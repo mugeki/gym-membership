@@ -188,8 +188,12 @@ paths:
               meta:
                 $ref: "#/definitions/SuccessResponse"
               data:
-                type: string
-                example: item created
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: jwttoken
+
         400:
           description: Bad Request
           schema:
@@ -198,7 +202,7 @@ paths:
           description: Unauthorized
           schema:
             $ref: "#/definitions/FailResponse401"
-            
+
   /video:
     get:
       tags:
