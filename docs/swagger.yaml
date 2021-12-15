@@ -198,7 +198,7 @@ paths:
           description: Unauthorized
           schema:
             $ref: "#/definitions/FailResponse401"
-
+            
   /video:
     get:
       tags:
@@ -917,6 +917,7 @@ definitions:
             type: array
             items:
               example: Error message goes here
+
 # Added by API Auto Mocking Plugin
 host: virtserver.swaggerhub.com
 basePath: /amirohqurrota/GymApps/1.0.0
