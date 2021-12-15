@@ -6,12 +6,6 @@ import (
 	"github.com/google/uuid"
 )
 
-type Gender string
-const (
-	Male Gender = "Male"
-	Female Gender = "Female"
-)
-
 type Domain struct {
 	ID 			uint
 	UUID 		uuid.UUID
@@ -19,7 +13,7 @@ type Domain struct {
 	Password	string
 	Email		string
 	FullName 	string
-	Gender 		Gender
+	Gender 		string
 	Telephone 	string
 	Address 	string
 	CreatedAt 	time.Time
