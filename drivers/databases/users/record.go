@@ -9,13 +9,12 @@ import (
 
 type Users struct {
 	gorm.Model
-	ID 			uint	
 	UUID 		uuid.UUID
 	Username	string		`gorm:"unique"`
 	Password	string
 	Email		string
 	FullName 	string	
-	Gender 		string	
+	Gender 		users.Gender
 	Telephone 	string	
 	Address 	string	
 }
