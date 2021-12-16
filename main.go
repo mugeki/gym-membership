@@ -15,6 +15,7 @@ import (
 	_videoRepo "gym-membership/drivers/databases/videos"
 
 	_adminRepo "gym-membership/drivers/databases/admins"
+	_classificationRepo "gym-membership/drivers/databases/classifications"
 
 	_middleware "gym-membership/app/middleware"
 	_routes "gym-membership/app/routes"
@@ -29,7 +30,7 @@ func dbMigrate(db *gorm.DB) {
 	db.AutoMigrate(
 		&_userRepo.Users{},
 		&_adminRepo.Admins{},
-		&_videoRepo.VideoClassifications{},
+		&_classificationRepo.Classifications{},
 		&_videoRepo.Videos{},
 	)
 }

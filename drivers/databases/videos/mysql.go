@@ -2,7 +2,9 @@ package videos
 
 import (
 	"gym-membership/business/videos"
+	"gym-membership/drivers/databases/classifications"
 
+	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 )
 
@@ -17,17 +19,22 @@ func NewMySQLRepo(conn *gorm.DB) videos.Repository {
 }
 
 func (mysqlRepo *mysqlVideosRepo) GetAll() ([]videos.Domain, error){
+	domain := []videos.Domain{}
 	rec := []Videos{}
 	err := mysqlRepo.Conn.Joins("Classification").Find(&rec).Error
 	if err != nil {
 		return nil, err
 	}
-	return toDomainArray(rec), nil
+	copier.Copy(&domain, &rec)
+	for i := 0; i < len(rec); i++ {
+		domain[i].ClassificationName = rec[i].Classification.Name
+	}
+	return domain, nil
 
 }
 
 func (mysqlRepo *mysqlVideosRepo) GetClassificationID(classification string) (int, error){
-	rec := VideoClassifications{}
+	rec := classifications.Classifications{}
 	err := mysqlRepo.Conn.First(&rec, "name = ?", classification).Error
 	if err != nil { 
 		return -1, err
@@ -36,20 +43,27 @@ func (mysqlRepo *mysqlVideosRepo) GetClassificationID(classification string) (in
 }
 
 func (mysqlRepo *mysqlVideosRepo) Insert(videoData *videos.Domain) (videos.Domain, error){
-	rec := fromDomain(*videoData)
+	domain := videos.Domain{}
+	rec := Videos{}
+	copier.Copy(&rec, videoData)
 	err := mysqlRepo.Conn.Create(&rec).Error
 	if err != nil {
 		return videos.Domain{}, err
 	}
-	return rec.toDomain(), nil
+	copier.Copy(&domain, &rec)
+	return domain, nil
 }
 
 func (mysqlRepo *mysqlVideosRepo) UpdateByID(id uint, videoData *videos.Domain) (videos.Domain, error){
+	domain := videos.Domain{}
 	rec := Videos{}
-	recData := *fromDomain(*videoData)
-	err := mysqlRepo.Conn.First(&rec, "id = ?", id).Updates(recData).Error
+	recData := Videos{}
+	copier.Copy(&recData, videoData)
+	err := mysqlRepo.Conn.First(&rec, "id = ?", id).Updates(recData).
+							Update("member_only",recData.MemberOnly).Error
 	if err != nil {
 		return videos.Domain{}, err
 	}
-	return rec.toDomain(), nil
+	copier.Copy(&domain, &rec)
+	return domain, nil
 }

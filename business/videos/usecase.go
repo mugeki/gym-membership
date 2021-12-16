@@ -1,6 +1,8 @@
 package videos
 
-import "gym-membership/business"
+import (
+	"gym-membership/business"
+)
 
 type videoUsecase struct {
 	videoRepository Repository
@@ -31,7 +33,7 @@ func (uc *videoUsecase) Insert(videoData *Domain, adminID uint) (string, error) 
 	return "item created", nil
 }
 
-func (uc *videoUsecase) UpdateVideoByID(id uint, videoData *Domain, adminID uint) (string, error) {
+func (uc *videoUsecase) UpdateByID(id uint, videoData *Domain, adminID uint) (string, error) {
 	classificationID, _ := uc.videoRepository.GetClassificationID(videoData.ClassificationName)
 	videoData.ClassificationID = classificationID
 	videoData.AdminID = adminID

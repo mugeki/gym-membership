@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	"github.com/asaskevich/govalidator"
+	"github.com/jinzhu/copier"
 	"github.com/labstack/echo/v4"
 )
 
@@ -27,7 +28,8 @@ func (ctrl *VideoController) GetAll(c echo.Context) error {
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
-	res := response.FromDomainArray(data)
+	res := []response.Videos{}
+	copier.Copy(&res, &data)
 	return controller.NewSuccessResponse(c, res)
 }
 
@@ -44,14 +46,16 @@ func (ctrl *VideoController) Insert(c echo.Context) error {
 	}
 
 	adminId := 1 //temporary adminID
-	data, err := ctrl.videoUsecase.Insert(req.ToDomain(), uint(adminId))
+	domain := videos.Domain{}
+	copier.Copy(&domain, &req)
+	data, err := ctrl.videoUsecase.Insert(&domain, uint(adminId))
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
 	return controller.NewSuccessResponse(c, data)
 }
 
-func (ctrl *VideoController) UpdateVideoByID(c echo.Context) error {
+func (ctrl *VideoController) UpdateByID(c echo.Context) error {
 	req := request.Videos{}
 	err := c.Bind(&req)
 	if err != nil {
@@ -65,7 +69,9 @@ func (ctrl *VideoController) UpdateVideoByID(c echo.Context) error {
 
 	videoId, _ := strconv.Atoi(c.Param("idVideo"))
 	adminId := 1 //temporary adminID
-	data, err := ctrl.videoUsecase.UpdateVideoByID(uint(videoId), req.ToDomain(), uint(adminId))
+	domain := videos.Domain{}
+	copier.Copy(&domain, &req)
+	data, err := ctrl.videoUsecase.UpdateByID(uint(videoId), &domain, uint(adminId))
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}

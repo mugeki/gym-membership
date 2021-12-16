@@ -18,7 +18,7 @@ type Domain struct {
 type Usecase interface {
 	GetAll() ([]Domain, error)
 	Insert(videoData *Domain, adminID uint) (string, error)
-	UpdateVideoByID(id uint, videoData *Domain, adminID uint) (string, error)
+	UpdateByID(id uint, videoData *Domain, adminID uint) (string, error)
 }
 
 type Repository interface {
