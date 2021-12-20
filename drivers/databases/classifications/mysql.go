@@ -16,11 +16,20 @@ func NewMySQLRepo(conn *gorm.DB) classification.Repository {
 	}
 }
 
-func (mysqlRepo *mysqlClassificationRepo) GetNameByID(id uint) (classification.Domain, error) {
-	recClassificationName := Classification{}
-	err := mysqlRepo.Conn.First(&recClassificationName, "id = ?", id).Error
+func (mysqlRepo *mysqlClassificationRepo) GetClassificationID(classification string) (uint, error) {
+	rec := Classification{}
+	err := mysqlRepo.Conn.First(&rec, "name = ?", classification).Error
+	if err != nil {
+		return 0, err
+	}
+	return rec.ID, nil
+}
+
+func (mysqlRepo *mysqlClassificationRepo) Insert(classificationData *classification.Domain) (classification.Domain, error) {
+	rec := fromDomain(*classificationData)
+	err := mysqlRepo.Conn.Create(&rec).Error
 	if err != nil {
 		return classification.Domain{}, err
 	}
-	return recClassificationName.toDomain(), nil
+	return rec.toDomain(), nil
 }

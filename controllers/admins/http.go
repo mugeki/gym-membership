@@ -14,7 +14,7 @@ type AdminController struct {
 	adminUsecase admins.Usecase
 }
 
-func NewUserController(Usecase admins.Usecase) *AdminController {
+func NewAdminController(Usecase admins.Usecase) *AdminController {
 	return &AdminController{
 		adminUsecase: Usecase,
 	}
@@ -34,6 +34,7 @@ func (ctrl *AdminController) Register(c echo.Context) error {
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusConflict, err)
 	}
+	// println(req, "ff")
 
 	return controller.NewSuccessResponse(c, data)
 }

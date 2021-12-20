@@ -6,9 +6,11 @@ type Domain struct {
 }
 
 type Usecase interface {
-	GetClassificationID(name string) (uint, error)
+	// GetClassificationID(name string) (uint, error)
+	Insert(classification *Domain) (Domain, error)
 }
 
 type Repository interface {
 	GetClassificationID(name string) (uint, error)
+	Insert(classification *Domain) (Domain, error)
 }

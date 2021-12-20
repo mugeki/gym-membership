@@ -17,7 +17,7 @@ type ArticleController struct {
 	articleUsecase articles.Usecase
 }
 
-func NewVideoController(Usecase articles.Usecase) *ArticleController {
+func NewArticleController(Usecase articles.Usecase) *ArticleController {
 	return &ArticleController{
 		articleUsecase: Usecase,
 	}
@@ -53,6 +53,7 @@ func (ctrl *ArticleController) Insert(c echo.Context) error {
 }
 
 func (ctrl *ArticleController) UpdateArticleByID(c echo.Context) error {
+	// println("cek param path", c.QueryParam("id"))
 	req := request.Articles{}
 	err := c.Bind(&req)
 	if err != nil {
@@ -64,7 +65,8 @@ func (ctrl *ArticleController) UpdateArticleByID(c echo.Context) error {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}
 
-	articleId, _ := strconv.Atoi(c.Param("idVideo"))
+	articleId, _ := strconv.Atoi(c.Param("idArticle"))
+	println(articleId, "article id")
 	adminId := 1 //temporary adminID
 	data, err := ctrl.articleUsecase.UpdateArticleByID(uint(articleId), req.ToDomain(), uint(adminId))
 	if err != nil {

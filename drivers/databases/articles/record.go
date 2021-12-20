@@ -57,5 +57,6 @@ func fromDomain(domain articles.Domain) *Articles {
 		AdminID:          domain.AdminID,
 		MemberOnly:       domain.MemberOnly,
 		UrlImage:         domain.UrlImage,
+		Text:             domain.Text,
 	}
 }

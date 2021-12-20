@@ -19,3 +19,11 @@ func (uc *classificationUsecase) GetClassificationID(name string) (uint, error) 
 	}
 	return res, nil
 }
+
+func (uc *classificationUsecase) Insert(classification *Domain) (Domain, error) {
+	res, err := uc.classificationRepository.Insert(classification)
+	if err != nil {
+		return res, business.ErrInternalServer
+	}
+	return res, nil
+}

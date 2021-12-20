@@ -6,19 +6,19 @@ import (
 	"gorm.io/gorm"
 )
 
-type mysqlVideosRepo struct {
+type mysqlArticlesRepo struct {
 	Conn *gorm.DB
 }
 
 func NewMySQLRepo(conn *gorm.DB) articles.Repository {
-	return &mysqlVideosRepo{
+	return &mysqlArticlesRepo{
 		Conn: conn,
 	}
 }
 
-func (mysqlRepo *mysqlVideosRepo) GetAll() ([]articles.Domain, error) {
+func (mysqlRepo *mysqlArticlesRepo) GetAll() ([]articles.Domain, error) {
 	rec := []Articles{}
-	err := mysqlRepo.Conn.Joins("Classification").Find(&rec).Error
+	err := mysqlRepo.Conn.Find(&rec).Error
 	if err != nil {
 		return nil, err
 	}
@@ -26,7 +26,7 @@ func (mysqlRepo *mysqlVideosRepo) GetAll() ([]articles.Domain, error) {
 
 }
 
-func (mysqlRepo *mysqlVideosRepo) Insert(videoData *articles.Domain) (articles.Domain, error) {
+func (mysqlRepo *mysqlArticlesRepo) Insert(videoData *articles.Domain) (articles.Domain, error) {
 	rec := fromDomain(*videoData)
 	err := mysqlRepo.Conn.Create(&rec).Error
 	if err != nil {
@@ -35,7 +35,8 @@ func (mysqlRepo *mysqlVideosRepo) Insert(videoData *articles.Domain) (articles.D
 	return rec.toDomain(), nil
 }
 
-func (mysqlRepo *mysqlVideosRepo) UpdateByID(id uint, videoData *articles.Domain) (articles.Domain, error) {
+func (mysqlRepo *mysqlArticlesRepo) UpdateByID(id uint, videoData *articles.Domain) (articles.Domain, error) {
+	// println("cek id", id)
 	rec := Articles{}
 	recData := *fromDomain(*videoData)
 	err := mysqlRepo.Conn.First(&rec, "id = ?", id).Updates(recData).Error

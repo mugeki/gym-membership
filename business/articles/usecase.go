@@ -29,6 +29,7 @@ func (uc *articleUsecase) Insert(articleData *Domain, adminID uint) (string, err
 	classificationID, _ := uc.classificationRepository.GetClassificationID(articleData.ClassificationName)
 	articleData.ClassificationID = classificationID
 	articleData.AdminID = adminID
+	// println("cek data text", articleData.Text)
 	_, err := uc.articleRepository.Insert(articleData)
 	if err != nil {
 		return "", business.ErrInternalServer
@@ -37,6 +38,7 @@ func (uc *articleUsecase) Insert(articleData *Domain, adminID uint) (string, err
 }
 
 func (uc *articleUsecase) UpdateArticleByID(id uint, videoData *Domain, adminID uint) (string, error) {
+	println("cek id", id)
 	classificationID, _ := uc.classificationRepository.GetClassificationID(videoData.ClassificationName)
 	videoData.ClassificationID = classificationID
 	videoData.AdminID = adminID
