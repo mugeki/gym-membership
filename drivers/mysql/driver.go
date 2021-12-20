@@ -17,7 +17,6 @@ type ConfigDB struct {
 }
 
 func (config *ConfigDB) InitDB() *gorm.DB {
-	fmt.Println("config: ",config)
 	dsn := fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?charset=utf8mb4&parseTime=True&loc=Local",
 		config.DB_Username,
 		config.DB_Password,
