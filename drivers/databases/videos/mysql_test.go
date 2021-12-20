@@ -62,7 +62,7 @@ func TestGetAll(t *testing.T) {
 				video.Url,
 			))
 
-	_, err = videoRepo.GetAll()
+	_, err = videoRepo.GetAll("Test",0,10)
 	require.NoError(t, err)
 }
 

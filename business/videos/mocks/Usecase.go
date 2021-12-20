@@ -13,13 +13,13 @@ type Usecase struct {
 	mock.Mock
 }
 
-// GetAll provides a mock function with given fields:
-func (_m *Usecase) GetAll() ([]videos.Domain, error) {
-	ret := _m.Called()
+// GetAll provides a mock function with given fields: title, page
+func (_m *Usecase) GetAll(title string, page int) ([]videos.Domain, error) {
+	ret := _m.Called(title, page)
 
 	var r0 []videos.Domain
-	if rf, ok := ret.Get(0).(func() []videos.Domain); ok {
-		r0 = rf()
+	if rf, ok := ret.Get(0).(func(string, int) []videos.Domain); ok {
+		r0 = rf(title, page)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]videos.Domain)
@@ -27,8 +27,8 @@ func (_m *Usecase) GetAll() ([]videos.Domain, error) {
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
+	if rf, ok := ret.Get(1).(func(string, int) error); ok {
+		r1 = rf(title, page)
 	} else {
 		r1 = ret.Error(1)
 	}

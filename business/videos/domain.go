@@ -16,13 +16,13 @@ type Domain struct {
 }
 
 type Usecase interface {
-	GetAll() ([]Domain, error)
+	GetAll(title string, page int) ([]Domain, error)
 	Insert(videoData *Domain, adminID uint) (string, error)
 	UpdateByID(id uint, videoData *Domain, adminID uint) (string, error)
 }
 
 type Repository interface {
-	GetAll() ([]Domain, error)
+	GetAll(title string, offset, limit int) ([]Domain, error)
 	GetClassificationID(classification string) (int, error)
 	Insert(videoData *Domain) (Domain, error)
 	UpdateByID(id uint, videoData *Domain) (Domain, error)

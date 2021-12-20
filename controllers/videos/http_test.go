@@ -75,7 +75,8 @@ func TestGetAll(t *testing.T){
 
 		data := []response.Videos{}
 		copier.Copy(&data, &videoData)
-		mockVideoUC.On("GetAll").Return([]_videoBusiness.Domain{videoData}, nil).Once()
+		mockVideoUC.On("GetAll", mock.AnythingOfType("string"), mock.AnythingOfType("int")).
+					Return([]_videoBusiness.Domain{videoData}, nil).Once()
 
 		resp := controllers.BaseResponse{}
 		resp.Meta.Status = http.StatusOK
@@ -94,7 +95,8 @@ func TestGetAll(t *testing.T){
 		rec := httptest.NewRecorder()
 		e := echo.New()
 		c := e.NewContext(req,rec)
-		mockVideoUC.On("GetAll").Return([]_videoBusiness.Domain{}, assert.AnError).Once()
+		mockVideoUC.On("GetAll", mock.AnythingOfType("string"), mock.AnythingOfType("int")).
+					Return([]_videoBusiness.Domain{}, assert.AnError).Once()
 
 		resp := controllers.BaseResponse{}
 		resp.Meta.Status = http.StatusInternalServerError

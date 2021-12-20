@@ -39,18 +39,29 @@ func TestMain(m *testing.M){
 }
 
 func TestGetAll(t *testing.T){
-	t.Run("Valid Test", func(t *testing.T){
-		mockVideoRepo.On("GetAll").Return([]videos.Domain{videoData},nil).Once()
+	t.Run("Valid Test | Unspecified Page", func(t *testing.T){
+		mockVideoRepo.On("GetAll", mock.AnythingOfType("string"), mock.AnythingOfType("int"), mock.AnythingOfType("int")).
+						Return([]videos.Domain{videoData},nil).Once()
 
-		resp, err := videoUsecase.GetAll()
+		resp, err := videoUsecase.GetAll("Test",1)
+		
+		assert.Nil(t, err)
+		assert.Contains(t, resp, videoData)
+	})
+	t.Run("Valid Test | Specified Page", func(t *testing.T){
+		mockVideoRepo.On("GetAll", mock.AnythingOfType("string"), mock.AnythingOfType("int"), mock.AnythingOfType("int")).
+						Return([]videos.Domain{videoData},nil).Once()
+
+		resp, err := videoUsecase.GetAll("Test",2)
 		
 		assert.Nil(t, err)
 		assert.Contains(t, resp, videoData)
 	})
 	t.Run("Invalid Test | Internal Server Error", func(t *testing.T){
-		mockVideoRepo.On("GetAll").Return([]videos.Domain{},assert.AnError).Once()
+		mockVideoRepo.On("GetAll", mock.AnythingOfType("string"), mock.AnythingOfType("int"), mock.AnythingOfType("int")).
+						Return([]videos.Domain{},assert.AnError).Once()
 
-		resp, err := videoUsecase.GetAll()
+		resp, err := videoUsecase.GetAll("Test",1)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, []videos.Domain{}, resp)

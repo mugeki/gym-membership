@@ -24,7 +24,12 @@ func NewVideoController(Usecase videos.Usecase) *VideoController {
 }
 
 func (ctrl *VideoController) GetAll(c echo.Context) error {
-	data, err := ctrl.videoUsecase.GetAll()
+	title := c.QueryParam("title")
+	page, _ := strconv.Atoi(c.QueryParam("page"))
+	if page <= 0 {
+		page = 1
+	}
+	data, err := ctrl.videoUsecase.GetAll(title, page)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}

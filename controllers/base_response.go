@@ -12,15 +12,17 @@ type BaseResponse struct {
 		Message 	string 		`json:"message"`
 		Messages 	[]string	`json:"messages,omitempty"`
 	} `json:"meta"`
-	Data interface{} `json:"data"`
+	Data interface{} `json:"data,omitempty"`
 }
 
 func NewSuccessResponse(c echo.Context, data interface{}) error {
 	res := BaseResponse{}
 	res.Meta.Status = http.StatusOK
 	res.Meta.Message = "Success"
-	res.Data = data
-
+	if data != ""{
+		res.Data = data
+	}
+	
 	return c.JSON(http.StatusOK, res)
 }
 

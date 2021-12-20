@@ -203,10 +203,10 @@ paths:
           schema:
             $ref: "#/definitions/FailResponse401"
 
-  /video:
+  /videos:
     get:
       tags:
-        - admin
+        - users
       summary: get video content
       operationId: searchVideo
       description: |
@@ -221,27 +221,27 @@ paths:
           required: false
           type: string
         - in: query
-          name: limit
-          description: maximum number of records to return
+          name: page
+          description: page number
           type: integer
           format: int32
-          minimum: 0
-          maximum: 50
       responses:
         200:
-          description: search results matching criteria
+          description: OK
           schema:
             type: array
             items:
-              $ref: "#/definitions/VideoItem"
-        400:
-          description: bad input parameter
+              $ref: "#/definitions/VideoResponseItem"
+        500:
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/FailResponse500"
     post:
       tags:
         - admin
       summary: adds a new video
       operationId: addVideo
-      description: Adds an video to the system
+      description: Adds a video to the system
       consumes:
         - application/json
       produces:
@@ -251,14 +251,22 @@ paths:
           name: TransactionItem
           description: Transaction item to add
           schema:
-            $ref: "#/definitions/VideoItem"
+            $ref: "#/definitions/VideoRequestItem"
       responses:
-        201:
-          description: item created
+        200:
+          description: OK
+          schema:
+            properties:
+              meta:
+                $ref: "#/definitions/SuccessResponse"
         400:
-          description: invalid input, object invalid
-        409:
-          description: an existing item already exists
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/FailResponse400"
+        500:
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/FailResponse500"
     put:
       tags:
         - admin
@@ -275,12 +283,20 @@ paths:
           description: id video to identified specific video
           type: integer
       responses:
-        201:
-          description: edited item succeed
+        200:
+          description: OK
+          schema:
+            properties:
+              meta:
+                $ref: "#/definitions/SuccessResponse"
         400:
-          description: invalid input, object invalid
-        409:
-          description: an existing item already exists
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/FailResponse400"
+        500:
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/FailResponse500"
 
   /article:
     get:
@@ -564,7 +580,7 @@ definitions:
     required:
       - id
       - userId
-      - adminId
+      - admin_id
       - status
       - nominal
       - classId
@@ -577,7 +593,7 @@ definitions:
       userId:
         type: integer
         example: 1
-      adminId:
+      admin_id:
         type: integer
         example: 1
       status:
@@ -739,14 +755,29 @@ definitions:
         format: date-time
         example: 2016-08-29T09:12:33.001Z
 
-  VideoItem:
+  VideoRequestItem:
     type: object
     required:
-      - id
       - title
       - classification
-      - adminId
       - url
+      - member_only
+    properties:
+      title:
+        type: string
+        example: Abs Workout in 2 weeks
+      classification:
+        type: string
+        example: daily workout
+      member_only:
+        type: boolean
+        example: false
+      url:
+        type: string
+        example: https://www.youtube.com/watch?v=80AjI0hlbf8
+
+  VideoResponseItem:
+    type: object
     properties:
       id:
         type: integer
@@ -757,10 +788,13 @@ definitions:
       classification:
         type: string
         example: daily workout
-      adminId:
+      admin_id:
         type: integer
         format: uuid
-        example: 08123456789
+        example: d290f1ee-6c54-4b01
+      member_only:
+        type: boolean
+        example: false
       url:
         type: string
         example: https://www.youtube.com/watch?v=80AjI0hlbf8
@@ -772,7 +806,7 @@ definitions:
       - title
       - urlImage
       - classification
-      - adminId
+      - admin_id
       - desc
     properties:
       id:
@@ -787,7 +821,7 @@ definitions:
       classification:
         type: string
         example: healthy recipe
-      adminId:
+      admin_id:
         type: integer
         format: uuid
         example: 08123456789
@@ -821,9 +855,6 @@ definitions:
             type: array
             items:
               example: Error message goes here
-      data:
-        type: string
-        example: null
 
   FailResponse401:
     type: object
@@ -841,9 +872,6 @@ definitions:
             type: array
             items:
               example: Error message goes here
-      data:
-        type: string
-        example: null
 
   FailResponse403:
     type: object
@@ -861,9 +889,6 @@ definitions:
             type: array
             items:
               example: Error message goes here
-      data:
-        type: string
-        example: null
 
   FailResponse404:
     type: object
@@ -881,9 +906,6 @@ definitions:
             type: array
             items:
               example: Error message goes here
-      data:
-        type: string
-        example: null
 
   FailResponse409:
     type: object
@@ -901,9 +923,6 @@ definitions:
             type: array
             items:
               example: Error message goes here
-      data:
-        type: string
-        example: null
 
   FailResponse500:
     type: object

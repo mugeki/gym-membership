@@ -13,13 +13,13 @@ type Repository struct {
 	mock.Mock
 }
 
-// GetAll provides a mock function with given fields:
-func (_m *Repository) GetAll() ([]videos.Domain, error) {
-	ret := _m.Called()
+// GetAll provides a mock function with given fields: title, offset, limit
+func (_m *Repository) GetAll(title string, offset int, limit int) ([]videos.Domain, error) {
+	ret := _m.Called(title, offset, limit)
 
 	var r0 []videos.Domain
-	if rf, ok := ret.Get(0).(func() []videos.Domain); ok {
-		r0 = rf()
+	if rf, ok := ret.Get(0).(func(string, int, int) []videos.Domain); ok {
+		r0 = rf(title, offset, limit)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]videos.Domain)
@@ -27,8 +27,8 @@ func (_m *Repository) GetAll() ([]videos.Domain, error) {
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
+	if rf, ok := ret.Get(1).(func(string, int, int) error); ok {
+		r1 = rf(title, offset, limit)
 	} else {
 		r1 = ret.Error(1)
 	}

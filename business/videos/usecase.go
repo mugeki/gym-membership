@@ -14,8 +14,15 @@ func NewVideoUsecase(videoRepo Repository) Usecase {
 	}
 }
 
-func (uc *videoUsecase) GetAll() ([]Domain, error) {
-	res, err := uc.videoRepository.GetAll()
+func (uc *videoUsecase) GetAll(title string, page int) ([]Domain, error) {
+	var offset int
+	limit := 10
+	if page == 1 {
+		offset = 0
+	} else {
+		offset = (page-1)*10
+	}
+	res, err := uc.videoRepository.GetAll(title, offset, limit)
 	if err != nil {
 		return []Domain{}, business.ErrInternalServer
 	}
@@ -30,7 +37,7 @@ func (uc *videoUsecase) Insert(videoData *Domain, adminID uint) (string, error) 
 	if err != nil {
 		return "", business.ErrInternalServer
 	}
-	return "item created", nil
+	return "", nil
 }
 
 func (uc *videoUsecase) UpdateByID(id uint, videoData *Domain, adminID uint) (string, error) {
@@ -41,5 +48,5 @@ func (uc *videoUsecase) UpdateByID(id uint, videoData *Domain, adminID uint) (st
 	if err != nil {
 		return "", business.ErrInternalServer
 	}
-	return "item edited", nil
+	return "", nil
 }

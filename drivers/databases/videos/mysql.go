@@ -18,10 +18,11 @@ func NewMySQLRepo(conn *gorm.DB) videos.Repository {
 	}
 }
 
-func (mysqlRepo *mysqlVideosRepo) GetAll() ([]videos.Domain, error){
+func (mysqlRepo *mysqlVideosRepo) GetAll(title string, offset, limit int) ([]videos.Domain, error){
 	domain := []videos.Domain{}
 	rec := []Videos{}
-	err := mysqlRepo.Conn.Joins("Classification").Find(&rec).Error
+	err := mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").
+						Joins("Classification").Find(&rec, "title LIKE ?", "%"+title+"%").Error
 	if err != nil {
 		return nil, err
 	}
