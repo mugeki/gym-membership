@@ -32,65 +32,6 @@ var (
 	}
 )
 
-func TestGetAll(t *testing.T) {
-	db, mock, err := sqlmock.New()
-	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
-	}
-	gdb, _ := gorm.Open(mysql.New(mysql.Config{
-		Conn:                      db,
-		SkipInitializeWithVersion: true,
-	}), &gorm.Config{})
-	videoRepo := videos.NewMySQLRepo(gdb)
-	defer db.Close()
-
-	mock.ExpectQuery(regexp.QuoteMeta("SELECT `videos`")).
-		WillReturnRows(
-			sqlmock.NewRows([]string{
-				"id",
-				"title",
-				"classification",
-				"adminId",
-				"memberOnly",
-				"url",
-			}).AddRow(
-				1,
-				video.Title,
-				video.ClassificationName,
-				video.AdminID,
-				video.MemberOnly,
-				video.Url,
-			))
-
-	_, err = videoRepo.GetAll("Test",0,10)
-	require.NoError(t, err)
-}
-
-func TestGetClassificationID(t *testing.T) {
-	db, mock, err := sqlmock.New()
-	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
-	}
-	gdb, _ := gorm.Open(mysql.New(mysql.Config{
-		Conn:                      db,
-		SkipInitializeWithVersion: true,
-	}), &gorm.Config{})
-	videoRepo := videos.NewMySQLRepo(gdb)
-	defer db.Close()
-
-	mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `classifications`")).
-		WillReturnRows(
-			sqlmock.NewRows([]string{
-				"id",
-				"name",
-			}).AddRow(
-				video.ClassificationID,
-				video.ClassificationName,
-			))
-
-	_, err = videoRepo.GetClassificationID(video.ClassificationName)
-	require.NoError(t, err)
-}
 func TestInsert(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {

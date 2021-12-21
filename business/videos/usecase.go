@@ -14,7 +14,7 @@ func NewVideoUsecase(videoRepo Repository) Usecase {
 	}
 }
 
-func (uc *videoUsecase) GetAll(title string, page int) ([]Domain, error) {
+func (uc *videoUsecase) GetAll(title string, page int) ([]Domain, int, int, int64, error) {
 	var offset int
 	limit := 10
 	if page == 1 {
@@ -22,17 +22,14 @@ func (uc *videoUsecase) GetAll(title string, page int) ([]Domain, error) {
 	} else {
 		offset = (page-1)*10
 	}
-	res, err := uc.videoRepository.GetAll(title, offset, limit)
+	res, totalData, err := uc.videoRepository.GetAll(title, offset, limit)
 	if err != nil {
-		return []Domain{}, business.ErrInternalServer
+		return []Domain{}, -1, -1, -1, business.ErrInternalServer
 	}
-	return res, nil
+	return res, offset, limit, totalData, nil
 }
 
-func (uc *videoUsecase) Insert(videoData *Domain, adminID uint) (string, error) {
-	classificationID, _ := uc.videoRepository.GetClassificationID(videoData.ClassificationName)
-	videoData.ClassificationID = classificationID
-	videoData.AdminID = adminID
+func (uc *videoUsecase) Insert(videoData *Domain) (string, error) {
 	_, err := uc.videoRepository.Insert(videoData)
 	if err != nil {
 		return "", business.ErrInternalServer
@@ -40,10 +37,7 @@ func (uc *videoUsecase) Insert(videoData *Domain, adminID uint) (string, error) 
 	return "", nil
 }
 
-func (uc *videoUsecase) UpdateByID(id uint, videoData *Domain, adminID uint) (string, error) {
-	classificationID, _ := uc.videoRepository.GetClassificationID(videoData.ClassificationName)
-	videoData.ClassificationID = classificationID
-	videoData.AdminID = adminID
+func (uc *videoUsecase) UpdateByID(id uint, videoData *Domain) (string, error) {
 	_, err := uc.videoRepository.UpdateByID(id, videoData)
 	if err != nil {
 		return "", business.ErrInternalServer

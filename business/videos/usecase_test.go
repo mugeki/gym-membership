@@ -35,36 +35,55 @@ func TestMain(m *testing.M){
 		MemberOnly         : false,
 		Url                : "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
 	}
+	
 	m.Run()
 }
 
 func TestGetAll(t *testing.T){
 	t.Run("Valid Test | Unspecified Page", func(t *testing.T){
 		mockVideoRepo.On("GetAll", mock.AnythingOfType("string"), mock.AnythingOfType("int"), mock.AnythingOfType("int")).
-						Return([]videos.Domain{videoData},nil).Once()
+						Return([]videos.Domain{videoData}, int64(1), nil).Once()
 
-		resp, err := videoUsecase.GetAll("Test",1)
+		expectOffset	:= 0
+		expectLimit		:= 10
+		expectTotalData	:= int64(1)
+		resp, offset, limit, totalData, err := videoUsecase.GetAll("Test",1)
 		
 		assert.Nil(t, err)
 		assert.Contains(t, resp, videoData)
+		assert.Equal(t, expectLimit, limit)
+		assert.Equal(t, expectOffset, offset)
+		assert.Equal(t, expectTotalData, totalData)
 	})
 	t.Run("Valid Test | Specified Page", func(t *testing.T){
 		mockVideoRepo.On("GetAll", mock.AnythingOfType("string"), mock.AnythingOfType("int"), mock.AnythingOfType("int")).
-						Return([]videos.Domain{videoData},nil).Once()
+						Return([]videos.Domain{videoData}, int64(1), nil).Once()
 
-		resp, err := videoUsecase.GetAll("Test",2)
+		expectOffset	:= 10
+		expectLimit		:= 10
+		expectTotalData	:= int64(1)
+		resp, offset, limit, totalData, err := videoUsecase.GetAll("Test",2)
 		
 		assert.Nil(t, err)
 		assert.Contains(t, resp, videoData)
+		assert.Equal(t, expectLimit, limit)
+		assert.Equal(t, expectOffset, offset)
+		assert.Equal(t, expectTotalData, totalData)
 	})
 	t.Run("Invalid Test | Internal Server Error", func(t *testing.T){
 		mockVideoRepo.On("GetAll", mock.AnythingOfType("string"), mock.AnythingOfType("int"), mock.AnythingOfType("int")).
-						Return([]videos.Domain{},assert.AnError).Once()
+						Return([]videos.Domain{}, int64(0), assert.AnError).Once()
 
-		resp, err := videoUsecase.GetAll("Test",1)
+		expectOffset	:= -1
+		expectLimit		:= -1
+		expectTotalData	:= int64(-1)
+		resp, offset, limit, totalData, err := videoUsecase.GetAll("Test",1)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, []videos.Domain{}, resp)
+		assert.Equal(t, expectLimit, limit)
+		assert.Equal(t, expectOffset, offset)
+		assert.Equal(t, expectTotalData, totalData)
 	})
 }
 
@@ -73,16 +92,16 @@ func TestInsert(t *testing.T){
 		mockVideoRepo.On("GetClassificationID", mock.AnythingOfType("string")).Return(1, nil).Once()
 		mockVideoRepo.On("Insert", mock.Anything).Return(videoData, nil).Once()
 
-		resp, err := videoUsecase.Insert(&videoInput, 1)
+		resp, err := videoUsecase.Insert(&videoInput)
 
 		assert.Nil(t, err)
-		assert.Equal(t, "item created", resp)
+		assert.Equal(t, "", resp)
 	})
 	t.Run("Invalid Test | Internal Server Error", func(t *testing.T){
 		mockVideoRepo.On("GetClassificationID", mock.AnythingOfType("string")).Return(1, nil).Once()
 		mockVideoRepo.On("Insert", mock.Anything).Return(videos.Domain{}, assert.AnError).Once()
 		
-		resp, err := videoUsecase.Insert(&videoInput, 1)
+		resp, err := videoUsecase.Insert(&videoInput)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "", resp)
@@ -94,16 +113,16 @@ func TestUpdateByID(t *testing.T){
 		mockVideoRepo.On("GetClassificationID", mock.AnythingOfType("string")).Return(1, nil).Once()
 		mockVideoRepo.On("UpdateByID", mock.Anything, mock.Anything).Return(videoData, nil).Once()
 
-		resp, err := videoUsecase.UpdateByID(1, &videoInput, 1)
+		resp, err := videoUsecase.UpdateByID(1, &videoInput)
 
 		assert.Nil(t, err)
-		assert.Equal(t, "item edited", resp)
+		assert.Equal(t, "", resp)
 	})
 	t.Run("Invalid Test | Internal Server Error", func(t *testing.T){
 		mockVideoRepo.On("GetClassificationID", mock.AnythingOfType("string")).Return(1, nil).Once()
 		mockVideoRepo.On("UpdateByID", mock.Anything, mock.Anything).Return(videos.Domain{}, assert.AnError).Once()
 
-		resp, err := videoUsecase.UpdateByID(1, &videoInput, 1)
+		resp, err := videoUsecase.UpdateByID(1, &videoInput)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "", resp)

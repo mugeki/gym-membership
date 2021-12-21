@@ -36,20 +36,23 @@ func TestMain(m *testing.M){
 	videoCtrl = *videos.NewVideoController(&mockVideoUC)
 	jsonReq.Video = `{
 		"title": "Test Title",
-		"classification": "test class",
+		"classification_id": 1,
 		"memberOnly": true,
+		"admin_id": 1,
 		"url": "https://www.youtube.com/watch?v=80AjI0hlbf8"
 	}`
 	jsonReq.VideoInvalidBind = `{
 		"title": "Test Title"
-		"classification": "test class",
+		"classification_id": 1,
 		"memberOnly": true,
+		"admin_id": 1,
 		"url": "https://www.youtube.com/watch?v=80AjI0hlbf8"
 	}`
 	jsonReq.VideoInvalidStruct = `{
 		"title": "Test Title",
-		"classification": "test class",
+		"classification_id": 1,
 		"memberOnly": true,
+		"admin_id": 1,
 		"url": "asd"
 	}`
 	videoData = _videoBusiness.Domain{
@@ -67,16 +70,19 @@ func TestMain(m *testing.M){
 
 func TestGetAll(t *testing.T){
 	t.Run("Valid Test", func(t *testing.T){
-		req := httptest.NewRequest(http.MethodGet, "/videos", nil)
+		req := httptest.NewRequest(http.MethodGet, "/users/videos", nil)
 		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 		rec := httptest.NewRecorder()
 		e := echo.New()
 		c := e.NewContext(req,rec)
 
-		data := []response.Videos{}
-		copier.Copy(&data, &videoData)
+		data := response.VideosPagination{}
+		data.Limit = 10
+		data.Offset = 0
+		data.TotalData = int64(1)
+		copier.Copy(&data.Videos, &videoData)
 		mockVideoUC.On("GetAll", mock.AnythingOfType("string"), mock.AnythingOfType("int")).
-					Return([]_videoBusiness.Domain{videoData}, nil).Once()
+					Return([]_videoBusiness.Domain{videoData}, 0, 10, int64(1), nil).Once()
 
 		resp := controllers.BaseResponse{}
 		resp.Meta.Status = http.StatusOK
@@ -89,14 +95,40 @@ func TestGetAll(t *testing.T){
 			assert.JSONEq(t, string(expected), rec.Body.String())
 		}
 	})
+	t.Run("Valid Test | No Content", func(t *testing.T){
+		req := httptest.NewRequest(http.MethodGet, "/users/videos", nil)
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		e := echo.New()
+		c := e.NewContext(req,rec)
+
+		data := response.VideosPagination{}
+		data.Limit = 10
+		data.Offset = 0
+		data.TotalData = int64(0)
+		data.Videos = nil
+		mockVideoUC.On("GetAll", mock.AnythingOfType("string"), mock.AnythingOfType("int")).
+					Return([]_videoBusiness.Domain{}, 0, 10, int64(0), nil).Once()
+
+		resp := controllers.BaseResponse{}
+		resp.Meta.Status = http.StatusNoContent
+		resp.Meta.Message = "Success"
+		resp.Data = data
+		expected, _ := json.Marshal(resp)
+
+		if assert.NoError(t, videoCtrl.GetAll(c)){
+			assert.Equal(t, http.StatusNoContent, rec.Code)
+			assert.JSONEq(t, string(expected), rec.Body.String())
+		}
+	})
 	t.Run("Invalid Test | Internal Server Error", func(t *testing.T){
-		req := httptest.NewRequest(http.MethodGet, "/videos", nil)
+		req := httptest.NewRequest(http.MethodGet, "/users/videos", nil)
 		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 		rec := httptest.NewRecorder()
 		e := echo.New()
 		c := e.NewContext(req,rec)
 		mockVideoUC.On("GetAll", mock.AnythingOfType("string"), mock.AnythingOfType("int")).
-					Return([]_videoBusiness.Domain{}, assert.AnError).Once()
+					Return([]_videoBusiness.Domain{}, -1, -1, int64(-1), assert.AnError).Once()
 
 		resp := controllers.BaseResponse{}
 		resp.Meta.Status = http.StatusInternalServerError
@@ -118,12 +150,12 @@ func TestInsert(t *testing.T){
 		rec := httptest.NewRecorder()
 		e := echo.New()
 		c := e.NewContext(req,rec)
-		mockVideoUC.On("Insert", mock.Anything, mock.AnythingOfType("uint")).Return("item created", nil).Once()
+		mockVideoUC.On("Insert", mock.Anything).Return("", nil).Once()
 
 		resp := controllers.BaseResponse{}
 		resp.Meta.Status = http.StatusOK
 		resp.Meta.Message = "Success"
-		resp.Data = "item created"
+		resp.Data = ""
 		expected, _ := json.Marshal(resp)
 
 		if assert.NoError(t, videoCtrl.Insert(c)){
@@ -137,7 +169,7 @@ func TestInsert(t *testing.T){
 		rec := httptest.NewRecorder()
 		e := echo.New()
 		c := e.NewContext(req,rec)
-		mockVideoUC.On("Insert", mock.Anything, mock.AnythingOfType("uint")).Return("", assert.AnError).Once()
+		mockVideoUC.On("Insert", mock.Anything).Return("", assert.AnError).Once()
 
 		resp := controllers.BaseResponse{}
 		resp.Meta.Status = http.StatusInternalServerError
@@ -195,13 +227,13 @@ func TestUpdateVideoByID(t *testing.T){
 		rec := httptest.NewRecorder()
 		e := echo.New()
 		c := e.NewContext(req,rec)
-		mockVideoUC.On("UpdateByID", mock.AnythingOfType("uint"), mock.Anything, mock.AnythingOfType("uint")).
-					Return("item edited", nil).Once()
+		mockVideoUC.On("UpdateByID", mock.AnythingOfType("uint"), mock.Anything).
+					Return("", nil).Once()
 
 		resp := controllers.BaseResponse{}
 		resp.Meta.Status = http.StatusOK
 		resp.Meta.Message = "Success"
-		resp.Data = "item edited"
+		resp.Data = ""
 		expected, _ := json.Marshal(resp)
 
 		if assert.NoError(t, videoCtrl.UpdateByID(c)){
@@ -215,7 +247,7 @@ func TestUpdateVideoByID(t *testing.T){
 		rec := httptest.NewRecorder()
 		e := echo.New()
 		c := e.NewContext(req,rec)
-		mockVideoUC.On("UpdateByID", mock.AnythingOfType("uint"), mock.Anything, mock.AnythingOfType("uint")).
+		mockVideoUC.On("UpdateByID", mock.AnythingOfType("uint"), mock.Anything).
 					Return("", assert.AnError).Once()
 
 		resp := controllers.BaseResponse{}

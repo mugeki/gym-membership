@@ -14,7 +14,7 @@ type Usecase struct {
 }
 
 // GetAll provides a mock function with given fields: title, page
-func (_m *Usecase) GetAll(title string, page int) ([]videos.Domain, error) {
+func (_m *Usecase) GetAll(title string, page int) ([]videos.Domain, int, int, int64, error) {
 	ret := _m.Called(title, page)
 
 	var r0 []videos.Domain
@@ -26,51 +26,72 @@ func (_m *Usecase) GetAll(title string, page int) ([]videos.Domain, error) {
 		}
 	}
 
-	var r1 error
-	if rf, ok := ret.Get(1).(func(string, int) error); ok {
+	var r1 int
+	if rf, ok := ret.Get(1).(func(string, int) int); ok {
 		r1 = rf(title, page)
 	} else {
+		r1 = ret.Get(1).(int)
+	}
+
+	var r2 int
+	if rf, ok := ret.Get(2).(func(string, int) int); ok {
+		r2 = rf(title, page)
+	} else {
+		r2 = ret.Get(2).(int)
+	}
+
+	var r3 int64
+	if rf, ok := ret.Get(3).(func(string, int) int64); ok {
+		r3 = rf(title, page)
+	} else {
+		r3 = ret.Get(3).(int64)
+	}
+
+	var r4 error
+	if rf, ok := ret.Get(4).(func(string, int) error); ok {
+		r4 = rf(title, page)
+	} else {
+		r4 = ret.Error(4)
+	}
+
+	return r0, r1, r2, r3, r4
+}
+
+// Insert provides a mock function with given fields: videoData
+func (_m *Usecase) Insert(videoData *videos.Domain) (string, error) {
+	ret := _m.Called(videoData)
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func(*videos.Domain) string); ok {
+		r0 = rf(videoData)
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(*videos.Domain) error); ok {
+		r1 = rf(videoData)
+	} else {
 		r1 = ret.Error(1)
 	}
 
 	return r0, r1
 }
 
-// Insert provides a mock function with given fields: videoData, adminID
-func (_m *Usecase) Insert(videoData *videos.Domain, adminID uint) (string, error) {
-	ret := _m.Called(videoData, adminID)
+// UpdateByID provides a mock function with given fields: id, videoData
+func (_m *Usecase) UpdateByID(id uint, videoData *videos.Domain) (string, error) {
+	ret := _m.Called(id, videoData)
 
 	var r0 string
-	if rf, ok := ret.Get(0).(func(*videos.Domain, uint) string); ok {
-		r0 = rf(videoData, adminID)
+	if rf, ok := ret.Get(0).(func(uint, *videos.Domain) string); ok {
+		r0 = rf(id, videoData)
 	} else {
 		r0 = ret.Get(0).(string)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(*videos.Domain, uint) error); ok {
-		r1 = rf(videoData, adminID)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// UpdateByID provides a mock function with given fields: id, videoData, adminID
-func (_m *Usecase) UpdateByID(id uint, videoData *videos.Domain, adminID uint) (string, error) {
-	ret := _m.Called(id, videoData, adminID)
-
-	var r0 string
-	if rf, ok := ret.Get(0).(func(uint, *videos.Domain, uint) string); ok {
-		r0 = rf(id, videoData, adminID)
-	} else {
-		r0 = ret.Get(0).(string)
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func(uint, *videos.Domain, uint) error); ok {
-		r1 = rf(id, videoData, adminID)
+	if rf, ok := ret.Get(1).(func(uint, *videos.Domain) error); ok {
+		r1 = rf(id, videoData)
 	} else {
 		r1 = ret.Error(1)
 	}

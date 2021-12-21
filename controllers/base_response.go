@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"net/http"
-
 	"github.com/labstack/echo/v4"
 )
 
@@ -15,15 +13,15 @@ type BaseResponse struct {
 	Data interface{} `json:"data,omitempty"`
 }
 
-func NewSuccessResponse(c echo.Context, data interface{}) error {
+func NewSuccessResponse(c echo.Context, status int, data interface{}) error {
 	res := BaseResponse{}
-	res.Meta.Status = http.StatusOK
+	res.Meta.Status = status
 	res.Meta.Message = "Success"
-	if data != ""{
+	if data != "" || data != nil{
 		res.Data = data
 	}
 	
-	return c.JSON(http.StatusOK, res)
+	return c.JSON(status, res)
 }
 
 func NewErrorResponse(c echo.Context, status int, err error) error {

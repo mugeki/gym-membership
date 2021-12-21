@@ -14,7 +14,7 @@ type Repository struct {
 }
 
 // GetAll provides a mock function with given fields: title, offset, limit
-func (_m *Repository) GetAll(title string, offset int, limit int) ([]videos.Domain, error) {
+func (_m *Repository) GetAll(title string, offset int, limit int) ([]videos.Domain, int64, error) {
 	ret := _m.Called(title, offset, limit)
 
 	var r0 []videos.Domain
@@ -26,35 +26,21 @@ func (_m *Repository) GetAll(title string, offset int, limit int) ([]videos.Doma
 		}
 	}
 
-	var r1 error
-	if rf, ok := ret.Get(1).(func(string, int, int) error); ok {
+	var r1 int64
+	if rf, ok := ret.Get(1).(func(string, int, int) int64); ok {
 		r1 = rf(title, offset, limit)
 	} else {
-		r1 = ret.Error(1)
+		r1 = ret.Get(1).(int64)
 	}
 
-	return r0, r1
-}
-
-// GetClassificationID provides a mock function with given fields: classification
-func (_m *Repository) GetClassificationID(classification string) (int, error) {
-	ret := _m.Called(classification)
-
-	var r0 int
-	if rf, ok := ret.Get(0).(func(string) int); ok {
-		r0 = rf(classification)
+	var r2 error
+	if rf, ok := ret.Get(2).(func(string, int, int) error); ok {
+		r2 = rf(title, offset, limit)
 	} else {
-		r0 = ret.Get(0).(int)
+		r2 = ret.Error(2)
 	}
 
-	var r1 error
-	if rf, ok := ret.Get(1).(func(string) error); ok {
-		r1 = rf(classification)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
+	return r0, r1, r2
 }
 
 // Insert provides a mock function with given fields: videoData

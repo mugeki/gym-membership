@@ -8,3 +8,10 @@ type Videos struct {
 	MemberOnly         bool   `json:"member_only"`
 	Url                string `json:"url"`
 }
+
+type VideosPagination struct {
+	Videos    []Videos `json:"videos"`
+	Offset    int      `json:"offset"`
+	Limit     int      `json:"limit"`
+	TotalData int64    `json:"total_data"`
+}

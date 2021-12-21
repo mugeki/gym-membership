@@ -29,13 +29,19 @@ func (ctrl *VideoController) GetAll(c echo.Context) error {
 	if page <= 0 {
 		page = 1
 	}
-	data, err := ctrl.videoUsecase.GetAll(title, page)
+	data, offset, limit, totalData, err := ctrl.videoUsecase.GetAll(title, page)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
-	res := []response.Videos{}
-	copier.Copy(&res, &data)
-	return controller.NewSuccessResponse(c, res)
+	res := response.VideosPagination{}
+	res.Limit = limit
+	res.Offset = offset
+	res.TotalData = totalData
+	copier.Copy(&res.Videos, &data)
+	if len(res.Videos) == 0 {
+		return controller.NewSuccessResponse(c, http.StatusNoContent, res)
+	}
+	return controller.NewSuccessResponse(c, http.StatusOK, res)
 }
 
 func (ctrl *VideoController) Insert(c echo.Context) error {
@@ -50,14 +56,13 @@ func (ctrl *VideoController) Insert(c echo.Context) error {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}
 
-	adminId := 1 //temporary adminID
 	domain := videos.Domain{}
 	copier.Copy(&domain, &req)
-	data, err := ctrl.videoUsecase.Insert(&domain, uint(adminId))
+	data, err := ctrl.videoUsecase.Insert(&domain)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
-	return controller.NewSuccessResponse(c, data)
+	return controller.NewSuccessResponse(c, http.StatusOK, data)
 }
 
 func (ctrl *VideoController) UpdateByID(c echo.Context) error {
@@ -73,12 +78,11 @@ func (ctrl *VideoController) UpdateByID(c echo.Context) error {
 	}
 
 	videoId, _ := strconv.Atoi(c.Param("idVideo"))
-	adminId := 1 //temporary adminID
 	domain := videos.Domain{}
 	copier.Copy(&domain, &req)
-	data, err := ctrl.videoUsecase.UpdateByID(uint(videoId), &domain, uint(adminId))
+	data, err := ctrl.videoUsecase.UpdateByID(uint(videoId), &domain)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
-	return controller.NewSuccessResponse(c, data)
+	return controller.NewSuccessResponse(c, http.StatusOK, data)
 }
