@@ -10,8 +10,8 @@ type Videos struct {
 }
 
 type VideosPagination struct {
-	Videos    []Videos `json:"videos"`
 	Offset    int      `json:"offset"`
 	Limit     int      `json:"limit"`
 	TotalData int64    `json:"total_data"`
+	Videos    []Videos `json:"videos"`
 }
