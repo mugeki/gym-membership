@@ -232,6 +232,8 @@ paths:
             type: array
             items:
               $ref: "#/definitions/VideoResponseItem"
+        204:
+          description: No Content
         500:
           description: Internal Server Error
           schema:
@@ -759,22 +761,26 @@ definitions:
     type: object
     required:
       - title
-      - classification
+      - classification_id
       - url
+      - admin_id
       - member_only
     properties:
       title:
         type: string
         example: Abs Workout in 2 weeks
-      classification:
-        type: string
-        example: daily workout
+      classification_id:
+        type: integer
+        example: 1
       member_only:
         type: boolean
         example: false
+      admin_id:
+        type: integer
+        example: 1
       url:
         type: string
-        example: https://www.youtube.com/watch?v=80AjI0hlbf8
+        example: https://www.youtube.com/embed/80AjI0hlbf8
 
   VideoResponseItem:
     type: object
@@ -797,7 +803,7 @@ definitions:
         example: false
       url:
         type: string
-        example: https://www.youtube.com/watch?v=80AjI0hlbf8
+        example: https://www.youtube.com/embed/80AjI0hlbf8
 
   ArticleItem:
     type: object
