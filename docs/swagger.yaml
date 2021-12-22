@@ -232,6 +232,8 @@ paths:
             properties:
               meta:
                 $ref: "#/definitions/SuccessResponse"
+              page:
+                $ref: "#/definitions/PageItem"
               data:
                 $ref: "#/definitions/VideosResponseItem"
         204:
@@ -579,6 +581,18 @@ paths:
           description: not found
 
 definitions:
+  PageItem:
+    properties:
+      offset:
+        type: integer
+        example: 0
+      limit:
+        type: integer
+        example: 10
+      total_data:
+        type: integer
+        example: 1
+
   TransactionItem:
     type: object
     required:

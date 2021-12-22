@@ -76,11 +76,13 @@ func TestGetAll(t *testing.T){
 		e := echo.New()
 		c := e.NewContext(req,rec)
 
-		data := response.VideosPagination{}
-		data.Limit = 10
-		data.Offset = 0
-		data.TotalData = int64(1)
-		copier.Copy(&data.Videos, &videoData)
+		data := []response.Videos{}
+		page := response.Page{
+			Limit: 10,
+			Offset: 0,
+			TotalData: int64(1),
+		}
+		copier.Copy(&data, &videoData)
 		mockVideoUC.On("GetAll", mock.AnythingOfType("string"), mock.AnythingOfType("int")).
 					Return([]_videoBusiness.Domain{videoData}, 0, 10, int64(1), nil).Once()
 
@@ -88,6 +90,7 @@ func TestGetAll(t *testing.T){
 		resp.Meta.Status = http.StatusOK
 		resp.Meta.Message = "Success"
 		resp.Data = data
+		resp.Page = page
 		expected, _ := json.Marshal(resp)
 
 		if assert.NoError(t, videoCtrl.GetAll(c)){
@@ -102,11 +105,13 @@ func TestGetAll(t *testing.T){
 		e := echo.New()
 		c := e.NewContext(req,rec)
 
-		data := response.VideosPagination{}
-		data.Limit = 10
-		data.Offset = 0
-		data.TotalData = int64(0)
-		data.Videos = nil
+		data := []response.Videos{}
+		page := response.Page{
+			Limit: 10,
+			Offset: 0,
+			TotalData: int64(1),
+		}
+		copier.Copy(&data, &videoData)
 		mockVideoUC.On("GetAll", mock.AnythingOfType("string"), mock.AnythingOfType("int")).
 					Return([]_videoBusiness.Domain{}, 0, 10, int64(0), nil).Once()
 
@@ -114,6 +119,7 @@ func TestGetAll(t *testing.T){
 		resp.Meta.Status = http.StatusNoContent
 		resp.Meta.Message = "Success"
 		resp.Data = data
+		resp.Page = page
 		expected, _ := json.Marshal(resp)
 
 		if assert.NoError(t, videoCtrl.GetAll(c)){

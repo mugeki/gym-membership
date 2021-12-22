@@ -9,9 +9,8 @@ type Videos struct {
 	Url                string `json:"url"`
 }
 
-type VideosPagination struct {
-	Offset    int      `json:"offset"`
-	Limit     int      `json:"limit"`
-	TotalData int64    `json:"total_data"`
-	Videos    []Videos `json:"videos"`
+type Page struct {
+	Offset    int   `json:"offset"`
+	Limit     int   `json:"limit"`
+	TotalData int64 `json:"total_data"`
 }

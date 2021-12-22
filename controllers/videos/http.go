@@ -33,15 +33,17 @@ func (ctrl *VideoController) GetAll(c echo.Context) error {
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
-	res := response.VideosPagination{}
-	res.Limit = limit
-	res.Offset = offset
-	res.TotalData = totalData
-	copier.Copy(&res.Videos, &data)
-	if len(res.Videos) == 0 {
+	res := []response.Videos{}
+	resPage := response.Page{
+		Limit: limit,
+		Offset: offset,
+		TotalData: totalData,
+	}
+	copier.Copy(&res, &data)
+	if len(res) == 0 {
 		return controller.NewSuccessResponse(c, http.StatusNoContent, res)
 	}
-	return controller.NewSuccessResponse(c, http.StatusOK, res)
+	return controller.NewSuccessResponse(c, http.StatusOK, res, resPage)
 }
 
 func (ctrl *VideoController) Insert(c echo.Context) error {
