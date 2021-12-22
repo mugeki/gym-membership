@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/asaskevich/govalidator"
+	"github.com/jinzhu/copier"
 	"github.com/labstack/echo/v4"
 )
 
@@ -21,6 +22,7 @@ func NewUserController(Usecase users.Usecase) *UserController {
 }
 
 func (ctrl *UserController) Register(c echo.Context) error{
+	domain := users.Domain{}
 	req := request.Users{}
 	if err := c.Bind(&req); err != nil{
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
@@ -30,7 +32,8 @@ func (ctrl *UserController) Register(c echo.Context) error{
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}
 
-	data, err := ctrl.userUsecase.Register(req.ToDomain())
+	copier.Copy(&domain, &req)
+	data, err := ctrl.userUsecase.Register(&domain)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusConflict, err)
 	}
@@ -50,7 +53,7 @@ func (ctrl *UserController) Login(c echo.Context) error{
 
 	token, err := ctrl.userUsecase.Login(req.Username, req.Password)
 	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+		return controller.NewErrorResponse(c, http.StatusUnauthorized, err)
 	}
 	
 	res := struct {
