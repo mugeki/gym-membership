@@ -3,14 +3,11 @@ package admins
 import (
 	"gym-membership/business/admins"
 
-	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type Admins struct {
 	gorm.Model
-	ID        uint
-	UUID      uuid.UUID
 	Username  string `gorm:"unique"`
 	Password  string
 	Email     string
@@ -22,8 +19,8 @@ type Admins struct {
 
 func (rec *Admins) toDomain() admins.Domain {
 	return admins.Domain{
-		ID:        rec.ID,
-		UUID:      rec.UUID,
+		// ID:        rec.ID,
+		// UUID:      rec.UUID,
 		Username:  rec.Username,
 		Password:  rec.Password,
 		Email:     rec.Email,
@@ -41,7 +38,7 @@ func fromDomain(domain admins.Domain) *Admins {
 			ID:        domain.ID,
 			CreatedAt: domain.CreatedAt,
 		},
-		UUID:      domain.UUID,
+		// UUID:      domain.UUID,
 		Username:  domain.Username,
 		Password:  domain.Password,
 		Email:     domain.Email,

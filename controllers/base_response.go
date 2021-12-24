@@ -1,27 +1,31 @@
-package controller
+package controllers
 
 import (
-	"net/http"
-
 	"github.com/labstack/echo/v4"
 )
 
 type BaseResponse struct {
 	Meta struct {
-		Status  	int    		`json:"status"`
-		Message 	string 		`json:"message"`
-		Messages 	[]string	`json:"messages,omitempty"`
+		Status   int      `json:"status"`
+		Message  string   `json:"message"`
+		Messages []string `json:"messages,omitempty"`
 	} `json:"meta"`
-	Data interface{} `json:"data"`
+	Page interface{} `json:"page,omitempty"`
+	Data interface{} `json:"data,omitempty"`
 }
 
-func NewSuccessResponse(c echo.Context, data interface{}) error {
+func NewSuccessResponse(c echo.Context, status int, data interface{}, args ...interface{}) error {
 	res := BaseResponse{}
-	res.Meta.Status = http.StatusOK
+	res.Meta.Status = status
 	res.Meta.Message = "Success"
-	res.Data = data
+	if data != "" || data != nil {
+		res.Data = data
+	}
+	if len(args) > 0 {
+		res.Page = args[0]
+	}
 
-	return c.JSON(http.StatusOK, res)
+	return c.JSON(status, res)
 }
 
 func NewErrorResponse(c echo.Context, status int, err error) error {

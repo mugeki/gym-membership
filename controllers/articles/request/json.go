@@ -5,22 +5,22 @@ import (
 )
 
 type Articles struct {
-	ID                 uint   `json:"id"`
-	Title              string `json:"title"`
-	ClassificationName string `json:"classificationName"`
-	AdminID            uint   `json:"adminId"`
-	MemberOnly         bool   `json:"memberOnly"`
-	UrlImage           string `json:"urlImage"`
-	Text               string `json:"text"`
+	ID               uint   `json:"id"`
+	Title            string `json:"title"`
+	ClassificationID uint   `json:"classificationId"`
+	AdminID          uint   `json:"adminId"`
+	MemberOnly       bool   `json:"memberOnly"`
+	UrlImage         string `json:"urlImage"`
+	Text             string `json:"text"`
 }
 
 func (req *Articles) ToDomain() *articles.Domain {
 	return &articles.Domain{
-		Title:              req.Title,
-		ClassificationName: req.ClassificationName,
-		MemberOnly:         req.MemberOnly,
-		UrlImage:           req.UrlImage,
-		Text:               req.Text,
+		Title:            req.Title,
+		ClassificationID: req.ClassificationID,
+		MemberOnly:       req.MemberOnly,
+		UrlImage:         req.UrlImage,
+		Text:             req.Text,
 	}
 }
 

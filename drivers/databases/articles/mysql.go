@@ -3,6 +3,7 @@ package articles
 import (
 	"gym-membership/business/articles"
 
+	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 )
 
@@ -16,32 +17,53 @@ func NewMySQLRepo(conn *gorm.DB) articles.Repository {
 	}
 }
 
-func (mysqlRepo *mysqlArticlesRepo) GetAll() ([]articles.Domain, error) {
+func (mysqlRepo *mysqlArticlesRepo) GetAll(title string, offset, limit int) ([]articles.Domain, int64, error) {
+	var totalData int64
+	domain := []articles.Domain{}
 	rec := []Articles{}
-	err := mysqlRepo.Conn.Find(&rec).Error
+
+	mysqlRepo.Conn.Find(&rec, "title LIKE ?", "%"+title+"%").Count(&totalData)
+	err := mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").
+		Joins("Classification").Find(&rec, "title LIKE ?", "%"+title+"%").Error
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
-	return toDomainArray(rec), nil
+
+	copier.Copy(&domain, &rec)
+	for i := 0; i < len(rec); i++ {
+		domain[i].ClassificationName = rec[i].Classification.Name
+		println("test", rec[i].Classification.Name)
+	}
+
+	return domain, totalData, nil
 
 }
 
 func (mysqlRepo *mysqlArticlesRepo) Insert(videoData *articles.Domain) (articles.Domain, error) {
-	rec := fromDomain(*videoData)
+	domain := articles.Domain{}
+	rec := Articles{}
+	// rec := fromDomain(*videoData)
+	println(videoData.AdminID)
+	copier.Copy(&rec, videoData)
 	err := mysqlRepo.Conn.Create(&rec).Error
 	if err != nil {
 		return articles.Domain{}, err
 	}
-	return rec.toDomain(), nil
+	copier.Copy(&domain, &rec)
+	return domain, nil
 }
 
 func (mysqlRepo *mysqlArticlesRepo) UpdateByID(id uint, videoData *articles.Domain) (articles.Domain, error) {
 	// println("cek id", id)
+	domain := articles.Domain{}
 	rec := Articles{}
-	recData := *fromDomain(*videoData)
+	// domainData := articles.Domain{}
+	recData := Articles{}
+	copier.Copy(recData, videoData)
 	err := mysqlRepo.Conn.First(&rec, "id = ?", id).Updates(recData).Error
 	if err != nil {
 		return articles.Domain{}, err
 	}
-	return rec.toDomain(), nil
+	copier.Copy(domain, rec)
+	return domain, nil
 }

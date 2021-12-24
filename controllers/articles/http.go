@@ -4,6 +4,7 @@ import (
 	"gym-membership/business/articles"
 	controller "gym-membership/controllers"
 	"gym-membership/controllers/articles/request"
+	"gym-membership/controllers/articles/response"
 
 	// "gym-membership/controllers/articles/response"
 	"net/http"
@@ -24,12 +25,28 @@ func NewArticleController(Usecase articles.Usecase) *ArticleController {
 }
 
 func (ctrl *ArticleController) GetAll(c echo.Context) error {
-	data, err := ctrl.articleUsecase.GetAll()
+	title := c.QueryParam("title")
+	page, _ := strconv.Atoi(c.QueryParam("page"))
+	if page <= 0 {
+		page = 1
+	}
+	data, offset, limit, totalData, err := ctrl.articleUsecase.GetAll(title, page)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
-	// res := response.FromDomainArray(data)
-	return controller.NewSuccessResponse(c, data)
+	// res := []response.FromDomainArray(data)
+
+	resPage := response.Page{
+		Limit:     limit,
+		Offset:    offset,
+		TotalData: totalData,
+	}
+	// copier.Copy(&res, &data)
+	if len(data) == 0 {
+		return controller.NewSuccessResponse(c, http.StatusNoContent, data)
+	}
+
+	return controller.NewSuccessResponse(c, http.StatusOK, data, resPage)
 }
 
 func (ctrl *ArticleController) Insert(c echo.Context) error {
@@ -49,7 +66,7 @@ func (ctrl *ArticleController) Insert(c echo.Context) error {
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
-	return controller.NewSuccessResponse(c, data)
+	return controller.NewSuccessResponse(c, http.StatusOK, data)
 }
 
 func (ctrl *ArticleController) UpdateArticleByID(c echo.Context) error {
@@ -66,11 +83,11 @@ func (ctrl *ArticleController) UpdateArticleByID(c echo.Context) error {
 	}
 
 	articleId, _ := strconv.Atoi(c.Param("idArticle"))
-	println(articleId, "article id")
+	// println(articleId, "article id")
 	adminId := 1 //temporary adminID
 	data, err := ctrl.articleUsecase.UpdateArticleByID(uint(articleId), req.ToDomain(), uint(adminId))
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
-	return controller.NewSuccessResponse(c, data)
+	return controller.NewSuccessResponse(c, http.StatusOK, data)
 }

@@ -23,7 +23,6 @@ func NewClassificationController(Usecase classification.Usecase) *Classification
 }
 
 func (ctrl *ClassificationController) Insert(c echo.Context) error {
-	// println("cek param path", c.QueryParam("id"))
 	req := request.Classification{}
 	err := c.Bind(&req)
 	if err != nil {
@@ -35,10 +34,9 @@ func (ctrl *ClassificationController) Insert(c echo.Context) error {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}
 
-	// adminId := 1 //temporary adminID
 	data, err := ctrl.classificationUsecase.Insert(req.ToDomain())
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
-	return controller.NewSuccessResponse(c, data)
+	return controller.NewSuccessResponse(c, http.StatusOK, data)
 }

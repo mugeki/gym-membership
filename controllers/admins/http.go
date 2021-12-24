@@ -6,6 +6,8 @@ import (
 	"gym-membership/controllers/admins/request"
 	"net/http"
 
+	"github.com/jinzhu/copier"
+
 	"github.com/asaskevich/govalidator"
 	"github.com/labstack/echo/v4"
 )
@@ -22,6 +24,7 @@ func NewAdminController(Usecase admins.Usecase) *AdminController {
 
 func (ctrl *AdminController) Register(c echo.Context) error {
 	req := request.Admins{}
+	domain := admins.Domain{}
 	if err := c.Bind(&req); err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}
@@ -29,14 +32,14 @@ func (ctrl *AdminController) Register(c echo.Context) error {
 	if _, err := govalidator.ValidateStruct(req); err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}
-
-	data, err := ctrl.adminUsecase.Register(req.ToDomain())
+	copier.Copy(domain, req)
+	data, err := ctrl.adminUsecase.Register(&domain)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusConflict, err)
 	}
 	// println(req, "ff")
 
-	return controller.NewSuccessResponse(c, data)
+	return controller.NewSuccessResponse(c, http.StatusOK, data)
 }
 
 func (ctrl *AdminController) Login(c echo.Context) error {
@@ -58,5 +61,5 @@ func (ctrl *AdminController) Login(c echo.Context) error {
 		Token string `json:"token"`
 	}{Token: token}
 
-	return controller.NewSuccessResponse(c, res)
+	return controller.NewSuccessResponse(c, http.StatusOK, res)
 }
