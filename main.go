@@ -10,6 +10,10 @@ import (
 	_userController "gym-membership/controllers/users"
 	_userRepo "gym-membership/drivers/databases/users"
 
+	_classService "gym-membership/business/class"
+	_classController "gym-membership/controllers/class"
+	_classRepo "gym-membership/drivers/databases/class"
+
 	_middleware "gym-membership/app/middleware"
 	_routes "gym-membership/app/routes"
 	_dbDriver "gym-membership/drivers/mysql"
@@ -22,6 +26,7 @@ import (
 func dbMigrate(db *gorm.DB) {
 	db.AutoMigrate(
 		&_userRepo.Users{},
+		&_classRepo.Class{},
 	)
 }
 
@@ -48,15 +53,20 @@ func main() {
 	userUsecase := _userService.NewUserUsecase(userRepo, &configJWT)
 	userCtrl := _userController.NewUserController(userUsecase)
 
+	classRepo := _driverFactory.NewClassRepository(db)
+	classUsecase := _classService.NewClassUsecase(classRepo, &configJWT)
+	classCtrl := _classController.NewClassController(classUsecase)
+
 	routesInit := _routes.ControllerList{
-		JWTMiddleware:        configJWT.Init(),
-		UserController:       *userCtrl,
+		JWTMiddleware:   configJWT.Init(),
+		UserController:  *userCtrl,
+		ClassController: *classCtrl,
 	}
 	routesInit.RegisterRoute(e)
-	
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8000"
 	}
-	e.Start(":"+port)
+	e.Start(":" + port)
 }
