@@ -299,6 +299,10 @@ paths:
           description: Bad Request
           schema:
             $ref: "#/definitions/FailResponse400"
+        404:
+          description: Not Found
+          schema:
+            $ref: "#/definitions/FailResponse404"
         500:
           description: Internal Server Error
           schema:
@@ -325,10 +329,10 @@ paths:
             properties:
               meta:
                 $ref: "#/definitions/SuccessResponse"
-        400:
-          description: Bad Request
+        404:
+          description: Not Found
           schema:
-            $ref: "#/definitions/FailResponse400"
+            $ref: "#/definitions/FailResponse404"
         500:
           description: Internal Server Error
           schema:
