@@ -32,15 +32,6 @@ func (mysqlRepo *mysqlClassificationRepo) GetAll() ([]classification.Domain, err
 	return domain, nil
 }
 
-func (mysqlRepo *mysqlClassificationRepo) GetClassificationID(classification string) (uint, error) {
-	rec := Classification{}
-	err := mysqlRepo.Conn.First(&rec, "name = ?", classification).Error
-	if err != nil {
-		return 0, err
-	}
-	return rec.ID, nil
-}
-
 func (mysqlRepo *mysqlClassificationRepo) Insert(classificationData *classification.Domain) (classification.Domain, error) {
 	rec := Classification{}
 	domain := classification.Domain{}

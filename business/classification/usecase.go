@@ -12,14 +12,6 @@ func NewClassificationUsecase(classificationRepo Repository) Usecase {
 	}
 }
 
-func (uc *classificationUsecase) GetClassificationID(name string) (uint, error) {
-	res, err := uc.classificationRepository.GetClassificationID(name)
-	if err != nil {
-		return res, business.ErrInternalServer
-	}
-	return res, nil
-}
-
 func (uc *classificationUsecase) GetAll() ([]Domain, error) {
 	res, err := uc.classificationRepository.GetAll()
 	if err != nil {
