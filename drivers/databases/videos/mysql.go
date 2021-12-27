@@ -65,3 +65,15 @@ func (mysqlRepo *mysqlVideosRepo) UpdateByID(id uint, videoData *videos.Domain) 
 	copier.Copy(&domain, &rec)
 	return domain, nil
 }
+
+func (mysqlRepo *mysqlVideosRepo) DeleteByID(id uint) error {
+	rec := Videos{}
+	err := mysqlRepo.Conn.Delete(&rec, id).Error
+	if  rec.ID == 0 {
+		return gorm.ErrRecordNotFound
+	}
+	if err != nil{
+		return err
+	}
+	return nil
+}

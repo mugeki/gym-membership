@@ -1,6 +1,7 @@
 package videos_test
 
 import (
+	"gym-membership/business"
 	"gym-membership/business/videos"
 	_videoMock "gym-membership/business/videos/mocks"
 	"testing"
@@ -89,7 +90,6 @@ func TestGetAll(t *testing.T){
 
 func TestInsert(t *testing.T){
 	t.Run("Valid Test", func(t *testing.T){
-		mockVideoRepo.On("GetClassificationID", mock.AnythingOfType("string")).Return(1, nil).Once()
 		mockVideoRepo.On("Insert", mock.Anything).Return(videoData, nil).Once()
 
 		resp, err := videoUsecase.Insert(&videoInput)
@@ -98,7 +98,6 @@ func TestInsert(t *testing.T){
 		assert.Equal(t, "", resp)
 	})
 	t.Run("Invalid Test | Internal Server Error", func(t *testing.T){
-		mockVideoRepo.On("GetClassificationID", mock.AnythingOfType("string")).Return(1, nil).Once()
 		mockVideoRepo.On("Insert", mock.Anything).Return(videos.Domain{}, assert.AnError).Once()
 		
 		resp, err := videoUsecase.Insert(&videoInput)
@@ -110,7 +109,6 @@ func TestInsert(t *testing.T){
 
 func TestUpdateByID(t *testing.T){
 	t.Run("Valid Test", func(t *testing.T){
-		mockVideoRepo.On("GetClassificationID", mock.AnythingOfType("string")).Return(1, nil).Once()
 		mockVideoRepo.On("UpdateByID", mock.Anything, mock.Anything).Return(videoData, nil).Once()
 
 		resp, err := videoUsecase.UpdateByID(1, &videoInput)
@@ -119,12 +117,37 @@ func TestUpdateByID(t *testing.T){
 		assert.Equal(t, "", resp)
 	})
 	t.Run("Invalid Test | Internal Server Error", func(t *testing.T){
-		mockVideoRepo.On("GetClassificationID", mock.AnythingOfType("string")).Return(1, nil).Once()
 		mockVideoRepo.On("UpdateByID", mock.Anything, mock.Anything).Return(videos.Domain{}, assert.AnError).Once()
 
 		resp, err := videoUsecase.UpdateByID(1, &videoInput)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "", resp)
+	})
+}
+
+func TestDeleteByID(t *testing.T){
+	t.Run("Valid Test", func(t *testing.T){
+		mockVideoRepo.On("DeleteByID", mock.AnythingOfType("uint")).Return(nil).Once()
+
+		err := videoUsecase.DeleteByID(1)
+
+		assert.Nil(t, err)
+	})
+	t.Run("Invalid Test | Internal Server Error", func(t *testing.T){
+		mockVideoRepo.On("DeleteByID", mock.AnythingOfType("uint")).Return(assert.AnError).Once()
+
+		err := videoUsecase.DeleteByID(1)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, business.ErrInternalServer, err)
+	})
+	t.Run("Invalid Test | Video Not Found", func(t *testing.T){
+		mockVideoRepo.On("DeleteByID", mock.AnythingOfType("uint")).Return(assert.AnError).Once()
+
+		err := videoUsecase.DeleteByID(1)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, business.ErrVideoNotFound, err)
 	})
 }

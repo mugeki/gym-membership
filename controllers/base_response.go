@@ -18,7 +18,7 @@ func NewSuccessResponse(c echo.Context, status int, data interface{}, args ...in
 	res := BaseResponse{}
 	res.Meta.Status = status
 	res.Meta.Message = "Success"
-	if data != "" || data != nil{
+	if data != "" && data != nil{
 		res.Data = data
 	}
 	if len(args) > 0 {

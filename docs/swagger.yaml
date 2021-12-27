@@ -17,14 +17,14 @@ tags:
     description: Secured Admin-only calls
   - name: users
     description: Available operations for end users
-  - name: admin
+  - name: admins
     description: Operations available to regular developers
 
 paths:
   /transaction:
     get:
       tags:
-        - admin
+        - admins
       summary: searches transaction
       operationId: searchInventory
       description: |
@@ -50,7 +50,7 @@ paths:
           description: bad input parameter
     post:
       tags:
-        - admin
+        - admins
       summary: adds a new transaction
       operationId: addTransaction
       description: Adds an item to the system
@@ -75,7 +75,7 @@ paths:
   /users/{idUser}:
     get:
       tags:
-        - admin
+        - admins
       summary: searches data's user
       operationId: searchUserById
       description: |
@@ -137,7 +137,7 @@ paths:
 
     get:
       tags:
-        - admin
+        - admins
       summary: searches data's user
       operationId: searchUser
       description: |
@@ -244,7 +244,7 @@ paths:
             $ref: "#/definitions/FailResponse500"
     post:
       tags:
-        - admin
+        - admins
       summary: adds a new video
       operationId: addVideo
       description: Adds a video to the system
@@ -275,10 +275,40 @@ paths:
             $ref: "#/definitions/FailResponse500"
     put:
       tags:
-        - admin
+        - admins
       summary: edit video
       operationId: editVideo
       description: Edit a video by idVideo to the system
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: id
+          description: id video to identified specific video
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            properties:
+              meta:
+                $ref: "#/definitions/SuccessResponse"
+        400:
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/FailResponse400"
+        500:
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/FailResponse500"
+    delete:
+      tags:
+        - admins
+      summary: delete video
+      operationId: deleteVideo
+      description: Delete a video by idVideo from the system
       consumes:
         - application/json
       produces:
@@ -307,7 +337,7 @@ paths:
   /article:
     get:
       tags:
-        - admin
+        - admins
       summary: get article content
       operationId: searchArticle
       description: |
@@ -344,7 +374,7 @@ paths:
           description: bad input parameter
     post:
       tags:
-        - admin
+        - admins
       summary: adds a new Article
       operationId: addArticle
       description: Adds an article to the system
@@ -368,7 +398,7 @@ paths:
 
     put:
       tags:
-        - admin
+        - admins
       summary: edit article
       operationId: editArticle
       description: Edit an article by id to the system
@@ -598,7 +628,7 @@ definitions:
     required:
       - id
       - userId
-      - admin_id
+      - admins_id
       - status
       - nominal
       - classId
@@ -779,7 +809,7 @@ definitions:
       - title
       - classification_id
       - url
-      - admin_id
+      - admins_id
       - member_only
     properties:
       title:
@@ -845,7 +875,7 @@ definitions:
       - title
       - urlImage
       - classification
-      - admin_id
+      - admins_id
       - desc
     properties:
       id:

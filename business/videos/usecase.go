@@ -1,7 +1,10 @@
 package videos
 
 import (
+	"errors"
 	"gym-membership/business"
+
+	"gorm.io/gorm"
 )
 
 type videoUsecase struct {
@@ -40,7 +43,23 @@ func (uc *videoUsecase) Insert(videoData *Domain) (string, error) {
 func (uc *videoUsecase) UpdateByID(id uint, videoData *Domain) (string, error) {
 	_, err := uc.videoRepository.UpdateByID(id, videoData)
 	if err != nil {
-		return "", business.ErrInternalServer
+		if errors.Is(gorm.ErrRecordNotFound, err){
+			return "", business.ErrVideoNotFound
+		} else {
+			return "", business.ErrInternalServer
+		}
 	}
 	return "", nil
+}
+
+func (uc *videoUsecase) DeleteByID(id uint) (error) {
+	err := uc.videoRepository.DeleteByID(id)
+	if err != nil {
+		if errors.Is(gorm.ErrRecordNotFound, err){
+			return business.ErrVideoNotFound
+		} else {
+			return business.ErrInternalServer
+		}
+	}
+	return nil
 }

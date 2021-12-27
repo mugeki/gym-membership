@@ -1,6 +1,7 @@
 package videos
 
 import (
+	"gym-membership/business"
 	"gym-membership/business/videos"
 	controller "gym-membership/controllers"
 	"gym-membership/controllers/videos/request"
@@ -84,7 +85,23 @@ func (ctrl *VideoController) UpdateByID(c echo.Context) error {
 	copier.Copy(&domain, &req)
 	data, err := ctrl.videoUsecase.UpdateByID(uint(videoId), &domain)
 	if err != nil {
+		if err == business.ErrVideoNotFound {
+			return controller.NewErrorResponse(c, http.StatusNotFound, err)
+		}
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
 	return controller.NewSuccessResponse(c, http.StatusOK, data)
+}
+
+func (ctrl *VideoController) DeleteByID(c echo.Context) error {
+	videoId, _ := strconv.Atoi(c.Param("idVideo"))
+	err := ctrl.videoUsecase.DeleteByID(uint(videoId))
+	if err != nil {
+		if err == business.ErrVideoNotFound{
+			return controller.NewErrorResponse(c, http.StatusNotFound, err)
+		} else {
+			return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+		}
+	}
+	return controller.NewSuccessResponse(c, http.StatusOK, nil)
 }

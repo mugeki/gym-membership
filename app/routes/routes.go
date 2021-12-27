@@ -23,4 +23,5 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	admins := e.Group("admins")
 	admins.POST("/videos", ctrlList.VideoController.Insert)
 	admins.PUT("/videos/:idVideo", ctrlList.VideoController.UpdateByID)
+	admins.DELETE("/videos/:idVideo", ctrlList.VideoController.DeleteByID)
 }
