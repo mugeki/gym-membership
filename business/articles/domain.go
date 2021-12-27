@@ -5,21 +5,21 @@ import (
 )
 
 type Domain struct {
-	ID                 uint
-	Title              string
-	ClassificationID   uint
-	ClassificationName string
-	AdminID            uint
-	MemberOnly         bool
-	UrlImage           string
-	CreatedAt          time.Time
-	Text               string
+	ID               uint
+	Title            string
+	ClassificationID uint
+	// ClassificationName string
+	AdminID    uint
+	MemberOnly bool
+	UrlImage   string
+	CreatedAt  time.Time
+	Text       string
 }
 
 type Usecase interface {
 	GetAll(title string, page int) ([]Domain, int, int, int64, error)
-	Insert(articleData *Domain, adminID uint) (string, error)
-	UpdateArticleByID(id uint, articleData *Domain, adminID uint) (string, error)
+	Insert(articleData *Domain) (string, error)
+	UpdateArticleByID(id uint, articleData *Domain) (string, error)
 }
 
 type Repository interface {

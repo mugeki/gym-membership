@@ -32,10 +32,10 @@ func (uc *articleUsecase) GetAll(title string, page int) ([]Domain, int, int, in
 	return res, offset, limit, totalData, nil
 }
 
-func (uc *articleUsecase) Insert(articleData *Domain, adminID uint) (string, error) {
+func (uc *articleUsecase) Insert(articleData *Domain) (string, error) {
 	// classificationID, _ := uc.classificationRepository.GetClassificationID(articleData.ClassificationName)
 	// articleData.ClassificationID = classificationID
-	articleData.AdminID = adminID
+	// articleData.AdminID = adminID
 	// println("cek data text", articleData.Text)
 	_, err := uc.articleRepository.Insert(articleData)
 	if err != nil {
@@ -44,11 +44,11 @@ func (uc *articleUsecase) Insert(articleData *Domain, adminID uint) (string, err
 	return "item created", nil
 }
 
-func (uc *articleUsecase) UpdateArticleByID(id uint, videoData *Domain, adminID uint) (string, error) {
+func (uc *articleUsecase) UpdateArticleByID(id uint, videoData *Domain) (string, error) {
 	println("cek id", id)
 	// classificationID, _ := uc.classificationRepository.GetClassificationID(videoData.ClassificationName)
 	// videoData.ClassificationID = classificationID
-	videoData.AdminID = adminID
+	// videoData.AdminID = adminID
 	_, err := uc.articleRepository.UpdateByID(id, videoData)
 	if err != nil {
 		return "", business.ErrInternalServer

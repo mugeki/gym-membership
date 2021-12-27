@@ -62,7 +62,8 @@ func (ctrl *ArticleController) Insert(c echo.Context) error {
 	}
 
 	adminId := 1 //temporary adminID
-	data, err := ctrl.articleUsecase.Insert(req.ToDomain(), uint(adminId))
+	req.AdminID = uint(adminId)
+	data, err := ctrl.articleUsecase.Insert(req.ToDomain())
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
@@ -85,9 +86,34 @@ func (ctrl *ArticleController) UpdateArticleByID(c echo.Context) error {
 	articleId, _ := strconv.Atoi(c.Param("idArticle"))
 	// println(articleId, "article id")
 	adminId := 1 //temporary adminID
-	data, err := ctrl.articleUsecase.UpdateArticleByID(uint(articleId), req.ToDomain(), uint(adminId))
+	req.AdminID = uint(adminId)
+	data, err := ctrl.articleUsecase.UpdateArticleByID(uint(articleId), req.ToDomain())
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
 	return controller.NewSuccessResponse(c, http.StatusOK, data)
 }
+
+// func (ctrl *ArticleController) DeleteArticleByID(c echo.Context) error {
+// 	// println("cek param path", c.QueryParam("id"))
+// 	// req := request.Articles{}
+// 	// err := c.Bind(&req)
+// 	// if err != nil {
+// 	// 	return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+// 	// }
+
+// 	// _, err = govalidator.ValidateStruct(req)
+// 	// if err != nil {
+// 	// 	return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+// 	// }
+
+// 	articleId, _ := strconv.Atoi(c.Param("idArticle"))
+// 	// println(articleId, "article id")
+// 	adminId := 1 //temporary adminID
+// 	req.AdminID = uint(adminId)
+// 	data, err := ctrl.articleUsecase.UpdateArticleByID(uint(articleId), req.ToDomain())
+// 	if err != nil {
+// 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+// 	}
+// 	return controller.NewSuccessResponse(c, http.StatusOK, data)
+// }

@@ -22,6 +22,16 @@ func NewClassificationController(Usecase classification.Usecase) *Classification
 	}
 }
 
+func (ctrl *ClassificationController) GetAll(c echo.Context) error {
+	data, err := ctrl.classificationUsecase.GetAll()
+	if err != nil {
+		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+	}
+
+	// copier.Copy(&res, &data)
+	return controller.NewSuccessResponse(c, http.StatusOK, data)
+}
+
 func (ctrl *ClassificationController) Insert(c echo.Context) error {
 	req := request.Classification{}
 	err := c.Bind(&req)

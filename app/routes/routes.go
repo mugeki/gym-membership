@@ -26,10 +26,14 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	admin := e.Group("admin")
 	admin.POST("", ctrlList.AdminController.Register)
 	admin.POST("/login", ctrlList.AdminController.Login)
-	admin.GET("/articles", ctrlList.ArticleController.GetAll)
-	admin.POST("/article", ctrlList.ArticleController.Insert)
-	admin.PUT("/article/:idArticle", ctrlList.ArticleController.UpdateArticleByID)
+
+	article := e.Group("article")
+	article.GET("/", ctrlList.ArticleController.GetAll)
+	article.POST("/", ctrlList.ArticleController.Insert)
+	// article.DELETE("/:idArticle", ctrlList.ArticleController.DeleteArticleByID)
+	article.PUT("/:idArticle", ctrlList.ArticleController.UpdateArticleByID)
 
 	classification := e.Group("classification")
 	classification.POST("", ctrlList.ClassificationController.Insert)
+	classification.GET("", ctrlList.ClassificationController.GetAll)
 }
