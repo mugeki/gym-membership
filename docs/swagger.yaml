@@ -168,7 +168,7 @@ paths:
       tags:
         - users
       summary: logs user into system
-      operationId: addUser
+      operationId: loginUser
       description: Adds a user to the system
       consumes:
         - application/json
@@ -235,7 +235,7 @@ paths:
               page:
                 $ref: "#/definitions/PageItem"
               data:
-                $ref: "#/definitions/VideosResponseItem"
+                $ref: "#/definitions/VideoResponseItem"
         204:
           description: No Content
         500:
@@ -854,23 +854,6 @@ definitions:
       url:
         type: string
         example: https://www.youtube.com/embed/80AjI0hlbf8
-
-  VideosResponseItem:
-    type: object
-    properties:
-      offset:
-        type: integer
-        example: 0
-      limit:
-        type: integer
-        example: 10
-      total_data:
-        type: integer
-        example: 1
-      videos:
-        type: array
-        items:
-          $ref: "#/definitions/VideoResponseItem"
 
   ArticleItem:
     type: object
