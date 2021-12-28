@@ -20,9 +20,9 @@ func NewUserController(Usecase users.Usecase) *UserController {
 	}
 }
 
-func (ctrl *UserController) Register(c echo.Context) error{
+func (ctrl *UserController) Register(c echo.Context) error {
 	req := request.Users{}
-	if err := c.Bind(&req); err != nil{
+	if err := c.Bind(&req); err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}
 
@@ -35,10 +35,10 @@ func (ctrl *UserController) Register(c echo.Context) error{
 		return controller.NewErrorResponse(c, http.StatusConflict, err)
 	}
 
-	return controller.NewSuccessResponse(c, data)
+	return controller.NewSuccessResponse(c, http.StatusOK, data)
 }
 
-func (ctrl *UserController) Login(c echo.Context) error{
+func (ctrl *UserController) Login(c echo.Context) error {
 	req := request.UsersLogin{}
 	if err := c.Bind(&req); err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
@@ -52,10 +52,10 @@ func (ctrl *UserController) Login(c echo.Context) error{
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
-	
+
 	res := struct {
 		Token string `json:"token"`
 	}{Token: token}
 
-	return controller.NewSuccessResponse(c,res)
+	return controller.NewSuccessResponse(c, http.StatusOK, res)
 }

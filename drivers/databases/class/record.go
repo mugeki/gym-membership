@@ -3,6 +3,8 @@ package class
 import (
 	"time"
 
+	"gym-membership/drivers/databases/trainers"
+
 	"gorm.io/gorm"
 )
 
@@ -14,6 +16,7 @@ type Class struct {
 	Kuota           int
 	Participant     int
 	TrainerId       int
+	Trainers        trainers.Trainers `gorm:"constraint:OnUpdate:NO ACTION,OnDelete:NO ACTION;foreignKey:TrainerId"`
 	Description     string
 	AvailableStatus bool
 	IsOnline        bool

@@ -14,6 +14,14 @@ import (
 	_classController "gym-membership/controllers/class"
 	_classRepo "gym-membership/drivers/databases/class"
 
+	_trainerService "gym-membership/business/trainers"
+	_trainerController "gym-membership/controllers/trainers"
+	_trainerRepo "gym-membership/drivers/databases/trainers"
+
+	_transactionClassService "gym-membership/business/transactionClass"
+	_transactionClassController "gym-membership/controllers/transactionClass"
+	_transactionClassRepo "gym-membership/drivers/databases/transactionClass"
+
 	_middleware "gym-membership/app/middleware"
 	_routes "gym-membership/app/routes"
 	_dbDriver "gym-membership/drivers/mysql"
@@ -27,6 +35,8 @@ func dbMigrate(db *gorm.DB) {
 	db.AutoMigrate(
 		&_userRepo.Users{},
 		&_classRepo.Class{},
+		&_trainerRepo.Trainers{},
+		&_transactionClassRepo.TransactionClass{},
 	)
 }
 
@@ -57,10 +67,20 @@ func main() {
 	classUsecase := _classService.NewClassUsecase(classRepo, &configJWT)
 	classCtrl := _classController.NewClassController(classUsecase)
 
+	trainerRepo := _driverFactory.NewTrainerRepository(db)
+	trainerUsecase := _trainerService.NewTrainerUsecase(trainerRepo)
+	trainerCtrl := _trainerController.NewTrainerController(trainerUsecase)
+
+	transactionClassRepo := _driverFactory.NewTransactionClassRepository(db)
+	transactionClassUsecase := _transactionClassService.NewTransactionClassUsecase(transactionClassRepo)
+	transactionClassCtrl := _transactionClassController.NewTransactionClassController(transactionClassUsecase)
+
 	routesInit := _routes.ControllerList{
-		JWTMiddleware:   configJWT.Init(),
-		UserController:  *userCtrl,
-		ClassController: *classCtrl,
+		JWTMiddleware:        configJWT.Init(),
+		UserController:       *userCtrl,
+		ClassController:      *classCtrl,
+		TrainerController:    *trainerCtrl,
+		TransactionClassCtrl: *transactionClassCtrl,
 	}
 	routesInit.RegisterRoute(e)
 
