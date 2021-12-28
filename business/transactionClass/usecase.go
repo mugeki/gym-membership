@@ -22,19 +22,20 @@ func NewTransactionClassUsecase(transactionClassRepo Repository, classRepository
 	}
 }
 
-func (uc *transactionClassUsecase) Insert(classData *Domain) (string, error) {
+func (uc *transactionClassUsecase) Insert(classData *Domain) (Domain, error) {
 	classData.Status = "waiting for payment"
-	_, err := uc.transactionClassRepository.Insert(classData)
+	data, err := uc.transactionClassRepository.Insert(classData)
+	println(err.Error())
 	if err != nil {
-		return "", business.ErrDuplicateData
+		return Domain{}, business.ErrDuplicateData
 	}
 	idClass := classData.ClassID
 	_, errUpdateKuota := uc.classRepository.UpdateKuota(idClass)
 
 	if errUpdateKuota != nil {
-		return "", business.ErrInternalServer
+		return Domain{}, business.ErrInternalServer
 	}
-	return "succes add new transaction", nil
+	return data, nil
 }
 
 func (uc *transactionClassUsecase) GetAll(page int) ([]Domain, int, int, int64, error) {
@@ -50,6 +51,14 @@ func (uc *transactionClassUsecase) GetAll(page int) ([]Domain, int, int, int64, 
 		return []Domain{}, -1, -1, -1, business.ErrInternalServer
 	}
 	return res, offset, limit, totalData, nil
+}
+
+func (uc *transactionClassUsecase) GetActiveClass(idUser uint) ([]class.Domain, error) {
+	res, err := uc.transactionClassRepository.GetActiveClass(idUser)
+	if err != nil {
+		return []class.Domain{}, business.ErrInternalServer
+	}
+	return res, nil
 }
 
 func (uc *transactionClassUsecase) UpdateStatus(id uint, status string) (string, error) {

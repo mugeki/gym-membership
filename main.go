@@ -72,15 +72,15 @@ func main() {
 	trainerCtrl := _trainerController.NewTrainerController(trainerUsecase)
 
 	transactionClassRepo := _driverFactory.NewTransactionClassRepository(db)
-	transactionClassUsecase := _transactionClassService.NewTransactionClassUsecase(transactionClassRepo)
+	transactionClassUsecase := _transactionClassService.NewTransactionClassUsecase(transactionClassRepo, classRepo, &configJWT)
 	transactionClassCtrl := _transactionClassController.NewTransactionClassController(transactionClassUsecase)
 
 	routesInit := _routes.ControllerList{
-		JWTMiddleware:        configJWT.Init(),
-		UserController:       *userCtrl,
-		ClassController:      *classCtrl,
-		TrainerController:    *trainerCtrl,
-		TransactionClassCtrl: *transactionClassCtrl,
+		JWTMiddleware:              configJWT.Init(),
+		UserController:             *userCtrl,
+		ClassController:            *classCtrl,
+		TrainerController:          *trainerCtrl,
+		TransactionClassController: *transactionClassCtrl,
 	}
 	routesInit.RegisterRoute(e)
 

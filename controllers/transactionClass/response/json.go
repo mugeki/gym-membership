@@ -5,7 +5,7 @@ type TransactionClass struct {
 	UserID   uint   `json:"userID"`
 	AdminID  uint   `json:"adminID"`
 	Status   string `json:"status"`
-	Nominal  string `json:"nominal"`
+	Nominal  int    `json:"nominal"`
 	ClassID  int    `json:"classID"`
 	Location string `json:"location"`
 }

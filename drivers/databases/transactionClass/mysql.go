@@ -1,6 +1,8 @@
 package transactionClass
 
 import (
+	"gym-membership/business/class"
+	// _classRepo "gym-membership/drivers/databases/class"
 	"gym-membership/business/transactionClass"
 
 	"github.com/jinzhu/copier"
@@ -17,15 +19,19 @@ func NewMySQLRepo(conn *gorm.DB) transactionClass.Repository {
 	}
 }
 
-func (mysqlRepo *mysqlTransactionClassRepo) Insert(userData *transactionClass.Domain) (transactionClass.Domain, error) {
+func (mysqlRepo *mysqlTransactionClassRepo) Insert(transactionClassData *transactionClass.Domain) (transactionClass.Domain, error) {
 	domain := transactionClass.Domain{}
-	recUser := TransactionClass{}
-	copier.Copy(&recUser, &userData)
-	err := mysqlRepo.Conn.Create(&recUser).Error
+	recTransaction := TransactionClass{}
+	copier.Copy(&recTransaction, &transactionClassData)
+	err := mysqlRepo.Conn.Create(&recTransaction).Error
+	mysqlRepo.Conn.Joins("Trainers").Find(&recTransaction)
 	if err != nil {
 		return transactionClass.Domain{}, err
 	}
-	copier.Copy(&domain, &recUser)
+	copier.Copy(&domain, &recTransaction)
+	domain.Nominal = recTransaction.Class.Price
+	domain.Location = recTransaction.Class.Location
+
 	return domain, nil
 }
 
@@ -43,6 +49,24 @@ func (mysqlRepo *mysqlTransactionClassRepo) GetAll(offset, limit int) ([]transac
 
 	copier.Copy(&domain, &rec)
 	return domain, totalData, nil
+}
+
+func (mysqlRepo *mysqlTransactionClassRepo) GetActiveClass(idUser uint) ([]class.Domain, error) {
+	domainResult := []class.Domain{}
+	domainClass := class.Domain{}
+	rec := []TransactionClass{}
+	status := "accepted"
+	err := mysqlRepo.Conn.Find(&rec, "user_id = ? AND status = ?", idUser, status).Error
+	if err != nil {
+		return []class.Domain{}, err
+	}
+	mysqlRepo.Conn.Order("updated_at desc").Joins("Class").Find(&rec)
+	for i := 0; i < len(rec); i++ {
+		copier.Copy(&domainClass, &rec[i].Class)
+		domainResult = append(domainResult, domainClass)
+	}
+
+	return domainResult, nil
 }
 
 func (mysqlRepo *mysqlTransactionClassRepo) UpdateStatus(id uint, status string) (transactionClass.Domain, error) {
