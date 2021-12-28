@@ -4,7 +4,6 @@ package mocks
 
 import (
 	members "gym-membership/business/members"
-
 	mock "github.com/stretchr/testify/mock"
 )
 

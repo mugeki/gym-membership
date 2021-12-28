@@ -10,6 +10,10 @@ import (
 	_userController "gym-membership/controllers/users"
 	_userRepo "gym-membership/drivers/databases/users"
 
+	_userUsecase "gym-membership/business/members"
+	_userController "gym-membership/controllers/members"
+	_userRepo "gym-membership/drivers/databases/members"
+
 	_middleware "gym-membership/app/middleware"
 	_routes "gym-membership/app/routes"
 	_dbDriver "gym-membership/drivers/mysql"
@@ -48,9 +52,14 @@ func main() {
 	userUsecase := _userUsecase.NewUserUsecase(userRepo, &configJWT)
 	userCtrl := _userController.NewUserController(userUsecase)
 
+	membersRepo := _driverFactory.NewMembersRepository(db)
+	userUsecase := _userUsecase.NewMembersUsecase(memberRepo, &configJWT)
+	userCtrl := _userController.NewMembersController(memberUsecase)
+
 	routesInit := _routes.ControllerList{
 		JWTMiddleware:        configJWT.Init(),
 		UserController:       *userCtrl,
+		MembersController:       *membersCtrl,
 	}
 	routesInit.RegisterRoute(e)
 	

@@ -18,7 +18,7 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	users := e.Group("users")
 	users.POST("", ctrlList.UserController.Register)
 	users.POST("/login", ctrlList.UserController.Login)
-
+	
 	members := e.Group("members")
 	members.POST("/members(create)", ctrlList.MembersController.Create)
 	members.GET("/members/:user_id ", ctrlList.MembersController.GetByUserID)

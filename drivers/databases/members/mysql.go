@@ -46,6 +46,5 @@ func (mysqlRepo *mysqlMembersRepo) GetByUserID(idMembers int) (string, error) {
 	if rec.Members == rec.Participant {
 		mysqlRepo.UpdateStatus(idMembers)
 	}
-
 	return "succes", nil
 }

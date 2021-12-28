@@ -9,6 +9,8 @@ type members struct {
 	gorm.Model
 	ID 				uint
 	// UUID      uuid.UUID
-	UserID 			uint
-	ExpiredDate		string
+	Name			string		
+	Url_image		string		
+	Price			int			
+	Period_time		time.time	
 }

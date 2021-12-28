@@ -1,14 +1,16 @@
 package members
 
-import (
-	"time"
-)
+// import (
+// 	"time"
+// )
 
 type Domain struct {
 	ID 				uint
 	// UUID      uuid.UUID
-	UserID 			uint
-	ExpiredDate		time.Time
+	Name			string
+	Url_image		string
+	Price			int
+	Period_time		string
 }
 
 type Usecase interface {

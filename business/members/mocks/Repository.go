@@ -34,30 +34,9 @@ func (_m *Repository) Insert(membersData *members.Domain) (members.Domain, error
 	return r0, r1
 }
 
-// GetByUserID provides a mock function with given fields: idmembers
-func (_m *Repository) GetByUserID(idmembers int) (string, error) {
+// GetByUserID provides a mock function with given fields: idMembers
+func (_m *Repository) GetByUserID(idMembers int) (string, error) {
 	ret := _m.Called(idMembers)
-
-	var r0 string
-	if rf, ok := ret.Get(0).(func(int) string); ok {
-		r0 = rf(idMembers)
-	} else {
-		r0 = ret.Get(0).(string)
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func(int) error); ok {
-		r1 = rf(idMembers)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// UpdateStatus provides a mock function with given fields: idMembers
-func (_m *Repository) UpdateStatus(idClass int) (string, error) {
-	ret := _m.Called(idClass)
 
 	var r0 string
 	if rf, ok := ret.Get(0).(func(int) string); ok {

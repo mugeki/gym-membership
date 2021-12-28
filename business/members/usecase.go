@@ -12,15 +12,14 @@ type membersUsecase struct {
 	jwtAuth         *middleware.ConfigJWT
 }
 
-func NewMembersUsecase(membersRepo Repository, jwtauth *middleware.ConfigJWT) Usecase {
+func NewMembersUsecase(membersRepository Repository, jwtauth *middleware.ConfigJWT) Usecase {
 	return &membersUsecase{
-		membersRepository: membersRepo,
+		membersRepository: membersRepository,
 		jwtAuth:         jwtauth,
 	}
 }
 
 func (uc *membersUsecase) Insert(membersData *Domain) (string, error) {
-	println("bussines members", membersData.Name)
 	_, err := uc.membersRepository.Insert(membersData)
 	if err != nil {
 		return "", business.ErrDuplicateData

@@ -3,6 +3,8 @@ package drivers
 import (
 	usersDomain "gym-membership/business/users"
 	usersDB "gym-membership/drivers/databases/users"
+	usersDomain "gym-membership/business/members"
+	usersDB "gym-membership/drivers/databases/members"
 
 	"gorm.io/gorm"
 )
