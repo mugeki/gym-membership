@@ -1,16 +1,16 @@
-package members
+package membership_products
 
 import (
 
 	"gorm.io/gorm"
 )
 
-type members struct {
+type MembershipProducts struct {
 	gorm.Model
 	ID 				uint
 	// UUID      uuid.UUID
 	Name			string		
-	Url_image		string		
+	UrlImage		string		
 	Price			int			
-	Period_time		time.time	
+	PeriodTime		int	
 }

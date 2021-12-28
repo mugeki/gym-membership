@@ -10,9 +10,9 @@ import (
 	_userController "gym-membership/controllers/users"
 	_userRepo "gym-membership/drivers/databases/users"
 
-	_userUsecase "gym-membership/business/members"
-	_userController "gym-membership/controllers/members"
-	_userRepo "gym-membership/drivers/databases/members"
+	_membershipProductsUsecase "gym-membership/business/membership_products"
+	_membershipProductsController "gym-membership/controllers/membership_products"
+	_membershipProductsRepo "gym-membership/drivers/databases/membership_products"
 
 	_middleware "gym-membership/app/middleware"
 	_routes "gym-membership/app/routes"
@@ -26,6 +26,8 @@ import (
 func dbMigrate(db *gorm.DB) {
 	db.AutoMigrate(
 		&_userRepo.Users{},
+		&_membershipProductsRepo.MembershipProducts{},
+
 	)
 }
 
@@ -52,14 +54,14 @@ func main() {
 	userUsecase := _userUsecase.NewUserUsecase(userRepo, &configJWT)
 	userCtrl := _userController.NewUserController(userUsecase)
 
-	membersRepo := _driverFactory.NewMembersRepository(db)
-	userUsecase := _userUsecase.NewMembersUsecase(memberRepo, &configJWT)
-	userCtrl := _userController.NewMembersController(memberUsecase)
+	membershipProductsRepo := _driverFactory.NewMembershipProductsRepository(db)
+	membershipProductsUsecase := _membershipProductsUsecase.NewMembershipProductsUsecase(membershipProductsRepo)
+	membershipProductsCtrl := _membershipProductsController.NewMembershipProductsController(membershipProductsUsecase)
 
 	routesInit := _routes.ControllerList{
 		JWTMiddleware:        configJWT.Init(),
 		UserController:       *userCtrl,
-		MembersController:       *membersCtrl,
+		MembershipProductsController:     *membershipProductsCtrl,
 	}
 	routesInit.RegisterRoute(e)
 	

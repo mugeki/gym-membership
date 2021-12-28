@@ -47,9 +47,3 @@ func GetUser(c echo.Context) *JwtCustomClaims {
 	claims := user.Claims.(*JwtCustomClaims)
 	return claims
 }
-
-func GetMembers(c echo.Context) *JwtCustomClaims {
-	members := c.Get("members").(*jwt.Token)
-	claims := members.Claims.(*JwtCustomClaims)
-	return claims
-}
