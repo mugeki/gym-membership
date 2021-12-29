@@ -4,6 +4,7 @@ import (
 	"gym-membership/app/middleware"
 	"gym-membership/business"
 	"gym-membership/business/class"
+	"strings"
 	// "gym-membership/helper/encrypt"
 	// "github.com/google/uuid"
 )
@@ -25,12 +26,11 @@ func NewTransactionClassUsecase(transactionClassRepo Repository, classRepository
 func (uc *transactionClassUsecase) Insert(classData *Domain) (Domain, error) {
 	classData.Status = "waiting for payment"
 	data, err := uc.transactionClassRepository.Insert(classData)
-	println(err.Error())
 	if err != nil {
 		return Domain{}, business.ErrDuplicateData
 	}
 	idClass := classData.ClassID
-	_, errUpdateKuota := uc.classRepository.UpdateKuota(idClass)
+	_, errUpdateKuota := uc.classRepository.UpdateParticipant(idClass)
 
 	if errUpdateKuota != nil {
 		return Domain{}, business.ErrInternalServer
@@ -38,7 +38,7 @@ func (uc *transactionClassUsecase) Insert(classData *Domain) (Domain, error) {
 	return data, nil
 }
 
-func (uc *transactionClassUsecase) GetAll(page int) ([]Domain, int, int, int64, error) {
+func (uc *transactionClassUsecase) GetAll(status string, idUser uint, page int) ([]Domain, int, int, int64, error) {
 	var offset int
 	limit := 10
 	if page == 1 {
@@ -46,20 +46,22 @@ func (uc *transactionClassUsecase) GetAll(page int) ([]Domain, int, int, int64, 
 	} else {
 		offset = (page - 1) * 10
 	}
-	res, totalData, err := uc.transactionClassRepository.GetAll(offset, limit)
+
+	resStatus := strings.ReplaceAll(status, "-", " ")
+	res, totalData, err := uc.transactionClassRepository.GetAll(resStatus, idUser, offset, limit)
 	if err != nil {
 		return []Domain{}, -1, -1, -1, business.ErrInternalServer
 	}
 	return res, offset, limit, totalData, nil
 }
 
-func (uc *transactionClassUsecase) GetActiveClass(idUser uint) ([]class.Domain, error) {
-	res, err := uc.transactionClassRepository.GetActiveClass(idUser)
-	if err != nil {
-		return []class.Domain{}, business.ErrInternalServer
-	}
-	return res, nil
-}
+// func (uc *transactionClassUsecase) GetActiveClass(idUser uint) ([]class.Domain, error) {
+// 	res, err := uc.transactionClassRepository.GetActiveClass(idUser)
+// 	if err != nil {
+// 		return []class.Domain{}, business.ErrInternalServer
+// 	}
+// 	return res, nil
+// }
 
 func (uc *transactionClassUsecase) UpdateStatus(id uint, status string) (string, error) {
 	_, err := uc.transactionClassRepository.UpdateStatus(id, status)

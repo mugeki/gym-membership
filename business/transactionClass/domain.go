@@ -1,7 +1,6 @@
 package transactionClass
 
 import (
-	"gym-membership/business/class"
 	"time"
 )
 
@@ -20,14 +19,13 @@ type Domain struct {
 type Usecase interface {
 	Insert(classData *Domain) (Domain, error)
 	UpdateStatus(id uint, status string) (string, error)
-	GetAll(page int) ([]Domain, int, int, int64, error)
-	GetActiveClass(idUser uint) ([]class.Domain, error)
+	GetAll(status string, idUser uint, page int) ([]Domain, int, int, int64, error)
+	// GetActiveClass(idUser uint) ([]class.Domain, error)
 }
 
 type Repository interface {
 	Insert(classData *Domain) (Domain, error)
 	UpdateStatus(id uint, status string) (Domain, error)
-	GetAll(offset, limit int) ([]Domain, int64, error)
-	GetActiveClass(idUser uint) ([]class.Domain, error)
-	// IsExist(idClass int) (Domain, error)
+	GetAll(status string, idUser uint, offset, limit int) ([]Domain, int64, error)
+	// GetActiveClass(idUser uint) ([]class.Domain, error)
 }

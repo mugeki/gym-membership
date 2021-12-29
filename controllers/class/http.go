@@ -46,6 +46,7 @@ func (ctrl *ClassController) Insert(c echo.Context) error {
 func (ctrl *ClassController) GetAll(c echo.Context) error {
 	title := c.QueryParam("name")
 	page, _ := strconv.Atoi(c.QueryParam("page"))
+	res := response.Class{}
 	if page <= 0 {
 		page = 1
 	}
@@ -59,17 +60,18 @@ func (ctrl *ClassController) GetAll(c echo.Context) error {
 		Offset:    offset,
 		TotalData: totalData,
 	}
-	// copier.Copy(&res, &data)
+	copier.Copy(&res, &data)
 	if len(data) == 0 {
 		return controller.NewSuccessResponse(c, http.StatusNoContent, data)
 	}
 
-	return controller.NewSuccessResponse(c, http.StatusOK, data, resPage)
+	return controller.NewSuccessResponse(c, http.StatusOK, res, resPage)
 }
 
 func (ctrl *ClassController) UpdateClassByID(c echo.Context) error {
 	// println("cek param path", c.QueryParam("id"))
 	req := request.ClassUpdate{}
+	res := response.Class{}
 	domain := class.Domain{}
 	err := c.Bind(&req)
 	if err != nil {
@@ -87,25 +89,6 @@ func (ctrl *ClassController) UpdateClassByID(c echo.Context) error {
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
-	return controller.NewSuccessResponse(c, http.StatusOK, data)
-}
-
-func (ctrl *ClassController) UpdateKuota(c echo.Context) error {
-	// req := request.Videos{}
-	// err := c.Bind(&req)
-	// if err != nil {
-	// 	return controller.NewErrorResponse(c, http.StatusBadRequest, err)
-	// }
-
-	// _, err = govalidator.ValidateStruct(req)
-	// if err != nil {
-	// 	return controller.NewErrorResponse(c, http.StatusBadRequest, err)
-	// }
-
-	classId, _ := strconv.Atoi(c.Param("idClass"))
-	stringStatus, err := ctrl.classUsecase.UpdateKuota(int(classId))
-	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
-	}
-	return controller.NewSuccessResponse(c, http.StatusOK, stringStatus)
+	copier.Copy(&res, &data)
+	return controller.NewSuccessResponse(c, http.StatusOK, res)
 }

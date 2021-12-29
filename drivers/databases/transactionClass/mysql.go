@@ -1,7 +1,7 @@
 package transactionClass
 
 import (
-	"gym-membership/business/class"
+
 	// _classRepo "gym-membership/drivers/databases/class"
 	"gym-membership/business/transactionClass"
 
@@ -24,7 +24,7 @@ func (mysqlRepo *mysqlTransactionClassRepo) Insert(transactionClassData *transac
 	recTransaction := TransactionClass{}
 	copier.Copy(&recTransaction, &transactionClassData)
 	err := mysqlRepo.Conn.Create(&recTransaction).Error
-	mysqlRepo.Conn.Joins("Trainers").Find(&recTransaction)
+	mysqlRepo.Conn.Joins("Class").Find(&recTransaction)
 	if err != nil {
 		return transactionClass.Domain{}, err
 	}
@@ -35,14 +35,19 @@ func (mysqlRepo *mysqlTransactionClassRepo) Insert(transactionClassData *transac
 	return domain, nil
 }
 
-func (mysqlRepo *mysqlTransactionClassRepo) GetAll(offset, limit int) ([]transactionClass.Domain, int64, error) {
+func (mysqlRepo *mysqlTransactionClassRepo) GetAll(status string, idUser uint, offset, limit int) ([]transactionClass.Domain, int64, error) {
 	var totalData int64
 	domain := []transactionClass.Domain{}
 	rec := []TransactionClass{}
+	var err error
+	if status != "" || idUser != 0 {
+		err = mysqlRepo.Conn.Limit(limit).Offset(offset).
+			Find(&rec, "status = ? OR user_id = ?", status, idUser).Count(&totalData).Order("updated_at desc").Error
+	} else {
+		err = mysqlRepo.Conn.Limit(limit).Offset(offset).
+			Find(&rec).Count(&totalData).Order("updated_at desc").Error
+	}
 
-	err := mysqlRepo.Conn.Find(&rec).Count(&totalData).Error
-	// err := mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").
-	// 	Joins("Trainers").Find(&rec).Error
 	if err != nil {
 		return nil, 0, err
 	}
@@ -51,23 +56,25 @@ func (mysqlRepo *mysqlTransactionClassRepo) GetAll(offset, limit int) ([]transac
 	return domain, totalData, nil
 }
 
-func (mysqlRepo *mysqlTransactionClassRepo) GetActiveClass(idUser uint) ([]class.Domain, error) {
-	domainResult := []class.Domain{}
-	domainClass := class.Domain{}
-	rec := []TransactionClass{}
-	status := "accepted"
-	err := mysqlRepo.Conn.Find(&rec, "user_id = ? AND status = ?", idUser, status).Error
-	if err != nil {
-		return []class.Domain{}, err
-	}
-	mysqlRepo.Conn.Order("updated_at desc").Joins("Class").Find(&rec)
-	for i := 0; i < len(rec); i++ {
-		copier.Copy(&domainClass, &rec[i].Class)
-		domainResult = append(domainResult, domainClass)
-	}
+// func (mysqlRepo *mysqlTransactionClassRepo) GetActiveClass(idUser uint) ([]class.Domain, error) {
+// 	println("repo user id", idUser)
+// 	domainResult := []class.Domain{}
+// 	domainClass := class.Domain{}
+// 	rec := []TransactionClass{}
+// 	status := "accepted"
+// 	err := mysqlRepo.Conn.Joins("Class").Find(&rec, "user_id = ? AND status = ?", idUser, status).Error
+// 	if err != nil {
+// 		return []class.Domain{}, err
+// 	}
+// 	println("repo interface", len(rec))
+// 	// mysqlRepo.Conn.Order("updated_at desc").Joins("Class").Find(&rec)
+// 	for i := 0; i < len(rec); i++ {
+// 		copier.Copy(&domainClass, &rec[i].Class)
+// 		domainResult = append(domainResult, domainClass)
+// 	}
 
-	return domainResult, nil
-}
+// 	return domainResult, nil
+// }
 
 func (mysqlRepo *mysqlTransactionClassRepo) UpdateStatus(id uint, status string) (transactionClass.Domain, error) {
 	rec := TransactionClass{}

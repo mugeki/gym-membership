@@ -25,7 +25,7 @@ type Domain struct {
 
 type Usecase interface {
 	Insert(classData *Domain) (string, error)
-	UpdateKuota(idClass int) (string, error)
+	UpdateParticipant(idClass int) (string, error)
 	GetAll(title string, page int) ([]Domain, int, int, int64, error)
 	UpdateClassByID(id uint, articleData *Domain) (string, error)
 }
@@ -33,8 +33,8 @@ type Usecase interface {
 type Repository interface {
 	Insert(classData *Domain) (Domain, error)
 	UpdateClassByID(id uint, articleData *Domain) (Domain, error)
-	UpdateKuota(idClass int) (string, error)
+	UpdateParticipant(idClass int) (string, error)
 	GetAll(title string, offset, limit int) ([]Domain, int64, error)
-	UpdateStatusToFalse(idClass int) (string, error)
+	UpdateStatus(idClass int, status bool) (string, error)
 	IsExist(idClass int) (Domain, error)
 }

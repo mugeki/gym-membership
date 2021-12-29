@@ -66,10 +66,10 @@ func (mysqlRepo *mysqlClassRepo) UpdateClassByID(id uint, classData *class.Domai
 	return domain, nil
 }
 
-func (mysqlRepo *mysqlClassRepo) UpdateStatusToFalse(idClass int) (string, error) {
+func (mysqlRepo *mysqlClassRepo) UpdateStatus(idClass int, status bool) (string, error) {
 	rec := Class{}
 	// println("update to false")
-	errUpdate := mysqlRepo.Conn.First(&rec, "id = ?", idClass).Update("available_status", 0).Error
+	errUpdate := mysqlRepo.Conn.First(&rec, "id = ?", idClass).Update("available_status", status).Error
 	if errUpdate != nil {
 		return "data not found", errUpdate
 	}
@@ -87,7 +87,7 @@ func (mysqlRepo *mysqlClassRepo) IsExist(idClass int) (class.Domain, error) {
 	return domain, nil
 }
 
-func (mysqlRepo *mysqlClassRepo) UpdateKuota(idClass int) (string, error) {
+func (mysqlRepo *mysqlClassRepo) UpdateParticipant(idClass int) (string, error) {
 	// println("repo classes")
 	rec := Class{}
 	data, err := mysqlRepo.IsExist(idClass)
@@ -100,7 +100,7 @@ func (mysqlRepo *mysqlClassRepo) UpdateKuota(idClass int) (string, error) {
 		return "errUpdated", err
 	}
 	if rec.Kuota == rec.Participant {
-		mysqlRepo.UpdateStatusToFalse(idClass)
+		mysqlRepo.UpdateStatus(idClass, false)
 	}
 
 	return "succes", nil

@@ -1,8 +1,7 @@
 package response
 
 type Class struct {
-	ID uint
-	// UUID      uuid.UUID
+	ID              uint   `json:"id"`
 	Name            string `json:"name"`
 	UrlImage        string `json:"urlImage"`
 	Price           int    `json:"price"`

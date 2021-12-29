@@ -52,8 +52,8 @@ func (uc *classUsecase) UpdateClassByID(id uint, classData *Domain) (string, err
 	return "item edited", nil
 }
 
-func (uc *classUsecase) UpdateKuota(idClass int) (string, error) {
-	_, err := uc.classRepository.UpdateKuota(idClass)
+func (uc *classUsecase) UpdateParticipant(idClass int) (string, error) {
+	_, err := uc.classRepository.UpdateParticipant(idClass)
 	if err != nil {
 		return "", business.ErrInternalServer
 	}
