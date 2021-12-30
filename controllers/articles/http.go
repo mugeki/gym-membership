@@ -11,6 +11,7 @@ import (
 	"strconv"
 
 	"github.com/asaskevich/govalidator"
+	"github.com/jinzhu/copier"
 	"github.com/labstack/echo/v4"
 )
 
@@ -34,23 +35,24 @@ func (ctrl *ArticleController) GetAll(c echo.Context) error {
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
-	// res := []response.FromDomainArray(data)
-
+	res := []response.Articles{}
 	resPage := response.Page{
 		Limit:     limit,
 		Offset:    offset,
 		TotalData: totalData,
 	}
-	// copier.Copy(&res, &data)
+	copier.Copy(&res, &data)
 	if len(data) == 0 {
 		return controller.NewSuccessResponse(c, http.StatusNoContent, data)
 	}
 
-	return controller.NewSuccessResponse(c, http.StatusOK, data, resPage)
+	return controller.NewSuccessResponse(c, http.StatusOK, res, resPage)
 }
 
 func (ctrl *ArticleController) Insert(c echo.Context) error {
 	req := request.Articles{}
+	res := response.Articles{}
+	domain := articles.Domain{}
 	err := c.Bind(&req)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
@@ -63,16 +65,20 @@ func (ctrl *ArticleController) Insert(c echo.Context) error {
 
 	adminId := 1 //temporary adminID
 	req.AdminID = uint(adminId)
-	data, err := ctrl.articleUsecase.Insert(req.ToDomain())
+	copier.Copy(&domain, &req)
+	data, err := ctrl.articleUsecase.Insert(&domain)
+
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
-	return controller.NewSuccessResponse(c, http.StatusOK, data)
+	copier.Copy(&res, &data)
+	return controller.NewSuccessResponse(c, http.StatusOK, res)
 }
 
 func (ctrl *ArticleController) UpdateArticleByID(c echo.Context) error {
-	// println("cek param path", c.QueryParam("id"))
 	req := request.Articles{}
+	res := response.Articles{}
+	domain := articles.Domain{}
 	err := c.Bind(&req)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
@@ -84,13 +90,14 @@ func (ctrl *ArticleController) UpdateArticleByID(c echo.Context) error {
 	}
 
 	articleId, _ := strconv.Atoi(c.Param("idArticle"))
-	// println(articleId, "article id")
 	adminId := 1 //temporary adminID
 	req.AdminID = uint(adminId)
-	data, err := ctrl.articleUsecase.UpdateArticleByID(uint(articleId), req.ToDomain())
+	copier.Copy(&domain, &req)
+	data, err := ctrl.articleUsecase.UpdateArticleByID(uint(articleId), &domain)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
+	copier.Copy(&res, &data)
 	return controller.NewSuccessResponse(c, http.StatusOK, data)
 }
 

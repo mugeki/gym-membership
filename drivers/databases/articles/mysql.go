@@ -39,7 +39,7 @@ func (mysqlRepo *mysqlArticlesRepo) Insert(videoData *articles.Domain) (articles
 	domain := articles.Domain{}
 	rec := Articles{}
 	// rec := fromDomain(*videoData)
-	println(videoData.AdminID)
+	// println(videoData.AdminID)
 	copier.Copy(&rec, videoData)
 	err := mysqlRepo.Conn.Create(&rec).Error
 	if err != nil {

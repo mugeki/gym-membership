@@ -18,7 +18,7 @@ type Domain struct {
 
 type Usecase interface {
 	GetAll(title string, page int) ([]Domain, int, int, int64, error)
-	Insert(articleData *Domain) (string, error)
+	Insert(articleData *Domain) (Domain, error)
 	UpdateArticleByID(id uint, articleData *Domain) (string, error)
 }
 

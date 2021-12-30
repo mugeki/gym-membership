@@ -28,8 +28,8 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	admin.POST("/login", ctrlList.AdminController.Login)
 
 	article := e.Group("article")
-	article.GET("/", ctrlList.ArticleController.GetAll)
-	article.POST("/", ctrlList.ArticleController.Insert)
+	article.GET("", ctrlList.ArticleController.GetAll)
+	article.POST("", ctrlList.ArticleController.Insert)
 	// article.DELETE("/:idArticle", ctrlList.ArticleController.DeleteArticleByID)
 	article.PUT("/:idArticle", ctrlList.ArticleController.UpdateArticleByID)
 

@@ -32,16 +32,14 @@ func (uc *articleUsecase) GetAll(title string, page int) ([]Domain, int, int, in
 	return res, offset, limit, totalData, nil
 }
 
-func (uc *articleUsecase) Insert(articleData *Domain) (string, error) {
+func (uc *articleUsecase) Insert(articleData *Domain) (Domain, error) {
 	// classificationID, _ := uc.classificationRepository.GetClassificationID(articleData.ClassificationName)
-	// articleData.ClassificationID = classificationID
-	// articleData.AdminID = adminID
 	// println("cek data text", articleData.Text)
-	_, err := uc.articleRepository.Insert(articleData)
+	data, err := uc.articleRepository.Insert(articleData)
 	if err != nil {
-		return "", business.ErrInternalServer
+		return Domain{}, business.ErrInternalServer
 	}
-	return "item created", nil
+	return data, nil
 }
 
 func (uc *articleUsecase) UpdateArticleByID(id uint, videoData *Domain) (string, error) {
