@@ -30,7 +30,7 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	article := e.Group("article")
 	article.GET("", ctrlList.ArticleController.GetAll)
 	article.POST("", ctrlList.ArticleController.Insert)
-	// article.DELETE("/:idArticle", ctrlList.ArticleController.DeleteArticleByID)
+	article.DELETE("/:idArticle", ctrlList.ArticleController.DeleteByID)
 	article.PUT("/:idArticle", ctrlList.ArticleController.UpdateArticleByID)
 
 	classification := e.Group("classification")

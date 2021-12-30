@@ -23,6 +23,7 @@ func NewUserController(Usecase users.Usecase) *UserController {
 
 func (ctrl *UserController) Register(c echo.Context) error {
 	req := request.Users{}
+	domain := users.Domain{}
 	if err := c.Bind(&req); err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}

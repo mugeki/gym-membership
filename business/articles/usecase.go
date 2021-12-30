@@ -1,8 +1,11 @@
 package articles
 
 import (
+	"errors"
 	"gym-membership/business"
 	classification "gym-membership/business/classification"
+
+	"gorm.io/gorm"
 )
 
 type articleUsecase struct {
@@ -43,13 +46,21 @@ func (uc *articleUsecase) Insert(articleData *Domain) (Domain, error) {
 }
 
 func (uc *articleUsecase) UpdateArticleByID(id uint, videoData *Domain) (string, error) {
-	println("cek id", id)
-	// classificationID, _ := uc.classificationRepository.GetClassificationID(videoData.ClassificationName)
-	// videoData.ClassificationID = classificationID
-	// videoData.AdminID = adminID
 	_, err := uc.articleRepository.UpdateByID(id, videoData)
 	if err != nil {
 		return "", business.ErrInternalServer
 	}
 	return "item edited", nil
+}
+
+func (uc *articleUsecase) DeleteByID(id uint) error {
+	err := uc.articleRepository.DeleteByID(id)
+	if err != nil {
+		if errors.Is(gorm.ErrRecordNotFound, err) {
+			return business.ErrArticleNotFound
+		} else {
+			return business.ErrInternalServer
+		}
+	}
+	return nil
 }

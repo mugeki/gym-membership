@@ -13,6 +13,20 @@ type Usecase struct {
 	mock.Mock
 }
 
+// DeleteByID provides a mock function with given fields: id
+func (_m *Usecase) DeleteByID(id uint) error {
+	ret := _m.Called(id)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(uint) error); ok {
+		r0 = rf(id)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // GetAll provides a mock function with given fields: title, page
 func (_m *Usecase) GetAll(title string, page int) ([]articles.Domain, int, int, int64, error) {
 	ret := _m.Called(title, page)
@@ -57,20 +71,20 @@ func (_m *Usecase) GetAll(title string, page int) ([]articles.Domain, int, int, 
 	return r0, r1, r2, r3, r4
 }
 
-// Insert provides a mock function with given fields: articleData, adminID
-func (_m *Usecase) Insert(articleData *articles.Domain, adminID uint) (string, error) {
-	ret := _m.Called(articleData, adminID)
+// Insert provides a mock function with given fields: articleData
+func (_m *Usecase) Insert(articleData *articles.Domain) (articles.Domain, error) {
+	ret := _m.Called(articleData)
 
-	var r0 string
-	if rf, ok := ret.Get(0).(func(*articles.Domain, uint) string); ok {
-		r0 = rf(articleData, adminID)
+	var r0 articles.Domain
+	if rf, ok := ret.Get(0).(func(*articles.Domain) articles.Domain); ok {
+		r0 = rf(articleData)
 	} else {
-		r0 = ret.Get(0).(string)
+		r0 = ret.Get(0).(articles.Domain)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(*articles.Domain, uint) error); ok {
-		r1 = rf(articleData, adminID)
+	if rf, ok := ret.Get(1).(func(*articles.Domain) error); ok {
+		r1 = rf(articleData)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -78,20 +92,20 @@ func (_m *Usecase) Insert(articleData *articles.Domain, adminID uint) (string, e
 	return r0, r1
 }
 
-// UpdateArticleByID provides a mock function with given fields: id, articleData, adminID
-func (_m *Usecase) UpdateArticleByID(id uint, articleData *articles.Domain, adminID uint) (string, error) {
-	ret := _m.Called(id, articleData, adminID)
+// UpdateArticleByID provides a mock function with given fields: id, articleData
+func (_m *Usecase) UpdateArticleByID(id uint, articleData *articles.Domain) (string, error) {
+	ret := _m.Called(id, articleData)
 
 	var r0 string
-	if rf, ok := ret.Get(0).(func(uint, *articles.Domain, uint) string); ok {
-		r0 = rf(id, articleData, adminID)
+	if rf, ok := ret.Get(0).(func(uint, *articles.Domain) string); ok {
+		r0 = rf(id, articleData)
 	} else {
 		r0 = ret.Get(0).(string)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(uint, *articles.Domain, uint) error); ok {
-		r1 = rf(id, articleData, adminID)
+	if rf, ok := ret.Get(1).(func(uint, *articles.Domain) error); ok {
+		r1 = rf(id, articleData)
 	} else {
 		r1 = ret.Error(1)
 	}

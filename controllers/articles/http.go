@@ -1,6 +1,7 @@
 package articles
 
 import (
+	"gym-membership/business"
 	"gym-membership/business/articles"
 	controller "gym-membership/controllers"
 	"gym-membership/controllers/articles/request"
@@ -101,26 +102,15 @@ func (ctrl *ArticleController) UpdateArticleByID(c echo.Context) error {
 	return controller.NewSuccessResponse(c, http.StatusOK, data)
 }
 
-// func (ctrl *ArticleController) DeleteArticleByID(c echo.Context) error {
-// 	// println("cek param path", c.QueryParam("id"))
-// 	// req := request.Articles{}
-// 	// err := c.Bind(&req)
-// 	// if err != nil {
-// 	// 	return controller.NewErrorResponse(c, http.StatusBadRequest, err)
-// 	// }
-
-// 	// _, err = govalidator.ValidateStruct(req)
-// 	// if err != nil {
-// 	// 	return controller.NewErrorResponse(c, http.StatusBadRequest, err)
-// 	// }
-
-// 	articleId, _ := strconv.Atoi(c.Param("idArticle"))
-// 	// println(articleId, "article id")
-// 	adminId := 1 //temporary adminID
-// 	req.AdminID = uint(adminId)
-// 	data, err := ctrl.articleUsecase.UpdateArticleByID(uint(articleId), req.ToDomain())
-// 	if err != nil {
-// 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
-// 	}
-// 	return controller.NewSuccessResponse(c, http.StatusOK, data)
-// }
+func (ctrl *ArticleController) DeleteByID(c echo.Context) error {
+	videoId, _ := strconv.Atoi(c.Param("idArticle"))
+	err := ctrl.articleUsecase.DeleteByID(uint(videoId))
+	if err != nil {
+		if err == business.ErrArticleNotFound {
+			return controller.NewErrorResponse(c, http.StatusNotFound, err)
+		} else {
+			return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+		}
+	}
+	return controller.NewSuccessResponse(c, http.StatusOK, nil)
+}
