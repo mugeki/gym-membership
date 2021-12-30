@@ -68,8 +68,8 @@ func (mysqlRepo *mysqlVideosRepo) UpdateByID(id uint, videoData *videos.Domain) 
 
 func (mysqlRepo *mysqlVideosRepo) DeleteByID(id uint) error {
 	rec := Videos{}
-	err := mysqlRepo.Conn.Delete(&rec, id).Error
-	if  rec.ID == 0 {
+	err := mysqlRepo.Conn.First(&rec,id).Delete(&rec).Error
+	if rec.ID == 0 {
 		return gorm.ErrRecordNotFound
 	}
 	if err != nil{
