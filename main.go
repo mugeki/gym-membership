@@ -6,7 +6,7 @@ import (
 
 	_driverFactory "gym-membership/drivers"
 
-	_userService "gym-membership/business/users"
+	_userUsecase "gym-membership/business/users"
 	_userController "gym-membership/controllers/users"
 	_userRepo "gym-membership/drivers/databases/users"
 
@@ -60,7 +60,7 @@ func main() {
 	e := echo.New()
 
 	userRepo := _driverFactory.NewUserRepository(db)
-	userUsecase := _userService.NewUserUsecase(userRepo, &configJWT)
+	userUsecase := _userUsecase.NewUserUsecase(userRepo, &configJWT)
 	userCtrl := _userController.NewUserController(userUsecase)
 
 	adminRepo := _driverFactory.NewAdminRepository(db)

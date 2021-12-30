@@ -1,0 +1,929 @@
+swagger: "2.0"
+info:
+  description: This is a simple API
+  version: 1.0.0
+  title: Simple Inventory API
+  # put the contact info for your development or API team
+  contact:
+    email: you@your-company.com
+
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+# tags are used for organizing operations
+tags:
+  - name: superAdmin
+    description: Secured Admin-only calls
+  - name: users
+    description: Available operations for end users
+  - name: admin
+    description: Operations available to regular developers
+
+paths:
+  /transaction:
+    get:
+      tags:
+        - admin
+      summary: searches transaction
+      operationId: searchInventory
+      description: |
+        By passing in the appropriate options, you can search for the exist
+        trasaction in the system
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: transactionItem
+          description: pass transaction value for looking up match transaction
+          required: false
+          schema:
+            $ref: "#/definitions/TransactionItem"
+      responses:
+        200:
+          description: search results matching criteria
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/TransactionItem"
+        400:
+          description: bad input parameter
+    post:
+      tags:
+        - admin
+      summary: adds a new transaction
+      operationId: addTransaction
+      description: Adds an item to the system
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: TransactionItem
+          description: Transaction item to add
+          schema:
+            $ref: "#/definitions/TransactionItem"
+      responses:
+        201:
+          description: item created
+        400:
+          description: invalid input, object invalid
+        409:
+          description: an existing item already exists
+
+  /users/{idUser}:
+    get:
+      tags:
+        - admin
+      summary: searches data's user
+      operationId: searchUserById
+      description: |
+        By passing in the appropriate options, you can search for the exist
+        user in the system
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: idUser
+          description: pass id user for looking up match user
+          required: true
+          type: integer
+      responses:
+        200:
+          description: search results matching criteria
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/UserItem"
+        400:
+          description: bad input parameter
+
+  /users:
+    post:
+      tags:
+        - users
+      summary: adds a new user
+      operationId: addUser
+      description: Adds a user to the system
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: userRegisterItem
+          description: user item to add
+          schema:
+            $ref: "#/definitions/UserRegisterItem"
+      responses:
+        200:
+          description: OK
+          schema:
+            properties:
+              meta:
+                $ref: "#/definitions/SuccessResponse"
+              data:
+                type: string
+                example: item created
+        400:
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/FailResponse400"
+        409:
+          description: Conflict
+          schema:
+            $ref: "#/definitions/FailResponse409"
+
+    get:
+      tags:
+        - admin
+      summary: searches data's user
+      operationId: searchUser
+      description: |
+        By passing in the appropriate options, you can search for the all existing
+        user in the system
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: limit
+          description: maximum number of records to return
+          type: integer
+          format: int32
+          minimum: 0
+          maximum: 50
+      responses:
+        200:
+          description: search results matching criteria
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/UserItem"
+        400:
+          description: bad input parameter
+
+  /users/login:
+    post:
+      tags:
+        - users
+      summary: logs user into system
+      operationId: addUser
+      description: Adds a user to the system
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: userLoginItem
+          description: user credetentials
+          schema:
+            $ref: "#/definitions/UserLoginItem"
+      responses:
+        200:
+          description: OK
+          schema:
+            properties:
+              meta:
+                $ref: "#/definitions/SuccessResponse"
+              data:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: jwttoken
+
+        400:
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/FailResponse400"
+        401:
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/FailResponse401"
+
+  /video:
+    get:
+      tags:
+        - admin
+      summary: get video content
+      operationId: searchVideo
+      description: |
+        By passing in the appropriate options, you can search for the exist
+        vidoe in the system or get all video content
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: title
+          description: pass title or keywords for looking up match video
+          required: false
+          type: string
+        - in: query
+          name: limit
+          description: maximum number of records to return
+          type: integer
+          format: int32
+          minimum: 0
+          maximum: 50
+      responses:
+        200:
+          description: search results matching criteria
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/VideoItem"
+        400:
+          description: bad input parameter
+    post:
+      tags:
+        - admin
+      summary: adds a new video
+      operationId: addVideo
+      description: Adds an video to the system
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: TransactionItem
+          description: Transaction item to add
+          schema:
+            $ref: "#/definitions/VideoItem"
+      responses:
+        201:
+          description: item created
+        400:
+          description: invalid input, object invalid
+        409:
+          description: an existing item already exists
+    put:
+      tags:
+        - admin
+      summary: edit video
+      operationId: editVideo
+      description: Edit a video by idVideo to the system
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: id
+          description: id video to identified specific video
+          type: integer
+      responses:
+        201:
+          description: edited item succeed
+        400:
+          description: invalid input, object invalid
+        409:
+          description: an existing item already exists
+
+  /article:
+    get:
+      tags:
+        - admin
+      summary: get article content
+      operationId: searchArticle
+      description: |
+        By passing in the appropriate options, you can search for the exist
+        article in the system or get all video content in limit
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: title
+          description: pass title or keywords for looking up match article
+          required: false
+          type: string
+        - in: query
+          name: classification
+          description: pass classification for looking up match article
+          required: false
+          type: string
+        - in: query
+          name: limit
+          description: maximum number of records to return
+          type: integer
+          format: int32
+          minimum: 0
+          maximum: 50
+      responses:
+        200:
+          description: search results matching criteria
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ArticleItem"
+        400:
+          description: bad input parameter
+    post:
+      tags:
+        - admin
+      summary: adds a new Article
+      operationId: addArticle
+      description: Adds an article to the system
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: TransactionItem
+          description: Transaction item to add
+          schema:
+            $ref: "#/definitions/ArticleItem"
+      responses:
+        201:
+          description: item created
+        400:
+          description: invalid input, object invalid
+        409:
+          description: an existing item already exists
+
+    put:
+      tags:
+        - admin
+      summary: edit article
+      operationId: editArticle
+      description: Edit an article by id to the system
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: id
+          description: id Article to identified specific article
+          type: integer
+      responses:
+        201:
+          description: edited item succeed
+        400:
+          description: invalid input, object invalid
+        409:
+          description: an existing item already exists
+
+  /admin:
+    get:
+      tags:
+        - superAdmin
+      summary: searches data's admin
+      operationId: searchAdmin
+      description: |
+        you can get all operational admin by passing the key value or passing null if you want to get all operational admin in the system
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: adminItem
+          description: search by passing key
+          schema:
+            $ref: "#/definitions/AdminItem"
+        - in: query
+          name: limit
+          description: maximum number of records to return
+          type: integer
+          format: int32
+          minimum: 0
+          maximum: 50
+      responses:
+        200:
+          description: search results matching criteria
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/AdminItem"
+        400:
+          description: bad input parameter
+
+    post:
+      tags:
+        - superAdmin
+      summary: adds a new admin
+      operationId: addAdmin
+      description: Adds an operational admin to the system
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: adminItem
+          description: admin item to add
+          schema:
+            $ref: "#/definitions/AdminItem"
+      responses:
+        201:
+          description: item created
+        400:
+          description: invalid input, object invalid
+        409:
+          description: an existing item already exists
+
+    put:
+      tags:
+        - superAdmin
+      summary: edit existing operational admin
+      operationId: editAdmin
+      description: Edit an operational admin to the system
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: adminItem
+          description: admin item to add
+          schema:
+            $ref: "#/definitions/AdminItem"
+      responses:
+        201:
+          description: item updated
+        400:
+          description: invalid input, object invalid
+        # 409:
+        #   description: an existing item already exists
+
+  /admin/{idAdmin}:
+    get:
+      tags:
+        - superAdmin
+      summary: searches data's admin
+      operationId: searchAdminById
+      description: |
+        By passing in the appropriate options, you can search for the exist
+        operational admin in the system
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: idAdmin
+          description: search admin by id
+          required: true
+          type: integer
+        - in: query
+          name: limit
+          description: maximum number of records to return
+          type: integer
+          format: int32
+          minimum: 0
+          maximum: 50
+      responses:
+        200:
+          description: search results matching criteria
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/AdminItem"
+        400:
+          description: bad input parameter
+
+    delete:
+      tags:
+        - superAdmin
+      summary: delete an existing data's operational admin
+      operationId: deleteAdminById
+      description: |
+        By passing id Admin, you can delete for the exist
+        operational admin in the system
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: idAdmin
+          description: search admin by id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: data's operational admin that have been deleted
+          schema:
+            items:
+              $ref: "#/definitions/AdminItem"
+        400:
+          description: bad input parameter
+        404:
+          description: operational admin item not found
+
+  /superAdmin:
+    post:
+      tags:
+        - superAdmin
+      summary: register a new super admin
+      operationId: addSuperAdmin
+      description: Adds a new super admin to the system
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: superAdminData
+          description: data's super admin item to add
+          schema:
+            $ref: "#/definitions/SuperAdminItem"
+      responses:
+        201:
+          description: super admin succeed to created
+        400:
+          description: invalid input, object invalid
+        409:
+          description: an existing item already exists
+
+    put:
+      tags:
+        - superAdmin
+      summary: updated an existing super admin
+      operationId: editSuperAdmin
+      description: Updated an existing super admin to the system
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: superAdminData
+          description: data's super admin item to updated
+          schema:
+            $ref: "#/definitions/SuperAdminItem"
+      responses:
+        201:
+          description: super admin succeed to updated
+        400:
+          description: invalid input, object invalid
+        409:
+          description: not found
+
+definitions:
+  TransactionItem:
+    type: object
+    required:
+      - id
+      - userId
+      - adminId
+      - status
+      - nominal
+      - classId
+      - date
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: d290f1ee-6c54-4b01
+      userId:
+        type: integer
+        example: 1
+      adminId:
+        type: integer
+        example: 1
+      status:
+        type: string
+        format: date-time
+        example: 2016-08-29T09:12:33.001Z
+      nominal:
+        type: integer
+        example: 30000
+      classId:
+        type: integer
+        example: 1
+      date:
+        type: string
+        format: date-time
+        example: 2016-08-29T09:12:33.001Z
+
+  UserItem:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1
+      uuid:
+        type: string
+        format: uuid
+        example: d290f1ee-6c54-4b01
+      username:
+        type: string
+        example: tonotono
+      password:
+        type: string
+        example: passwordtono
+      email:
+        type: string
+        example: tono@gmail.com
+      fullname:
+        type: string
+        example: tono sutono
+      gender:
+        type: string
+        example: male
+      telephone:
+        type: string
+        example: 8123456789
+      address:
+        type: string
+        example: jl dr sutomo 106
+
+  UserRegisterItem:
+    type: object
+    required:
+      - username
+      - password
+      - email
+      - fullname
+      - gender
+      - telephone
+      - address
+    properties:
+      username:
+        type: string
+        example: tonotono
+      password:
+        type: string
+        example: passwordtono
+      email:
+        type: string
+        example: tono@gmail.com
+      fullname:
+        type: string
+        example: tono sutono
+      gender:
+        type: string
+        example: male
+      telephone:
+        type: string
+        example: 8123456789
+      address:
+        type: string
+        example: jl dr sutomo 106
+
+  UserLoginItem:
+    type: object
+    required:
+      - username
+      - password
+    properties:
+      username:
+        type: string
+        example: tonotono
+      password:
+        type: string
+        example: passwordtono
+
+  AdminItem:
+    type: object
+    required:
+      - id
+      - fullname
+      - gender
+      - telephone
+      - createdAt
+      - date
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: d290f1ee-6c54-4b01
+      fullname:
+        type: string
+        example: tono sutono
+      gender:
+        type: string
+        example: male
+      telephone:
+        type: string
+        example: 08123456789
+      address:
+        type: string
+        example: jl dr sutomo 106
+      createdAt:
+        type: string
+        format: date-time
+        example: 2016-08-29T09:12:33.001Z
+
+  SuperAdminItem:
+    type: object
+    required:
+      - id
+      - fullname
+      - gender
+      - telephone
+      - createdAt
+      - deletedAt
+      - date
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: d290f1ee-6c54-4b01
+      fullname:
+        type: string
+        example: tono sutono
+      photoUrl:
+        type: string
+        example: https://www.image.com
+      gender:
+        type: string
+        example: male
+      telephone:
+        type: string
+        example: 08123456789
+      address:
+        type: string
+        example: jl dr sutomo 106
+      createdAt:
+        type: string
+        format: date-time
+        example: 2016-08-29T09:12:33.001Z
+
+  VideoItem:
+    type: object
+    required:
+      - id
+      - title
+      - classification
+      - adminId
+      - url
+    properties:
+      id:
+        type: integer
+        example: 1
+      title:
+        type: string
+        example: Abs Workout in 2 weeks
+      classification:
+        type: string
+        example: daily workout
+      adminId:
+        type: integer
+        format: uuid
+        example: 08123456789
+      url:
+        type: string
+        example: https://www.youtube.com/watch?v=80AjI0hlbf8
+
+  ArticleItem:
+    type: object
+    required:
+      - id
+      - title
+      - urlImage
+      - classification
+      - adminId
+      - desc
+    properties:
+      id:
+        type: integer
+        example: 1
+      title:
+        type: string
+        example: Abs Workout in 2 weeks
+      urlImage:
+        type: string
+        example: https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.britannica
+      classification:
+        type: string
+        example: healthy recipe
+      adminId:
+        type: integer
+        format: uuid
+        example: 08123456789
+      desc:
+        type: string
+        example: A computer is a machine that can store and process information. Most computers rely on a binary system, which uses two variables, 0 and 1, to complete tasks such as storing data, calculating algorithms, and displaying information. Computers come in many different shapes and sizes, from handheld smartphones to supercomputers weighing more than 300 tons. A computer is a machine that can store and process information. Most computers rely on a binary system, which uses two variables, 0 and 1, to complete tasks such as storing data, calculating algorithms, and displaying information. Computers come in many different shapes and sizes, from handheld smartphones to supercomputers weighing more than 300 tons.
+
+  SuccessResponse:
+    type: object
+    properties:
+      status:
+        type: integer
+        example: 200
+      message:
+        type: string
+        example: Success
+
+  FailResponse400:
+    type: object
+    properties:
+      meta:
+        type: object
+        properties:
+          status:
+            type: integer
+            example: 400
+          message:
+            type: string
+            example: Error
+          messages:
+            type: array
+            items:
+              example: Error message goes here
+      data:
+        type: string
+        example: null
+
+  FailResponse401:
+    type: object
+    properties:
+      meta:
+        type: object
+        properties:
+          status:
+            type: integer
+            example: 401
+          message:
+            type: string
+            example: Error
+          messages:
+            type: array
+            items:
+              example: Error message goes here
+      data:
+        type: string
+        example: null
+
+  FailResponse403:
+    type: object
+    properties:
+      meta:
+        type: object
+        properties:
+          status:
+            type: integer
+            example: 403
+          message:
+            type: string
+            example: Error
+          messages:
+            type: array
+            items:
+              example: Error message goes here
+      data:
+        type: string
+        example: null
+
+  FailResponse404:
+    type: object
+    properties:
+      meta:
+        type: object
+        properties:
+          status:
+            type: integer
+            example: 404
+          message:
+            type: string
+            example: Error
+          messages:
+            type: array
+            items:
+              example: Error message goes here
+      data:
+        type: string
+        example: null
+
+  FailResponse409:
+    type: object
+    properties:
+      meta:
+        type: object
+        properties:
+          status:
+            type: integer
+            example: 409
+          message:
+            type: string
+            example: Error
+          messages:
+            type: array
+            items:
+              example: Error message goes here
+      data:
+        type: string
+        example: null
+
+  FailResponse500:
+    type: object
+    properties:
+      meta:
+        type: object
+        properties:
+          status:
+            type: integer
+            example: 500
+          message:
+            type: string
+            example: Error
+          messages:
+            type: array
+            items:
+              example: Error message goes here
+
+# Added by API Auto Mocking Plugin
+host: virtserver.swaggerhub.com
+basePath: /amirohqurrota/GymApps/1.0.0
+schemes:
+  - https
