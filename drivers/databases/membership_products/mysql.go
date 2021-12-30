@@ -6,7 +6,6 @@ import (
 	"github.com/jinzhu/copier"
 
 	"gorm.io/gorm"
-	"fmt"
 )
 
 type mysqlMembershipProductsRepo struct {
@@ -20,7 +19,6 @@ func NewMySQLRepo(conn *gorm.DB) membership_products.Repository {
 }
 
 func (mysqlRepo *mysqlMembershipProductsRepo) Insert(userData *membership_products.Domain) (membership_products.Domain, error) {
-	println("repo membership_products", userData.Name)
 	domain := membership_products.Domain{}
 	recUser := MembershipProducts{}
 	copier.Copy(&recUser, &userData)
@@ -32,13 +30,13 @@ func (mysqlRepo *mysqlMembershipProductsRepo) Insert(userData *membership_produc
 	return domain, nil
 }
 
-func (mysqlRepo *mysqlMembershipProductsRepo) GetByUserID(idMembershipProducts uint) (string, error) {
-	fmt.Println("mysql ",idMembershipProducts)
-	// println("repo membership_products")
+func (mysqlRepo *mysqlMembershipProductsRepo) GetByID(idMembershipProducts uint) (membership_products.Domain, error) {
 	rec := MembershipProducts{}
+	domain := membership_products.Domain{}
 	err := mysqlRepo.Conn.First(&rec, "id = ?", idMembershipProducts).Error
 	if err != nil {
-		return "data not found", err
+		return membership_products.Domain{}, err
 	}
-	return "succes", nil
+	copier.Copy(&domain, &rec)
+	return domain, nil
 }

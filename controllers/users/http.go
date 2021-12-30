@@ -38,7 +38,7 @@ func (ctrl *UserController) Register(c echo.Context) error{
 		return controller.NewErrorResponse(c, http.StatusConflict, err)
 	}
 
-	return controller.NewSuccessResponse(c, data)
+	return controller.NewSuccessResponse(c, http.StatusOK, data)
 }
 
 func (ctrl *UserController) Login(c echo.Context) error{
@@ -60,5 +60,5 @@ func (ctrl *UserController) Login(c echo.Context) error{
 		Token string `json:"token"`
 	}{Token: token}
 
-	return controller.NewSuccessResponse(c,res)
+	return controller.NewSuccessResponse(c, http.StatusOK, res)
 }

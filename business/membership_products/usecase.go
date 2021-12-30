@@ -2,9 +2,6 @@ package membership_products
 
 import (
 	"gym-membership/business"
-	// "gym-membership/helper/encrypt"
-	// "github.com/google/uuid"
-	"fmt"
 )
 
 type membershipProductsUsecase struct {
@@ -26,11 +23,10 @@ func (uc *membershipProductsUsecase) Insert(membershipProductsData *Domain) (str
 	return "item created", nil
 }
 
-func (uc *membershipProductsUsecase) GetByUserID(idMembershipProducts uint) (string, error) { 
-	fmt.Println("usecase ",idMembershipProducts)
-	_, err := uc.membershipProductsRepository.GetByUserID(idMembershipProducts)
+func (uc *membershipProductsUsecase) GetByID(idMembershipProducts uint) (Domain, error) { 
+	res, err := uc.membershipProductsRepository.GetByID(idMembershipProducts)
 	if err != nil {
-		return "", business.ErrInternalServer
+		return Domain{}, business.ErrInternalServer
 	}
-	return "", nil
+	return res, nil
 }
