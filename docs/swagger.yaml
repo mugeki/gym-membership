@@ -17,14 +17,14 @@ tags:
     description: Secured Admin-only calls
   - name: users
     description: Available operations for end users
-  - name: admin
+  - name: admins
     description: Operations available to regular developers
 
 paths:
   /transaction:
     get:
       tags:
-        - admin
+        - admins
       summary: searches transaction
       operationId: searchInventory
       description: |
@@ -50,7 +50,7 @@ paths:
           description: bad input parameter
     post:
       tags:
-        - admin
+        - admins
       summary: adds a new transaction
       operationId: addTransaction
       description: Adds an item to the system
@@ -75,7 +75,7 @@ paths:
   /users/{idUser}:
     get:
       tags:
-        - admin
+        - admins
       summary: searches data's user
       operationId: searchUserById
       description: |
@@ -137,7 +137,7 @@ paths:
 
     get:
       tags:
-        - admin
+        - admins
       summary: searches data's user
       operationId: searchUser
       description: |
@@ -168,7 +168,7 @@ paths:
       tags:
         - users
       summary: logs user into system
-      operationId: addUser
+      operationId: loginUser
       description: Adds a user to the system
       consumes:
         - application/json
@@ -203,10 +203,10 @@ paths:
           schema:
             $ref: "#/definitions/FailResponse401"
 
-  /video:
+  /videos:
     get:
       tags:
-        - admin
+        - users
       summary: get video content
       operationId: searchVideo
       description: |
@@ -221,27 +221,33 @@ paths:
           required: false
           type: string
         - in: query
-          name: limit
-          description: maximum number of records to return
+          name: page
+          description: page number
           type: integer
           format: int32
-          minimum: 0
-          maximum: 50
       responses:
         200:
-          description: search results matching criteria
+          description: OK
           schema:
-            type: array
-            items:
-              $ref: "#/definitions/VideoItem"
-        400:
-          description: bad input parameter
+            properties:
+              meta:
+                $ref: "#/definitions/SuccessResponse"
+              page:
+                $ref: "#/definitions/PageItem"
+              data:
+                $ref: "#/definitions/VideoResponseItem"
+        204:
+          description: No Content
+        500:
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/FailResponse500"
     post:
       tags:
-        - admin
+        - admins
       summary: adds a new video
       operationId: addVideo
-      description: Adds an video to the system
+      description: Adds a video to the system
       consumes:
         - application/json
       produces:
@@ -251,17 +257,25 @@ paths:
           name: TransactionItem
           description: Transaction item to add
           schema:
-            $ref: "#/definitions/VideoItem"
+            $ref: "#/definitions/VideoRequestItem"
       responses:
-        201:
-          description: item created
+        200:
+          description: OK
+          schema:
+            properties:
+              meta:
+                $ref: "#/definitions/SuccessResponse"
         400:
-          description: invalid input, object invalid
-        409:
-          description: an existing item already exists
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/FailResponse400"
+        500:
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/FailResponse500"
     put:
       tags:
-        - admin
+        - admins
       summary: edit video
       operationId: editVideo
       description: Edit a video by idVideo to the system
@@ -275,17 +289,59 @@ paths:
           description: id video to identified specific video
           type: integer
       responses:
-        201:
-          description: edited item succeed
+        200:
+          description: OK
+          schema:
+            properties:
+              meta:
+                $ref: "#/definitions/SuccessResponse"
         400:
-          description: invalid input, object invalid
-        409:
-          description: an existing item already exists
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/FailResponse400"
+        404:
+          description: Not Found
+          schema:
+            $ref: "#/definitions/FailResponse404"
+        500:
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/FailResponse500"
+    delete:
+      tags:
+        - admins
+      summary: delete video
+      operationId: deleteVideo
+      description: Delete a video by idVideo from the system
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: id
+          description: id video to identified specific video
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            properties:
+              meta:
+                $ref: "#/definitions/SuccessResponse"
+        404:
+          description: Not Found
+          schema:
+            $ref: "#/definitions/FailResponse404"
+        500:
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/FailResponse500"
 
   /article:
     get:
       tags:
-        - admin
+        - admins
       summary: get article content
       operationId: searchArticle
       description: |
@@ -322,7 +378,7 @@ paths:
           description: bad input parameter
     post:
       tags:
-        - admin
+        - admins
       summary: adds a new Article
       operationId: addArticle
       description: Adds an article to the system
@@ -346,7 +402,7 @@ paths:
 
     put:
       tags:
-        - admin
+        - admins
       summary: edit article
       operationId: editArticle
       description: Edit an article by id to the system
@@ -559,12 +615,24 @@ paths:
           description: not found
 
 definitions:
+  PageItem:
+    properties:
+      offset:
+        type: integer
+        example: 0
+      limit:
+        type: integer
+        example: 10
+      total_data:
+        type: integer
+        example: 1
+
   TransactionItem:
     type: object
     required:
       - id
       - userId
-      - adminId
+      - admins_id
       - status
       - nominal
       - classId
@@ -577,7 +645,7 @@ definitions:
       userId:
         type: integer
         example: 1
-      adminId:
+      admin_id:
         type: integer
         example: 1
       status:
@@ -739,14 +807,33 @@ definitions:
         format: date-time
         example: 2016-08-29T09:12:33.001Z
 
-  VideoItem:
+  VideoRequestItem:
     type: object
     required:
-      - id
       - title
-      - classification
-      - adminId
+      - classification_id
       - url
+      - admins_id
+      - member_only
+    properties:
+      title:
+        type: string
+        example: Abs Workout in 2 weeks
+      classification_id:
+        type: integer
+        example: 1
+      member_only:
+        type: boolean
+        example: false
+      admin_id:
+        type: integer
+        example: 1
+      url:
+        type: string
+        example: https://www.youtube.com/embed/80AjI0hlbf8
+
+  VideoResponseItem:
+    type: object
     properties:
       id:
         type: integer
@@ -757,13 +844,16 @@ definitions:
       classification:
         type: string
         example: daily workout
-      adminId:
+      admin_id:
         type: integer
         format: uuid
-        example: 08123456789
+        example: 1
+      member_only:
+        type: boolean
+        example: false
       url:
         type: string
-        example: https://www.youtube.com/watch?v=80AjI0hlbf8
+        example: https://www.youtube.com/embed/80AjI0hlbf8
 
   ArticleItem:
     type: object
@@ -772,7 +862,7 @@ definitions:
       - title
       - urlImage
       - classification
-      - adminId
+      - admins_id
       - desc
     properties:
       id:
@@ -787,7 +877,7 @@ definitions:
       classification:
         type: string
         example: healthy recipe
-      adminId:
+      admin_id:
         type: integer
         format: uuid
         example: 08123456789
@@ -821,9 +911,6 @@ definitions:
             type: array
             items:
               example: Error message goes here
-      data:
-        type: string
-        example: null
 
   FailResponse401:
     type: object
@@ -841,9 +928,6 @@ definitions:
             type: array
             items:
               example: Error message goes here
-      data:
-        type: string
-        example: null
 
   FailResponse403:
     type: object
@@ -861,9 +945,6 @@ definitions:
             type: array
             items:
               example: Error message goes here
-      data:
-        type: string
-        example: null
 
   FailResponse404:
     type: object
@@ -881,9 +962,6 @@ definitions:
             type: array
             items:
               example: Error message goes here
-      data:
-        type: string
-        example: null
 
   FailResponse409:
     type: object
@@ -901,9 +979,6 @@ definitions:
             type: array
             items:
               example: Error message goes here
-      data:
-        type: string
-        example: null
 
   FailResponse500:
     type: object

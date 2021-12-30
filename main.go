@@ -10,6 +10,13 @@ import (
 	_userController "gym-membership/controllers/users"
 	_userRepo "gym-membership/drivers/databases/users"
 
+	_videoService "gym-membership/business/videos"
+	_videoController "gym-membership/controllers/videos"
+	_videoRepo "gym-membership/drivers/databases/videos"
+
+	_adminRepo "gym-membership/drivers/databases/admins"
+	_classificationRepo "gym-membership/drivers/databases/classifications"
+
 	_middleware "gym-membership/app/middleware"
 	_routes "gym-membership/app/routes"
 	_dbDriver "gym-membership/drivers/mysql"
@@ -22,6 +29,9 @@ import (
 func dbMigrate(db *gorm.DB) {
 	db.AutoMigrate(
 		&_userRepo.Users{},
+		&_adminRepo.Admins{},
+		&_classificationRepo.Classifications{},
+		&_videoRepo.Videos{},
 	)
 }
 
@@ -48,9 +58,14 @@ func main() {
 	userUsecase := _userUsecase.NewUserUsecase(userRepo, &configJWT)
 	userCtrl := _userController.NewUserController(userUsecase)
 
+	videoRepo := _driverFactory.NewVideoRepository(db)
+	videoUsecase := _videoService.NewVideoUsecase(videoRepo)
+	videoCtrl := _videoController.NewVideoController(videoUsecase)
+
 	routesInit := _routes.ControllerList{
-		JWTMiddleware:        configJWT.Init(),
-		UserController:       *userCtrl,
+		JWTMiddleware:		configJWT.Init(),
+		UserController:		*userCtrl,
+		VideoController:	*videoCtrl,	
 	}
 	routesInit.RegisterRoute(e)
 	
