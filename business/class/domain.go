@@ -33,8 +33,8 @@ type Usecase interface {
 type Repository interface {
 	Insert(classData *Domain) (Domain, error)
 	UpdateClassByID(id uint, articleData *Domain) (Domain, error)
-	UpdateParticipant(idClass int) (string, error)
+	UpdateParticipant(idClass int) (Domain, error)
 	GetAll(title string, offset, limit int) ([]Domain, int64, error)
-	UpdateStatus(idClass int, status bool) (string, error)
+	UpdateStatus(idClass int, status bool) (Domain, error)
 	IsExist(idClass int) (Domain, error)
 }

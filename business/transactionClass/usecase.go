@@ -1,7 +1,6 @@
 package transactionClass
 
 import (
-	"gym-membership/app/middleware"
 	"gym-membership/business"
 	"gym-membership/business/class"
 	"strings"
@@ -12,24 +11,24 @@ import (
 type transactionClassUsecase struct {
 	transactionClassRepository Repository
 	classRepository            class.Repository
-	jwtAuth                    *middleware.ConfigJWT
+	// jwtAuth                    *middleware.ConfigJWT
 }
 
-func NewTransactionClassUsecase(transactionClassRepo Repository, classRepository class.Repository, jwtauth *middleware.ConfigJWT) Usecase {
+func NewTransactionClassUsecase(transactionClassRepo Repository, classRepository class.Repository) Usecase {
 	return &transactionClassUsecase{
 		transactionClassRepository: transactionClassRepo,
 		classRepository:            classRepository,
-		jwtAuth:                    jwtauth,
+		// jwtAuth:                    jwtauth,
 	}
 }
 
-func (uc *transactionClassUsecase) Insert(classData *Domain) (Domain, error) {
-	classData.Status = "waiting for payment"
-	data, err := uc.transactionClassRepository.Insert(classData)
+func (uc *transactionClassUsecase) Insert(transactionClassData *Domain) (Domain, error) {
+	transactionClassData.Status = "waiting for payment"
+	data, err := uc.transactionClassRepository.Insert(transactionClassData)
 	if err != nil {
 		return Domain{}, business.ErrDuplicateData
 	}
-	idClass := classData.ClassID
+	idClass := transactionClassData.ClassID
 	_, errUpdateKuota := uc.classRepository.UpdateParticipant(idClass)
 
 	if errUpdateKuota != nil {

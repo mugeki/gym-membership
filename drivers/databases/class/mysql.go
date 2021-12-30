@@ -66,14 +66,16 @@ func (mysqlRepo *mysqlClassRepo) UpdateClassByID(id uint, classData *class.Domai
 	return domain, nil
 }
 
-func (mysqlRepo *mysqlClassRepo) UpdateStatus(idClass int, status bool) (string, error) {
+func (mysqlRepo *mysqlClassRepo) UpdateStatus(idClass int, status bool) (class.Domain, error) {
 	rec := Class{}
+	domain := class.Domain{}
 	// println("update to false")
 	errUpdate := mysqlRepo.Conn.First(&rec, "id = ?", idClass).Update("available_status", status).Error
 	if errUpdate != nil {
-		return "data not found", errUpdate
+		return class.Domain{}, errUpdate
 	}
-	return "succes", nil
+	copier.Copy(&domain, &rec)
+	return domain, nil
 }
 
 func (mysqlRepo *mysqlClassRepo) IsExist(idClass int) (class.Domain, error) {
@@ -87,21 +89,23 @@ func (mysqlRepo *mysqlClassRepo) IsExist(idClass int) (class.Domain, error) {
 	return domain, nil
 }
 
-func (mysqlRepo *mysqlClassRepo) UpdateParticipant(idClass int) (string, error) {
+func (mysqlRepo *mysqlClassRepo) UpdateParticipant(idClass int) (class.Domain, error) {
 	// println("repo classes")
 	rec := Class{}
+	domain := class.Domain{}
 	data, err := mysqlRepo.IsExist(idClass)
 	if err != nil {
-		return "data not found", err
+		return class.Domain{}, err
 	}
 	kuotaUpdated := data.Participant + 1
 	errUpdate := mysqlRepo.Conn.First(&rec, "id = ?", idClass).Update("participant", kuotaUpdated).Error
 	if errUpdate != nil {
-		return "errUpdated", err
+		return class.Domain{}, err
 	}
 	if rec.Kuota == rec.Participant {
 		mysqlRepo.UpdateStatus(idClass, false)
 	}
 
-	return "succes", nil
+	copier.Copy(&domain, &rec)
+	return domain, nil
 }

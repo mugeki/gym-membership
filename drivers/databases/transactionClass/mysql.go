@@ -30,7 +30,7 @@ func (mysqlRepo *mysqlTransactionClassRepo) Insert(transactionClassData *transac
 	}
 	copier.Copy(&domain, &recTransaction)
 	domain.Nominal = recTransaction.Class.Price
-	domain.Location = recTransaction.Class.Location
+	// domain.Location = recTransaction.Class.Location
 
 	return domain, nil
 }
