@@ -13,6 +13,9 @@ import (
 	classificationDomain "gym-membership/business/classification"
 	classificationDB "gym-membership/drivers/databases/classifications"
 
+	videosDomain "gym-membership/business/videos"
+	videosDB "gym-membership/drivers/databases/videos"
+
 	"gorm.io/gorm"
 )
 
@@ -31,3 +34,8 @@ func NewArticleRepository(conn *gorm.DB) articlesDomain.Repository {
 func NewClassificationRepository(conn *gorm.DB) classificationDomain.Repository {
 	return classificationDB.NewMySQLRepo(conn)
 }
+
+func NewVideoRepository(conn *gorm.DB) videosDomain.Repository{
+	return videosDB.NewMySQLRepo(conn)
+}
+

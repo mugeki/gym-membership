@@ -20,6 +20,11 @@ import (
 
 	_classificationService "gym-membership/business/classification"
 	_classificationController "gym-membership/controllers/classifications"
+
+	_videoService "gym-membership/business/videos"
+	_videoController "gym-membership/controllers/videos"
+	_videoRepo "gym-membership/drivers/databases/videos"
+
 	_classificationRepo "gym-membership/drivers/databases/classifications"
 
 	_middleware "gym-membership/app/middleware"
@@ -37,6 +42,7 @@ func dbMigrate(db *gorm.DB) {
 		&_adminRepo.Admins{},
 		&_articleRepo.Articles{},
 		&_classificationRepo.Classification{},
+		&_videoRepo.Videos{},
 	)
 }
 
@@ -72,16 +78,23 @@ func main() {
 	articleUsecase := _articleService.NewArticleUsecase(articleRepo, classificationRepo)
 	articleCtrl := _articleController.NewArticleController(articleUsecase)
 
-	// classificationRepo := _driverFactory.NewArticleRepository(db)
+	classificationRepo := _driverFactory.NewArticleRepository(db)
 	classificationUsecase := _classificationService.NewClassificationUsecase(classificationRepo)
 	classificationCtrl := _classificationController.NewClassificationController(classificationUsecase)
-
+  
+  videoRepo := _driverFactory.NewVideoRepository(db)
+	videoUsecase := _videoService.NewVideoUsecase(videoRepo)
+	videoCtrl := _videoController.NewVideoController(videoUsecase)
+  
 	routesInit := _routes.ControllerList{
 		JWTMiddleware:            configJWT.Init(),
 		UserController:           *userCtrl,
 		AdminController:          *adminCtrl,
 		ArticleController:        *articleCtrl,
 		ClassificationController: *classificationCtrl,
+    VideoController:	*videoCtrl,	
+
+	
 	}
 	routesInit.RegisterRoute(e)
 
