@@ -57,20 +57,20 @@ func (_m *Usecase) GetAll(status string, idUser uint, page int) ([]transactionCl
 	return r0, r1, r2, r3, r4
 }
 
-// Insert provides a mock function with given fields: classData
-func (_m *Usecase) Insert(classData *transactionClass.Domain) (transactionClass.Domain, error) {
-	ret := _m.Called(classData)
+// Insert provides a mock function with given fields: transactionClassData
+func (_m *Usecase) Insert(transactionClassData *transactionClass.Domain) (transactionClass.Domain, error) {
+	ret := _m.Called(transactionClassData)
 
 	var r0 transactionClass.Domain
 	if rf, ok := ret.Get(0).(func(*transactionClass.Domain) transactionClass.Domain); ok {
-		r0 = rf(classData)
+		r0 = rf(transactionClassData)
 	} else {
 		r0 = ret.Get(0).(transactionClass.Domain)
 	}
 
 	var r1 error
 	if rf, ok := ret.Get(1).(func(*transactionClass.Domain) error); ok {
-		r1 = rf(classData)
+		r1 = rf(transactionClassData)
 	} else {
 		r1 = ret.Error(1)
 	}
