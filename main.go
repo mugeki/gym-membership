@@ -72,7 +72,7 @@ func main() {
 	trainerCtrl := _trainerController.NewTrainerController(trainerUsecase)
 
 	transactionClassRepo := _driverFactory.NewTransactionClassRepository(db)
-	transactionClassUsecase := _transactionClassService.NewTransactionClassUsecase(transactionClassRepo, classRepo, &configJWT)
+	transactionClassUsecase := _transactionClassService.NewTransactionClassUsecase(transactionClassRepo, classRepo)
 	transactionClassCtrl := _transactionClassController.NewTransactionClassController(transactionClassUsecase)
 
 	routesInit := _routes.ControllerList{

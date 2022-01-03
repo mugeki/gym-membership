@@ -59,3 +59,11 @@ func (uc *classUsecase) UpdateParticipant(idClass int) (string, error) {
 	}
 	return "", nil
 }
+
+func (uc *classUsecase) ScheduleByID(idUser uint) ([]Domain, error) {
+	_, err := uc.classRepository.ScheduleByID(idUser)
+	if err != nil {
+		return []Domain{}, business.ErrInternalServer
+	}
+	return []Domain{}, nil
+}

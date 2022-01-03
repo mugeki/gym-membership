@@ -1,13 +1,12 @@
 package response
 
 type TransactionClass struct {
-	ID       uint   `json:"id"`
-	UserID   uint   `json:"userID"`
-	AdminID  uint   `json:"adminID"`
-	Status   string `json:"status"`
-	Nominal  int    `json:"nominal"`
-	ClassID  int    `json:"classID"`
-	Location string `json:"location"`
+	ID      uint   `json:"id"`
+	UserID  uint   `json:"userID"`
+	AdminID uint   `json:"adminID"`
+	Status  string `json:"status"`
+	Nominal int    `json:"nominal"`
+	ClassID int    `json:"classID"`
 }
 
 type Page struct {

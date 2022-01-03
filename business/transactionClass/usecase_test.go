@@ -42,22 +42,23 @@ func TestMain(m *testing.M) {
 }
 
 func TestInsert(t *testing.T) {
-	// t.Run("Valid Test", func(t *testing.T) {
-	// 	mockTransactionClassRepo.On("Insert", mock.Anything).Return(transactionClassData, nil).Once()
-	// 	mockClassRepo.On("UpdateParticipant", mock.AnythingOfType("int")).Return(transactionClassData, nil).Once()
+	t.Run("Valid Test", func(t *testing.T) {
+		mockTransactionClassRepo.On("Insert", mock.Anything).Return(transactionClassData, nil).Once()
+		mockClassRepo.On("UpdateParticipant", mock.AnythingOfType("int")).Return(transactionClassData, nil).Once()
 
-	// 	resp, err := transactionClassUsecase.Insert(&transactionClassInput)
-
-	// 	assert.Nil(t, err)
-	// 	assert.Equal(t, transactionClassData, resp)
-	// })
-	t.Run("Invalid Test | Duplicate Data Error", func(t *testing.T) {
-		mockClassRepo.On("Insert", mock.Anything).Return(transactionClassData, assert.AnError).Once()
 		resp, err := transactionClassUsecase.Insert(&transactionClassInput)
 
 		assert.Nil(t, err)
-		assert.Contains(t, transactionClass.Domain{}, resp)
+		assert.Equal(t, transactionClassData, resp)
 	})
+	// t.Run("Invalid Test | Duplicate Data Error", func(t *testing.T) {
+	// 	mockClassRepo.On("Insert", mock.Anything).Return(transactionClass.Domain{}, assert.AnError).Once()
+	// 	resp, err := transactionClassUsecase.Insert(&transactionClassInput)
+
+	// 	// assert.NotNil(t, err)
+	// 	assert.Equal(t, "Data already exist", err)
+	// 	assert.Contains(t, transactionClass.Domain{}, resp)
+	// })
 }
 
 // func TestGetAll(t *testing.T) {

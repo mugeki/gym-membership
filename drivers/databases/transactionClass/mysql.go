@@ -31,7 +31,7 @@ func (mysqlRepo *mysqlTransactionClassRepo) Insert(transactionClassData *transac
 	copier.Copy(&domain, &recTransaction)
 	domain.Nominal = recTransaction.Class.Price
 	// domain.Location = recTransaction.Class.Location
-
+	println("ID: ", domain.ID, "   UserID: ", domain.UserID)
 	return domain, nil
 }
 
@@ -55,26 +55,6 @@ func (mysqlRepo *mysqlTransactionClassRepo) GetAll(status string, idUser uint, o
 	copier.Copy(&domain, &rec)
 	return domain, totalData, nil
 }
-
-// func (mysqlRepo *mysqlTransactionClassRepo) GetActiveClass(idUser uint) ([]class.Domain, error) {
-// 	println("repo user id", idUser)
-// 	domainResult := []class.Domain{}
-// 	domainClass := class.Domain{}
-// 	rec := []TransactionClass{}
-// 	status := "accepted"
-// 	err := mysqlRepo.Conn.Joins("Class").Find(&rec, "user_id = ? AND status = ?", idUser, status).Error
-// 	if err != nil {
-// 		return []class.Domain{}, err
-// 	}
-// 	println("repo interface", len(rec))
-// 	// mysqlRepo.Conn.Order("updated_at desc").Joins("Class").Find(&rec)
-// 	for i := 0; i < len(rec); i++ {
-// 		copier.Copy(&domainClass, &rec[i].Class)
-// 		domainResult = append(domainResult, domainClass)
-// 	}
-
-// 	return domainResult, nil
-// }
 
 func (mysqlRepo *mysqlTransactionClassRepo) UpdateStatus(id uint, status string) (transactionClass.Domain, error) {
 	rec := TransactionClass{}
