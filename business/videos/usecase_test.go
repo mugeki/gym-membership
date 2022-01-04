@@ -142,12 +142,4 @@ func TestDeleteByID(t *testing.T){
 		assert.NotNil(t, err)
 		assert.Equal(t, business.ErrInternalServer, err)
 	})
-	t.Run("Invalid Test | Video Not Found", func(t *testing.T){
-		mockVideoRepo.On("DeleteByID", mock.AnythingOfType("uint")).Return(assert.AnError).Once()
-
-		err := videoUsecase.DeleteByID(1)
-
-		assert.NotNil(t, err)
-		assert.Equal(t, business.ErrVideoNotFound, err)
-	})
 }

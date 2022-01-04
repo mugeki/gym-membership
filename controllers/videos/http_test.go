@@ -120,11 +120,9 @@ func TestGetAll(t *testing.T){
 		resp.Meta.Message = "Success"
 		resp.Data = data
 		resp.Page = page
-		expected, _ := json.Marshal(resp)
 
 		if assert.NoError(t, videoCtrl.GetAll(c)){
 			assert.Equal(t, http.StatusNoContent, rec.Code)
-			assert.JSONEq(t, string(expected), rec.Body.String())
 		}
 	})
 	t.Run("Invalid Test | Internal Server Error", func(t *testing.T){
@@ -161,7 +159,6 @@ func TestInsert(t *testing.T){
 		resp := controllers.BaseResponse{}
 		resp.Meta.Status = http.StatusOK
 		resp.Meta.Message = "Success"
-		resp.Data = ""
 		expected, _ := json.Marshal(resp)
 
 		if assert.NoError(t, videoCtrl.Insert(c)){
@@ -239,7 +236,6 @@ func TestUpdateVideoByID(t *testing.T){
 		resp := controllers.BaseResponse{}
 		resp.Meta.Status = http.StatusOK
 		resp.Meta.Message = "Success"
-		resp.Data = ""
 		expected, _ := json.Marshal(resp)
 
 		if assert.NoError(t, videoCtrl.UpdateByID(c)){
