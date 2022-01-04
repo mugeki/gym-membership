@@ -54,3 +54,56 @@ func (_m *Usecase) Insert(membersData *membership_products.Domain) (string, erro
 
 	return r0, r1
 }
+
+func (_m *Usecase) UpdateStatus(idMembers uint) (string, error) {
+	ret := _m.Called(idMembers)
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func(uint) string); ok {
+		r0 = rf(idMembers)
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(uint) error); ok {
+		r1 = rf(idMembers)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+func (_m *Usecase) DeleteByID(idMembers uint) error {
+	ret := _m.Called(idMembers)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(uint) error); ok {
+		r0 = rf(idMembers)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+func (_m *Usecase) UpdateByID(idMembers uint, membersData *membership_products.Domain) (membership_products.Domain, error) {
+	ret := _m.Called(idMembers, membersData)
+
+	var r0 membership_products.Domain
+	if rf, ok := ret.Get(0).(func(uint, *membership_products.Domain) membership_products.Domain); ok {
+		r0 = rf(idMembers, membersData)
+	} else {
+		r0 = ret.Get(0).(membership_products.Domain)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(uint, *membership_products.Domain) error); ok {
+		r1 = rf(idMembers, membersData)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}

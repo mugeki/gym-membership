@@ -40,3 +40,31 @@ func (mysqlRepo *mysqlMembershipProductsRepo) GetByID(idMembershipProducts uint)
 	copier.Copy(&domain, &rec)
 	return domain, nil
 }
+
+func (mysqlRepo *mysqlMembershipProductRepo) UpdateByID(idMembershipProducts uint, membership_products.Domain, error) {
+	// println("cek id", id)
+	domain := membership_products.Domain{}
+	rec := membership_products{}
+	// domainData := articles.Domain{}
+	recData := membership_products{}
+	copier.Copy(idMembershipProducts)
+	err := mysqlRepo.Conn.First(&rec, "id = ?", idMembershipProducts).Updates(recData).Error
+	if err != nil {
+		return articles.Domain{}, err
+	}
+	copier.Copy(domain, rec)
+	return domain, nil
+}
+
+func (mysqlRepo *mysqlMembershipProductRepo) DeleteByID(idMembershipProducts uint) error {
+	rec := membership_products{}
+	err := mysqlRepo.Conn.First(&rec, idMembershipProducts).Delete(&rec).Error
+	if rec.ID == 0 {
+		// println("not found", rec.Title)
+		return gorm.ErrRecordNotFound
+	}
+	if err != nil {
+		return err
+	}
+	return nil
+}

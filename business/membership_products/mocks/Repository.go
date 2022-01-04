@@ -75,3 +75,36 @@ func (_m *Repository) UpdateStatus(idMembers int) (string, error) {
 
 	return r0, r1
 }
+
+func (_m *Repository) DeleteByID(idMembers int) error {
+	ret := _m.Called(idMembers)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(int) error); ok {
+		r0 = rf(idMembers)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+func (_m *Repository) UpdateByID(idMembers int, membersData *membership_products.Domain) (membership_products.Domain, error) {
+	ret := _m.Called(idMembers, membersData)
+
+	var r0 membership_products.Domain
+	if rf, ok := ret.Get(0).(func(int, *membership_products.Domain) membership_products.Domain); ok {
+		r0 = rf(idMembers, membersData)
+	} else {
+		r0 = ret.Get(0).(membership_products.Domain)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(int, *membership_products.Domain) error); ok {
+		r1 = rf(idMembers, membersData)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
