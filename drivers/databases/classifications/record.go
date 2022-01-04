@@ -1,6 +1,11 @@
 package classifications
 
-type Classifications struct {
-	ID   int    `gorm:"primarykey"`
-	Name string `gorm:"column:name"`
+import (
+	"gorm.io/gorm"
+)
+
+type Classification struct {
+	gorm.Model
+	ID   uint
+	Name string
 }

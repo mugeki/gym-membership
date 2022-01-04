@@ -10,11 +10,21 @@ import (
 	_userController "gym-membership/controllers/users"
 	_userRepo "gym-membership/drivers/databases/users"
 
+	_adminService "gym-membership/business/admins"
+	_adminController "gym-membership/controllers/admins"
+	_adminRepo "gym-membership/drivers/databases/admins"
+
+	_articleService "gym-membership/business/articles"
+	_articleController "gym-membership/controllers/articles"
+	_articleRepo "gym-membership/drivers/databases/articles"
+
+	_classificationService "gym-membership/business/classification"
+	_classificationController "gym-membership/controllers/classifications"
+
 	_videoService "gym-membership/business/videos"
 	_videoController "gym-membership/controllers/videos"
 	_videoRepo "gym-membership/drivers/databases/videos"
 
-	_adminRepo "gym-membership/drivers/databases/admins"
 	_classificationRepo "gym-membership/drivers/databases/classifications"
 
 	_middleware "gym-membership/app/middleware"
@@ -30,7 +40,8 @@ func dbMigrate(db *gorm.DB) {
 	db.AutoMigrate(
 		&_userRepo.Users{},
 		&_adminRepo.Admins{},
-		&_classificationRepo.Classifications{},
+		&_articleRepo.Articles{},
+		&_classificationRepo.Classification{},
 		&_videoRepo.Videos{},
 	)
 }
@@ -58,20 +69,38 @@ func main() {
 	userUsecase := _userUsecase.NewUserUsecase(userRepo, &configJWT)
 	userCtrl := _userController.NewUserController(userUsecase)
 
-	videoRepo := _driverFactory.NewVideoRepository(db)
+	adminRepo := _driverFactory.NewAdminRepository(db)
+	adminUsecase := _adminService.NewAdminUsecase(adminRepo, &configJWT)
+	adminCtrl := _adminController.NewAdminController(adminUsecase)
+
+	articleRepo := _driverFactory.NewArticleRepository(db)
+	classificationRepo := _driverFactory.NewClassificationRepository(db)
+	articleUsecase := _articleService.NewArticleUsecase(articleRepo, classificationRepo)
+	articleCtrl := _articleController.NewArticleController(articleUsecase)
+
+	classificationRepo := _driverFactory.NewArticleRepository(db)
+	classificationUsecase := _classificationService.NewClassificationUsecase(classificationRepo)
+	classificationCtrl := _classificationController.NewClassificationController(classificationUsecase)
+  
+  videoRepo := _driverFactory.NewVideoRepository(db)
 	videoUsecase := _videoService.NewVideoUsecase(videoRepo)
 	videoCtrl := _videoController.NewVideoController(videoUsecase)
-
+  
 	routesInit := _routes.ControllerList{
-		JWTMiddleware:		configJWT.Init(),
-		UserController:		*userCtrl,
-		VideoController:	*videoCtrl,	
+		JWTMiddleware:            configJWT.Init(),
+		UserController:           *userCtrl,
+		AdminController:          *adminCtrl,
+		ArticleController:        *articleCtrl,
+		ClassificationController: *classificationCtrl,
+    VideoController:	*videoCtrl,	
+
+	
 	}
 	routesInit.RegisterRoute(e)
-	
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8000"
 	}
-	e.Start(":"+port)
+	e.Start(":" + port)
 }
