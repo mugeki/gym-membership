@@ -23,6 +23,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"gorm.io/gorm"
 )
 
@@ -53,6 +54,10 @@ func main() {
 		ExpiresDuration: int64(EXPIRE),
 	}
 	e := echo.New()
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"http://localhost:3000"},
+  		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+	}))
 
 	userRepo := _driverFactory.NewUserRepository(db)
 	userUsecase := _userUsecase.NewUserUsecase(userRepo, &configJWT)
