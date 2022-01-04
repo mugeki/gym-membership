@@ -3,21 +3,34 @@ package calendars
 import (
 	"gym-membership/app/middleware"
 	"gym-membership/business"
-	"gym-membership/helper/encrypt"
-
-	"github.com/google/uuid"
 )
 
 type calendarUsecase struct {
-	calendarRepository 	Repository
-	jwtAuth			*middleware.ConfigJWT
+	calendarRepository Repository
+	jwtAuth            *middleware.ConfigJWT
 }
 
 func NewCalendarUsecase(calendarRepo Repository, jwtauth *middleware.ConfigJWT) Usecase {
 	return &calendarUsecase{
 		calendarRepository: calendarRepo,
-		jwtAuth: jwtauth,
+		jwtAuth:            jwtauth,
 	}
 }
 
-func 
+func (uc *calendarUsecase) CreateEvent(EventData *Event) (Event, error) {
+
+	data, err := uc.calendarRepository.CreateEvent(EventData)
+	if err != nil {
+		return Event{}, business.ErrInternalServer
+	}
+	return data, nil
+}
+
+func (uc *calendarUsecase) AddGuest(eventId, emailGuest string) (Event, error) {
+
+	data, err := uc.calendarRepository.AddGuest(eventId, emailGuest)
+	if err != nil {
+		return Event{}, business.ErrInternalServer
+	}
+	return data, nil
+}

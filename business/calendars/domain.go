@@ -1,16 +1,45 @@
 package calendars
 
-type Domain struct {
-	NameEvent string
-	StartDate string
-	EndDate   string
-	Location  string
-}
+import "time"
 
+type Event struct {
+	Kind     string
+	Etag     string
+	ID       string
+	Status   string
+	HTMLLink string
+	Created  time.Time
+	Updated  time.Time
+	Summary  string
+	Creator  struct {
+		Email string
+	}
+	Organizer struct {
+		Email       string
+		DisplayName string
+		Self        bool
+	}
+	Start struct {
+		DateTime time.Time
+		TimeZone string
+	}
+	End struct {
+		DateTime time.Time
+		TimeZone string
+	}
+	ICalUID   string
+	Sequence  int
+	Reminders struct {
+		UseDefault bool
+	}
+	EventType string
+}
 type Usecase interface {
-	Insert(EventData *Domain) (string, error)
+	CreateEvent(EventData *Event) (Event, error)
+	AddGuest(eventId, emailGuest string) (Event, error)
 }
 
 type Repository interface {
-	Insert(EventData *Domain) (Domain, error)
+	CreateEvent(EventData *Event) (Event, error)
+	AddGuest(eventId, emailGuest string) (Event, error)
 }
