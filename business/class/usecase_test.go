@@ -55,7 +55,7 @@ func TestInsert(t *testing.T) {
 		resp, err := classUsecase.Insert(&classInput)
 
 		assert.Nil(t, err)
-		assert.Equal(t, "item created", resp)
+		assert.Equal(t, "", resp)
 	})
 	t.Run("Invalid Test | Internal Server Error", func(t *testing.T) {
 		mockClassRepo.On("Insert", mock.Anything).Return(class.Domain{}, assert.AnError).Once()
@@ -141,7 +141,7 @@ func TestUpdateClassByID(t *testing.T) {
 		resp, err := classUsecase.UpdateClassByID(uint(1), &classInput)
 
 		assert.Nil(t, err)
-		assert.Equal(t, "item edited", resp)
+		assert.Equal(t, "", resp)
 	})
 	t.Run("Invalid Test | Internal Server Error", func(t *testing.T) {
 		mockClassRepo.On("UpdateClassByID", mock.Anything, mock.Anything).Return(class.Domain{}, assert.AnError).Once()

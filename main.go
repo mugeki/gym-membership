@@ -6,7 +6,7 @@ import (
 
 	_driverFactory "gym-membership/drivers"
 
-	_userService "gym-membership/business/users"
+	_userUsecase "gym-membership/business/users"
 	_userController "gym-membership/controllers/users"
 	_userRepo "gym-membership/drivers/databases/users"
 
@@ -21,6 +21,24 @@ import (
 	_transactionClassService "gym-membership/business/transactionClass"
 	_transactionClassController "gym-membership/controllers/transactionClass"
 	_transactionClassRepo "gym-membership/drivers/databases/transactionClass"
+
+	_adminService "gym-membership/business/admins"
+	_adminController "gym-membership/controllers/admins"
+	_adminRepo "gym-membership/drivers/databases/admins"
+
+	_articleService "gym-membership/business/articles"
+	_articleController "gym-membership/controllers/articles"
+	_articleRepo "gym-membership/drivers/databases/articles"
+
+	_classificationService "gym-membership/business/classification"
+	_classificationController "gym-membership/controllers/classifications"
+
+	_videoService "gym-membership/business/videos"
+	_videoController "gym-membership/controllers/videos"
+	_videoRepo "gym-membership/drivers/databases/videos"
+
+	_classificationRepo "gym-membership/drivers/databases/classifications"
+
 
 	_middleware "gym-membership/app/middleware"
 	_routes "gym-membership/app/routes"
@@ -37,6 +55,10 @@ func dbMigrate(db *gorm.DB) {
 		&_classRepo.Class{},
 		&_trainerRepo.Trainers{},
 		&_transactionClassRepo.TransactionClass{},
+		&_adminRepo.Admins{},
+		&_articleRepo.Articles{},
+		&_classificationRepo.Classification{},
+		&_videoRepo.Videos{},
 	)
 }
 
@@ -60,7 +82,7 @@ func main() {
 	e := echo.New()
 
 	userRepo := _driverFactory.NewUserRepository(db)
-	userUsecase := _userService.NewUserUsecase(userRepo, &configJWT)
+	userUsecase := _userUsecase.NewUserUsecase(userRepo, &configJWT)
 	userCtrl := _userController.NewUserController(userUsecase)
 
 	classRepo := _driverFactory.NewClassRepository(db)
@@ -75,10 +97,31 @@ func main() {
 	transactionClassUsecase := _transactionClassService.NewTransactionClassUsecase(transactionClassRepo, classRepo)
 	transactionClassCtrl := _transactionClassController.NewTransactionClassController(transactionClassUsecase)
 
+	adminRepo := _driverFactory.NewAdminRepository(db)
+	adminUsecase := _adminService.NewAdminUsecase(adminRepo, &configJWT)
+	adminCtrl := _adminController.NewAdminController(adminUsecase)
+
+	articleRepo := _driverFactory.NewArticleRepository(db)
+	classificationRepo := _driverFactory.NewClassificationRepository(db)
+	articleUsecase := _articleService.NewArticleUsecase(articleRepo, classificationRepo)
+	articleCtrl := _articleController.NewArticleController(articleUsecase)
+
+	classificationRepo := _driverFactory.NewArticleRepository(db)
+	classificationUsecase := _classificationService.NewClassificationUsecase(classificationRepo)
+	classificationCtrl := _classificationController.NewClassificationController(classificationUsecase)
+  
+  videoRepo := _driverFactory.NewVideoRepository(db)
+	videoUsecase := _videoService.NewVideoUsecase(videoRepo)
+	videoCtrl := _videoController.NewVideoController(videoUsecase)
+  
 	routesInit := _routes.ControllerList{
-		JWTMiddleware:              configJWT.Init(),
-		UserController:             *userCtrl,
-		ClassController:            *classCtrl,
+		JWTMiddleware:            configJWT.Init(),
+		UserController:           *userCtrl,
+		AdminController:          *adminCtrl,
+		ArticleController:        *articleCtrl,
+		ClassificationController: *classificationCtrl,
+    VideoController:	*videoCtrl,
+    ClassController:            *classCtrl,
 		TrainerController:          *trainerCtrl,
 		TransactionClassController: *transactionClassCtrl,
 	}
