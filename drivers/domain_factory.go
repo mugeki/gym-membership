@@ -13,6 +13,19 @@ import (
 	transactionClassDomain "gym-membership/business/transactionClass"
 	transactionClassDB "gym-membership/drivers/databases/transactionClass"
 
+	adminsDomain "gym-membership/business/admins"
+	adminsDB "gym-membership/drivers/databases/admins"
+
+	articlesDomain "gym-membership/business/articles"
+	articlesDB "gym-membership/drivers/databases/articles"
+
+	classificationDomain "gym-membership/business/classification"
+	classificationDB "gym-membership/drivers/databases/classifications"
+
+	videosDomain "gym-membership/business/videos"
+	videosDB "gym-membership/drivers/databases/videos"
+
+
 	"gorm.io/gorm"
 )
 
@@ -31,3 +44,20 @@ func NewTrainerRepository(conn *gorm.DB) trainerDomain.Repository {
 func NewTransactionClassRepository(conn *gorm.DB) transactionClassDomain.Repository {
 	return transactionClassDB.NewMySQLRepo(conn)
 }
+
+func NewAdminRepository(conn *gorm.DB) adminsDomain.Repository {
+	return adminsDB.NewMySQLRepo(conn)
+}
+
+func NewArticleRepository(conn *gorm.DB) articlesDomain.Repository {
+	return articlesDB.NewMySQLRepo(conn)
+}
+
+func NewClassificationRepository(conn *gorm.DB) classificationDomain.Repository {
+	return classificationDB.NewMySQLRepo(conn)
+}
+
+func NewVideoRepository(conn *gorm.DB) videosDomain.Repository{
+	return videosDB.NewMySQLRepo(conn)
+}
+

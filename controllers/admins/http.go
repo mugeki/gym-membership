@@ -1,29 +1,30 @@
-package users
+package admins
 
 import (
-	"gym-membership/business/users"
+	"gym-membership/business/admins"
 	controller "gym-membership/controllers"
-	"gym-membership/controllers/users/request"
+	"gym-membership/controllers/admins/request"
 	"net/http"
 
-	"github.com/asaskevich/govalidator"
 	"github.com/jinzhu/copier"
+
+	"github.com/asaskevich/govalidator"
 	"github.com/labstack/echo/v4"
 )
 
-type UserController struct {
-	userUsecase users.Usecase
+type AdminController struct {
+	adminUsecase admins.Usecase
 }
 
-func NewUserController(Usecase users.Usecase) *UserController {
-	return &UserController{
-		userUsecase: Usecase,
+func NewAdminController(Usecase admins.Usecase) *AdminController {
+	return &AdminController{
+		adminUsecase: Usecase,
 	}
 }
 
-func (ctrl *UserController) Register(c echo.Context) error {
-	req := request.Users{}
-	domain := users.Domain{}
+func (ctrl *AdminController) Register(c echo.Context) error {
+	req := request.Admins{}
+	domain := admins.Domain{}
 	if err := c.Bind(&req); err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}
@@ -31,18 +32,18 @@ func (ctrl *UserController) Register(c echo.Context) error {
 	if _, err := govalidator.ValidateStruct(req); err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}
-
-	copier.Copy(&domain, &req)
-	data, err := ctrl.userUsecase.Register(&domain)
+	copier.Copy(domain, req)
+	data, err := ctrl.adminUsecase.Register(&domain)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusConflict, err)
 	}
+	// println(req, "ff")
 
 	return controller.NewSuccessResponse(c, http.StatusOK, data)
 }
 
-func (ctrl *UserController) Login(c echo.Context) error {
-	req := request.UsersLogin{}
+func (ctrl *AdminController) Login(c echo.Context) error {
+	req := request.AdminsLogin{}
 	if err := c.Bind(&req); err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}
@@ -51,9 +52,9 @@ func (ctrl *UserController) Login(c echo.Context) error {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}
 
-	token, err := ctrl.userUsecase.Login(req.Username, req.Password)
+	token, err := ctrl.adminUsecase.Login(req.Username, req.Password)
 	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusUnauthorized, err)
+		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
 
 	res := struct {
