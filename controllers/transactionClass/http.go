@@ -69,30 +69,19 @@ func (ctrl *TransactionClassController) GetAll(c echo.Context) error {
 	return controller.NewSuccessResponse(c, http.StatusOK, res, resPage)
 }
 
-// func (ctrl *TransactionClassController) GetActiveClass(c echo.Context) error {
-// 	// page, _ := strconv.Atoi(c.QueryParam("page"))
-// 	// if page <= 0 {
-// 	// 	page = 1
-// 	// }
-// 	idUser, _ := strconv.Atoi(c.Param("idUser"))
-// 	println(idUser, "id user")
-// 	data, err := ctrl.transactionClassUsecase.GetActiveClass(uint(idUser))
-// 	if err != nil {
-// 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
-// 	}
+func (ctrl *TransactionClassController) GetActiveClass(c echo.Context) error {
+	idUser, _ := strconv.Atoi(c.Param("idUser"))
+	// println(idUser, "id user")
+	data, err := ctrl.transactionClassUsecase.GetActiveClass(uint(idUser))
+	if err != nil {
+		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+	}
+	if len(data) == 0 {
+		return controller.NewSuccessResponse(c, http.StatusNoContent, data)
+	}
 
-// 	// resPage := response.Page{
-// 	// 	Limit:     limit,
-// 	// 	Offset:    offset,
-// 	// 	TotalData: totalData,
-// 	// }
-// 	// copier.Copy(&res, &data)
-// 	if len(data) == 0 {
-// 		return controller.NewSuccessResponse(c, http.StatusNoContent, data)
-// 	}
-
-// 	return controller.NewSuccessResponse(c, http.StatusOK, data)
-// }
+	return controller.NewSuccessResponse(c, http.StatusOK, data)
+}
 
 func (ctrl *TransactionClassController) UpdateStatus(c echo.Context) error {
 	classId, _ := strconv.Atoi(c.Param("idClass"))

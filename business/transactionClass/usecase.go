@@ -54,13 +54,13 @@ func (uc *transactionClassUsecase) GetAll(status string, idUser uint, page int) 
 	return res, offset, limit, totalData, nil
 }
 
-// func (uc *transactionClassUsecase) GetActiveClass(idUser uint) ([]class.Domain, error) {
-// 	res, err := uc.transactionClassRepository.GetActiveClass(idUser)
-// 	if err != nil {
-// 		return []class.Domain{}, business.ErrInternalServer
-// 	}
-// 	return res, nil
-// }
+func (uc *transactionClassUsecase) GetActiveClass(idUser uint) ([]class.Domain, error) {
+	res, err := uc.transactionClassRepository.GetActiveClass(idUser)
+	if err != nil {
+		return []class.Domain{}, business.ErrInternalServer
+	}
+	return res, nil
+}
 
 func (uc *transactionClassUsecase) UpdateStatus(id uint, status string) (string, error) {
 	_, err := uc.transactionClassRepository.UpdateStatus(id, status)

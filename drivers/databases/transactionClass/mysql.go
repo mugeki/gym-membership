@@ -3,6 +3,7 @@ package transactionClass
 import (
 
 	// _classRepo "gym-membership/drivers/databases/class"
+	"gym-membership/business/class"
 	"gym-membership/business/transactionClass"
 
 	"github.com/jinzhu/copier"
@@ -66,4 +67,23 @@ func (mysqlRepo *mysqlTransactionClassRepo) UpdateStatus(id uint, status string)
 	}
 	copier.Copy(&domain, &rec)
 	return domain, nil
+}
+
+func (mysqlRepo *mysqlTransactionClassRepo) GetActiveClass(idUser uint) ([]class.Domain, error) {
+	rec := []TransactionClass{}
+	domain := []transactionClass.Domain{}
+	domainArrClass := []class.Domain{}
+
+	// println("update to false")
+	err := mysqlRepo.Conn.Order("updated_at desc").Joins("Class").Find(&rec, "user_id = ? AND status = ?", idUser, "accepted").Error
+	if err != nil {
+		return []class.Domain{}, err
+	}
+	copier.Copy(&domain, &rec)
+	for i := 0; i < len(rec); i++ {
+		domainClass := class.Domain{}
+		copier.Copy(&domainClass, &rec[i].Class)
+		domainArrClass = append(domainArrClass, domainClass)
+	}
+	return domainArrClass, nil
 }
