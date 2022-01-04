@@ -26,7 +26,7 @@ func (uc *classUsecase) Insert(classData *Domain) (string, error) {
 		return "", business.ErrDuplicateData
 	}
 
-	return "item created", nil
+	return "", nil
 }
 
 func (uc *classUsecase) GetAll(name string, page int) ([]Domain, int, int, int64, error) {
@@ -49,7 +49,7 @@ func (uc *classUsecase) UpdateClassByID(id uint, classData *Domain) (string, err
 	if err != nil {
 		return "", business.ErrInternalServer
 	}
-	return "item edited", nil
+	return "", nil
 }
 
 func (uc *classUsecase) UpdateParticipant(idClass int) (string, error) {
