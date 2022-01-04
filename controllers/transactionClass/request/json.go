@@ -2,9 +2,9 @@ package request
 
 type TransactionClass struct {
 	ID      uint
-	UserID  uint   `json:"userID" valid:"required"`
-	AdminID uint   `json:"adminID"`
+	UserID  uint   `json:"user_id" valid:"required"`
+	AdminID uint   `json:"admin_id"`
 	Status  string `json:"status"`
 	Nominal int    `json:"nominal"`
-	ClassID int    `json:"classID" valid:"required"`
+	ClassID int    `json:"class_id" valid:"required"`
 }

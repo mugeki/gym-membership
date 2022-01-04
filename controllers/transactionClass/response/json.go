@@ -2,11 +2,11 @@ package response
 
 type TransactionClass struct {
 	ID      uint   `json:"id"`
-	UserID  uint   `json:"user_id"`
-	AdminID uint   `json:"admin_id"`
+	UserID  uint   `json:"userID"`
+	AdminID uint   `json:"adminID"`
 	Status  string `json:"status"`
 	Nominal int    `json:"nominal"`
-	ClassID int    `json:"class_id"`
+	ClassID int    `json:"classID"`
 }
 
 type Page struct {
@@ -19,12 +19,12 @@ type Class struct {
 	ID uint
 	// UUID      uuid.UUID
 	Name         string `json:"name"`
-	UrlImage     string `json:"url_image"`
-	TrainerName  string `json:"trainer_name"`
-	TrainerImage string `json:"trainer_image"`
+	UrlImage     string `json:"urlImage"`
+	TrainerName  string `json:"trainerName"`
+	TrainerImage string `json:"trainerImage"`
 	Description  string `json:"description"`
-	IsOnline     bool   `json:"is_online"`
-	StartDate    string `json:"start_date"`
-	StartEnd     string `json:"start_end"`
+	IsOnline     bool   `json:"isOnline"`
+	StartDate    string `json:"startDate"`
+	StartEnd     string `json:"startEnd"`
 	Location     string `json:"location"`
 }

@@ -3,14 +3,14 @@ package response
 type Class struct {
 	ID              uint   `json:"id"`
 	Name            string `json:"name"`
-	UrlImage        string `json:"url_image"`
+	UrlImage        string `json:"urlImage"`
 	Price           int    `json:"price"`
 	Kuota           int    `json:"kuota"`
-	TrainerName     string `json:"trainer_name"`
-	TrainerImage    string `json:"trainer_image"`
+	TrainerName     string `json:"trainerName"`
+	TrainerImage    string `json:"trainerImage"`
 	Description     string `json:"description"`
-	AvailableStatus bool   `json:"available_status"`
-	IsOnline        bool   `json:"is_online"`
+	AvailableStatus bool   `json:"availableStatus"`
+	IsOnline        bool   `json:"isOnline"`
 	Date            string `json:"date"`
 	Location        string `json:"location"`
 }
