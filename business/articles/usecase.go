@@ -50,7 +50,7 @@ func (uc *articleUsecase) UpdateArticleByID(id uint, videoData *Domain) (string,
 	if err != nil {
 		return "", business.ErrInternalServer
 	}
-	return "item edited", nil
+	return "", nil
 }
 
 func (uc *articleUsecase) DeleteByID(id uint) error {
