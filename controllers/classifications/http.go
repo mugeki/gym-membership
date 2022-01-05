@@ -4,11 +4,13 @@ import (
 	"gym-membership/business/classification"
 	controller "gym-membership/controllers"
 	"gym-membership/controllers/classifications/request"
+	"gym-membership/controllers/classifications/response"
 
 	// "gym-membership/controllers/articles/response"
 	"net/http"
 
 	"github.com/asaskevich/govalidator"
+	"github.com/jinzhu/copier"
 	"github.com/labstack/echo/v4"
 )
 
@@ -27,9 +29,12 @@ func (ctrl *ClassificationController) GetAll(c echo.Context) error {
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
-
-	// copier.Copy(&res, &data)
-	return controller.NewSuccessResponse(c, http.StatusOK, data)
+	res := []response.Classification{}
+	copier.Copy(&res, &data)
+	if len(data) == 0 {
+		return controller.NewSuccessResponse(c, http.StatusNoContent, data)
+	}
+	return controller.NewSuccessResponse(c, http.StatusOK, res)
 }
 
 func (ctrl *ClassificationController) Insert(c echo.Context) error {
@@ -44,9 +49,13 @@ func (ctrl *ClassificationController) Insert(c echo.Context) error {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}
 
-	data, err := ctrl.classificationUsecase.Insert(req.ToDomain())
+	domain := classification.Domain{}
+	copier.Copy(&domain,&req)
+	data, err := ctrl.classificationUsecase.Insert(&domain)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
-	return controller.NewSuccessResponse(c, http.StatusOK, data)
+	res :=response.Classification{}
+	copier.Copy(&res, &data)
+	return controller.NewSuccessResponse(c, http.StatusOK, res)
 }

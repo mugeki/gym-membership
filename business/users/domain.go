@@ -17,11 +17,12 @@ type Domain struct {
 	Telephone 	string
 	Address 	string
 	CreatedAt 	time.Time
+	Token		string
 }
 
 type Usecase interface {
-	Register(userData *Domain) (string, error)
-	Login(username, password string) (string, error)
+	Register(userData *Domain) (error)
+	Login(username, password string) (Domain, error)
 }
 
 type Repository interface {

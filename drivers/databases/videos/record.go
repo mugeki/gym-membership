@@ -10,7 +10,7 @@ import (
 type Videos struct {
 	gorm.Model
 	Title				string
-	ClassificationID	int
+	ClassificationID	uint
 	Classification		classifications.Classification	`gorm:"constraint:OnUpdate:NO ACTION,OnDelete:NO ACTION;"`
 	AdminID				uint
 	Admin				admins.Admins					`gorm:"constraint:OnUpdate:NO ACTION,OnDelete:NO ACTION;"`
