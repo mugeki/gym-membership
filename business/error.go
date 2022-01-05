@@ -8,4 +8,5 @@ var (
 	ErrUserNotFound = errors.New("User not found")
 	ErrInternalServer = errors.New("Something went wrong")
 	ErrUnauthorized = errors.New("User Unauthorized")
+	ErrProductNotFound = errors.New("Product not found")
 )

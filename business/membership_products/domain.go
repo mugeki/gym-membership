@@ -9,15 +9,17 @@ type Domain struct {
 }
 
 type Usecase interface {
-	Insert(membershipProductsData *Domain) (string, error)
-	GetByID(idMembers uint) (Domain, error)
-	UpdateByID(idMembers uint, membersData *Domain) (string, error)
-	DeleteByID(idMembers uint) error
+	Insert(newData *Domain) error
+	GetAll() ([]Domain, error)
+	GetByID(id uint) (Domain, error)
+	UpdateByID(id uint, newData *Domain) error
+	DeleteByID(id uint) error
 }
 
 type Repository interface {
-	Insert(membershipProductsData *Domain) (Domain, error)
-	GetByID(idMembers uint) (Domain, error)
-	UpdateByID(idMembers uint, membersData *Domain) (string, error)
-	DeleteByID(idMembers uint) error
+	Insert(newData *Domain) error
+	GetAll() ([]Domain, error)
+	GetByID(id uint) (Domain, error)
+	UpdateByID(id uint, newData *Domain) error
+	DeleteByID(id uint) error
 }

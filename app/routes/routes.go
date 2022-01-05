@@ -21,7 +21,8 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 
 	membership_products := e.Group("membership-products")
 	membership_products.POST("", ctrlList.MembershipProductsController.Insert)
+	membership_products.GET("", ctrlList.MembershipProductsController.GetAll)
 	membership_products.GET("/:id", ctrlList.MembershipProductsController.GetByID)
-	membership_products.DELETE("/:idMembers", ctrlList.MembershipProductsController.DeleteByID)
-	membership_products.PUT("/:idMembers", ctrlList.MembershipProductsController.UpdateByID)
+	membership_products.DELETE("/:id", ctrlList.MembershipProductsController.DeleteByID)
+	membership_products.PUT("/:id", ctrlList.MembershipProductsController.UpdateByID)
 }

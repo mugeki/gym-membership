@@ -1,7 +1,10 @@
 package membership_products
 
 import (
+	"errors"
 	"gym-membership/business"
+
+	"gorm.io/gorm"
 )
 
 type membershipProductsUsecase struct {
@@ -14,19 +17,55 @@ func NewMembershipProductsUsecase(membershipProductsRepository Repository) Useca
 	}
 }
 
-func (uc *membershipProductsUsecase) Insert(membershipProductsData *Domain) (string, error) {
-	_, err := uc.membershipProductsRepository.Insert(membershipProductsData)
+func (uc *membershipProductsUsecase) Insert(newData *Domain)  error {
+	err := uc.membershipProductsRepository.Insert(newData)
 	if err != nil {
-		return "", business.ErrDuplicateData
+		return business.ErrInternalServer
 	}
 
-	return "item created", nil
+	return nil
 }
 
-func (uc *membershipProductsUsecase) GetByID(idMembershipProducts uint) (Domain, error) { 
-	res, err := uc.membershipProductsRepository.GetByID(idMembershipProducts)
+func (uc *membershipProductsUsecase) GetAll() ([]Domain, error) {
+	res, err := uc.membershipProductsRepository.GetAll()
 	if err != nil {
+		return []Domain{}, business.ErrInternalServer
+	}
+	return res, nil
+}
+
+func (uc *membershipProductsUsecase) GetByID(id uint) (Domain, error) { 
+	res, err := uc.membershipProductsRepository.GetByID(id)
+	if err != nil {
+		if errors.Is(gorm.ErrRecordNotFound, err) {
+			return Domain{}, business.ErrProductNotFound
+		}
 		return Domain{}, business.ErrInternalServer
 	}
 	return res, nil
 }
+
+func (uc *membershipProductsUsecase) UpdateByID(id uint, newData *Domain) error{
+	err := uc.membershipProductsRepository.UpdateByID(id,newData)
+	if err != nil {
+		if errors.Is(gorm.ErrRecordNotFound, err){
+			return business.ErrProductNotFound
+		} else {
+			return business.ErrInternalServer
+		}
+	}
+	return nil
+}
+
+func (uc *membershipProductsUsecase) DeleteByID(id uint) error{
+	err := uc.membershipProductsRepository.DeleteByID(id)
+	if err != nil {
+		if errors.Is(gorm.ErrRecordNotFound, err){
+			return business.ErrProductNotFound
+		} else {
+			return business.ErrInternalServer
+		}
+	}
+	return nil
+}
+

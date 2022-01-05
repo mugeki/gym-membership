@@ -18,22 +18,35 @@ func NewMySQLRepo(conn *gorm.DB) membership_products.Repository {
 	}
 }
 
-func (mysqlRepo *mysqlMembershipProductsRepo) Insert(userData *membership_products.Domain) (membership_products.Domain, error) {
+func (mysqlRepo *mysqlMembershipProductsRepo) Insert(newData *membership_products.Domain) (error) {
 	domain := membership_products.Domain{}
-	recUser := MembershipProducts{}
-	copier.Copy(&recUser, &userData)
-	err := mysqlRepo.Conn.Create(&recUser).Error
+	rec := MembershipProducts{}
+	copier.Copy(&rec, &newData)
+	err := mysqlRepo.Conn.Create(&rec).Error
 	if err != nil {
-		return membership_products.Domain{}, err
+		return err
 	}
-	copier.Copy(domain, recUser)
+	copier.Copy(domain, rec)
+	return nil
+}
+
+func (mysqlRepo *mysqlMembershipProductsRepo) GetAll() ([]membership_products.Domain, error) {
+	domain := []membership_products.Domain{}
+	rec := []MembershipProducts{}
+	
+	err := mysqlRepo.Conn.Find(&rec).Error
+	if err != nil {
+		return nil, err
+	}
+
+	copier.Copy(&domain, &rec)
 	return domain, nil
 }
 
-func (mysqlRepo *mysqlMembershipProductsRepo) GetByID(idMembershipProducts uint) (membership_products.Domain, error) {
+func (mysqlRepo *mysqlMembershipProductsRepo) GetByID(id uint) (membership_products.Domain, error) {
 	rec := MembershipProducts{}
 	domain := membership_products.Domain{}
-	err := mysqlRepo.Conn.First(&rec, "id = ?", idMembershipProducts).Error
+	err := mysqlRepo.Conn.First(&rec, "id = ?", id).Error
 	if err != nil {
 		return membership_products.Domain{}, err
 	}
@@ -41,26 +54,23 @@ func (mysqlRepo *mysqlMembershipProductsRepo) GetByID(idMembershipProducts uint)
 	return domain, nil
 }
 
-func (mysqlRepo *mysqlMembershipProductRepo) UpdateByID(idMembershipProducts uint, membership_products.Domain, error) {
-	// println("cek id", id)
+func (mysqlRepo *mysqlMembershipProductsRepo) UpdateByID(id uint, newData *membership_products.Domain)  error {
 	domain := membership_products.Domain{}
-	rec := membership_products{}
-	// domainData := articles.Domain{}
-	recData := membership_products{}
-	copier.Copy(idMembershipProducts)
-	err := mysqlRepo.Conn.First(&rec, "id = ?", idMembershipProducts).Updates(recData).Error
+	rec := MembershipProducts{}
+	recData := MembershipProducts{}
+	copier.Copy(&recData, &newData)
+	err := mysqlRepo.Conn.First(&rec, "id = ?", id).Updates(recData).Error
 	if err != nil {
-		return articles.Domain{}, err
+		return err
 	}
 	copier.Copy(domain, rec)
-	return domain, nil
+	return nil
 }
 
-func (mysqlRepo *mysqlMembershipProductRepo) DeleteByID(idMembershipProducts uint) error {
-	rec := membership_products{}
-	err := mysqlRepo.Conn.First(&rec, idMembershipProducts).Delete(&rec).Error
+func (mysqlRepo *mysqlMembershipProductsRepo) DeleteByID(id uint) error {
+	rec := MembershipProducts{}
+	err := mysqlRepo.Conn.First(&rec, id).Delete(&rec).Error
 	if rec.ID == 0 {
-		// println("not found", rec.Title)
 		return gorm.ErrRecordNotFound
 	}
 	if err != nil {

@@ -13,74 +13,13 @@ type Usecase struct {
 	mock.Mock
 }
 
-// GetByUserID provides a mock function with given fields: idMembers
-func (_m *Usecase) GetByUserID(idMembers int) (string, error) {
-	ret := _m.Called(idMembers)
-
-	var r0 string
-	if rf, ok := ret.Get(0).(func(int) string); ok {
-		r0 = rf(idMembers)
-	} else {
-		r0 = ret.Get(0).(string)
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func(int) error); ok {
-		r1 = rf(idMembers)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// Insert provides a mock function with given fields: membersData
-func (_m *Usecase) Insert(membersData *membership_products.Domain) (string, error) {
-	ret := _m.Called(membersData)
-
-	var r0 string
-	if rf, ok := ret.Get(0).(func(*membership_products.Domain) string); ok {
-		r0 = rf(membersData)
-	} else {
-		r0 = ret.Get(0).(string)
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func(*membership_products.Domain) error); ok {
-		r1 = rf(membersData)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-func (_m *Usecase) UpdateStatus(idMembers uint) (string, error) {
-	ret := _m.Called(idMembers)
-
-	var r0 string
-	if rf, ok := ret.Get(0).(func(uint) string); ok {
-		r0 = rf(idMembers)
-	} else {
-		r0 = ret.Get(0).(string)
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func(uint) error); ok {
-		r1 = rf(idMembers)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-func (_m *Usecase) DeleteByID(idMembers uint) error {
-	ret := _m.Called(idMembers)
+// DeleteByID provides a mock function with given fields: id
+func (_m *Usecase) DeleteByID(id uint) error {
+	ret := _m.Called(id)
 
 	var r0 error
 	if rf, ok := ret.Get(0).(func(uint) error); ok {
-		r0 = rf(idMembers)
+		r0 = rf(id)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -88,22 +27,74 @@ func (_m *Usecase) DeleteByID(idMembers uint) error {
 	return r0
 }
 
-func (_m *Usecase) UpdateByID(idMembers uint, membersData *membership_products.Domain) (membership_products.Domain, error) {
-	ret := _m.Called(idMembers, membersData)
+// GetAll provides a mock function with given fields:
+func (_m *Usecase) GetAll() ([]membership_products.Domain, error) {
+	ret := _m.Called()
 
-	var r0 membership_products.Domain
-	if rf, ok := ret.Get(0).(func(uint, *membership_products.Domain) membership_products.Domain); ok {
-		r0 = rf(idMembers, membersData)
+	var r0 []membership_products.Domain
+	if rf, ok := ret.Get(0).(func() []membership_products.Domain); ok {
+		r0 = rf()
 	} else {
-		r0 = ret.Get(0).(membership_products.Domain)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]membership_products.Domain)
+		}
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(uint, *membership_products.Domain) error); ok {
-		r1 = rf(idMembers, membersData)
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
 	} else {
 		r1 = ret.Error(1)
 	}
 
 	return r0, r1
+}
+
+// GetByID provides a mock function with given fields: id
+func (_m *Usecase) GetByID(id uint) (membership_products.Domain, error) {
+	ret := _m.Called(id)
+
+	var r0 membership_products.Domain
+	if rf, ok := ret.Get(0).(func(uint) membership_products.Domain); ok {
+		r0 = rf(id)
+	} else {
+		r0 = ret.Get(0).(membership_products.Domain)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(uint) error); ok {
+		r1 = rf(id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// Insert provides a mock function with given fields: newData
+func (_m *Usecase) Insert(newData *membership_products.Domain) error {
+	ret := _m.Called(newData)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*membership_products.Domain) error); ok {
+		r0 = rf(newData)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// UpdateByID provides a mock function with given fields: id, newData
+func (_m *Usecase) UpdateByID(id uint, newData *membership_products.Domain) error {
+	ret := _m.Called(id, newData)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(uint, *membership_products.Domain) error); ok {
+		r0 = rf(id, newData)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
 }
