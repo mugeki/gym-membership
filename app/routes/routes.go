@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"gym-membership/controllers/calendars"
 	"gym-membership/controllers/users"
 	"gym-membership/controllers/videos"
 
@@ -9,9 +10,10 @@ import (
 )
 
 type ControllerList struct {
-	JWTMiddleware  	middleware.JWTConfig
-	UserController 	users.UserController
-	VideoController videos.VideoController
+	JWTMiddleware          middleware.JWTConfig
+	UserController         users.UserController
+	VideoController        videos.VideoController
+	CalendarsApiController calendars.CalendarsController
 }
 
 func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
@@ -24,4 +26,7 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	admins.POST("/videos", ctrlList.VideoController.Insert)
 	admins.PUT("/videos/:idVideo", ctrlList.VideoController.UpdateByID)
 	admins.DELETE("/videos/:idVideo", ctrlList.VideoController.DeleteByID)
+
+	calendars := e.Group("calendars")
+	calendars.GET("", ctrlList.CalendarsApiController.GetAll)
 }

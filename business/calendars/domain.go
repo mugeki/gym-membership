@@ -29,6 +29,10 @@ type Event struct {
 	}
 	ICalUID   string
 	Sequence  int
+	Attendees []struct {
+		Email          string
+		ResponseStatus string
+	}
 	Reminders struct {
 		UseDefault bool
 	}
@@ -37,9 +41,11 @@ type Event struct {
 type Usecase interface {
 	CreateEvent(EventData *Event) (Event, error)
 	AddGuest(eventId, emailGuest string) (Event, error)
+	GetAll() (Event, error)
 }
 
 type Repository interface {
 	CreateEvent(EventData *Event) (Event, error)
 	AddGuest(eventId, emailGuest string) (Event, error)
+	GetAll() (Event, error)
 }

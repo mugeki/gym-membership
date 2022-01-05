@@ -1,4 +1,4 @@
-package calendarsApi
+package request
 
 import "time"
 

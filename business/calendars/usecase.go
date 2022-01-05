@@ -10,10 +10,9 @@ type calendarUsecase struct {
 	jwtAuth            *middleware.ConfigJWT
 }
 
-func NewCalendarUsecase(calendarRepo Repository, jwtauth *middleware.ConfigJWT) Usecase {
+func NewCalendarUsecase(calendarRepo Repository) Usecase {
 	return &calendarUsecase{
 		calendarRepository: calendarRepo,
-		jwtAuth:            jwtauth,
 	}
 }
 
@@ -29,6 +28,15 @@ func (uc *calendarUsecase) CreateEvent(EventData *Event) (Event, error) {
 func (uc *calendarUsecase) AddGuest(eventId, emailGuest string) (Event, error) {
 
 	data, err := uc.calendarRepository.AddGuest(eventId, emailGuest)
+	if err != nil {
+		return Event{}, business.ErrInternalServer
+	}
+	return data, nil
+}
+
+func (uc *calendarUsecase) GetAll() (Event, error) {
+
+	data, err := uc.calendarRepository.GetAll()
 	if err != nil {
 		return Event{}, business.ErrInternalServer
 	}
