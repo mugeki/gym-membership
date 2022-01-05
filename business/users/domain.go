@@ -7,16 +7,16 @@ import (
 )
 
 type Domain struct {
-	ID 			uint
-	UUID 		uuid.UUID
-	Username	string
-	Password	string
-	Email		string
-	FullName 	string
-	Gender 		string
-	Telephone 	string
-	Address 	string
-	CreatedAt 	time.Time
+	ID        uint
+	UUID      uuid.UUID
+	Username  string
+	Password  string
+	Email     string
+	FullName  string
+	Gender    string
+	Telephone string
+	Address   string
+	CreatedAt time.Time
 }
 
 type Usecase interface {
@@ -28,4 +28,3 @@ type Repository interface {
 	Register(userData *Domain) (Domain, error)
 	GetByUsername(username string) (Domain, error)
 }
-
