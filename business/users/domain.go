@@ -17,6 +17,7 @@ type Domain struct {
 	Telephone 	string
 	Address 	string
 	CreatedAt 	time.Time
+	UrlImage	string
 	Token		string
 }
 
