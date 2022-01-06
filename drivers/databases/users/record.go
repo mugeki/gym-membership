@@ -14,5 +14,6 @@ type Users struct {
 	FullName 	string	
 	Gender 		string
 	Telephone 	string	
-	Address 	string	
+	Address 	string
+	UrlImage	string
 }

@@ -57,10 +57,9 @@ func TestRegister(t *testing.T){
 			CreatedAt 	: time.Date(2021,12,1,0,0,0,0,time.UTC),
 		}
 
-		resp, err := userUsecase.Register(&inputData)
+		err := userUsecase.Register(&inputData)
 
 		assert.Nil(t, err)
-		assert.Equal(t, "item created", resp)
 	})
 	t.Run("Invalid Test | Duplicate Data", func(t *testing.T){
 		mockUserRepo.On("Register", mock.Anything).Return(users.Domain{},assert.AnError).Once()
@@ -76,10 +75,9 @@ func TestRegister(t *testing.T){
 			CreatedAt 	: time.Date(2021,12,1,0,0,0,0,time.UTC),
 		}
 
-		resp, err := userUsecase.Register(&inputData)
+		err := userUsecase.Register(&inputData)
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "", resp)
 	})
 }
 
@@ -106,7 +104,7 @@ func TestLogin(t *testing.T){
 		resp, err := userUsecase.Login(username, password)
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "", resp)
+		assert.Equal(t, users.Domain{}, resp)
 	})
 	t.Run("Invalid Test | Invalid Password", func(t *testing.T){
 		mockUserRepo.On("GetByUsername", mock.AnythingOfType("string")).
@@ -120,6 +118,6 @@ func TestLogin(t *testing.T){
 		resp, err := userUsecase.Login(username, password)
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "", resp)
+		assert.Equal(t, users.Domain{}, resp)
 	})
 }

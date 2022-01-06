@@ -6,9 +6,9 @@ import (
 
 type BaseResponse struct {
 	Meta struct {
-		Status  	int    		`json:"status"`
-		Message 	string 		`json:"message"`
-		Messages 	[]string	`json:"messages,omitempty"`
+		Status   int      `json:"status"`
+		Message  string   `json:"message"`
+		Messages []string `json:"messages,omitempty"`
 	} `json:"meta"`
 	Page interface{} `json:"page,omitempty"`
 	Data interface{} `json:"data,omitempty"`
@@ -24,7 +24,6 @@ func NewSuccessResponse(c echo.Context, status int, data interface{}, args ...in
 	if len(args) > 0 {
 		res.Page = args[0]
 	}
-	
 	return c.JSON(status, res)
 }
 

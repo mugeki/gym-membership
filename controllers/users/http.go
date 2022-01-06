@@ -4,6 +4,7 @@ import (
 	"gym-membership/business/users"
 	controller "gym-membership/controllers"
 	"gym-membership/controllers/users/request"
+	"gym-membership/controllers/users/response"
 	"net/http"
 
 	"github.com/asaskevich/govalidator"
@@ -21,10 +22,10 @@ func NewUserController(Usecase users.Usecase) *UserController {
 	}
 }
 
-func (ctrl *UserController) Register(c echo.Context) error{
-	domain := users.Domain{}
+func (ctrl *UserController) Register(c echo.Context) error {
 	req := request.Users{}
-	if err := c.Bind(&req); err != nil{
+	domain := users.Domain{}
+	if err := c.Bind(&req); err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}
 
@@ -33,15 +34,15 @@ func (ctrl *UserController) Register(c echo.Context) error{
 	}
 
 	copier.Copy(&domain, &req)
-	data, err := ctrl.userUsecase.Register(&domain)
+	err := ctrl.userUsecase.Register(&domain)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusConflict, err)
 	}
 
-	return controller.NewSuccessResponse(c, http.StatusOK, data)
+	return controller.NewSuccessResponse(c, http.StatusOK, nil)
 }
 
-func (ctrl *UserController) Login(c echo.Context) error{
+func (ctrl *UserController) Login(c echo.Context) error {
 	req := request.UsersLogin{}
 	if err := c.Bind(&req); err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
@@ -51,14 +52,11 @@ func (ctrl *UserController) Login(c echo.Context) error{
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}
 
-	token, err := ctrl.userUsecase.Login(req.Username, req.Password)
+	data, err := ctrl.userUsecase.Login(req.Username, req.Password)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusUnauthorized, err)
 	}
-	
-	res := struct {
-		Token string `json:"token"`
-	}{Token: token}
-
+	res := response.Users{}
+	copier.Copy(&res, &data)
 	return controller.NewSuccessResponse(c, http.StatusOK, res)
 }
