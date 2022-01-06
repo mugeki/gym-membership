@@ -1,13 +1,13 @@
 package routes
 
 import (
-	"gym-membership/controllers/membership_products"
-	"gym-membership/controllers/class"
-	"gym-membership/controllers/trainers"
-	"gym-membership/controllers/transactionClass"
 	"gym-membership/controllers/admins"
 	"gym-membership/controllers/articles"
+	"gym-membership/controllers/class"
 	"gym-membership/controllers/classifications"
+	"gym-membership/controllers/membership_products"
+	"gym-membership/controllers/trainers"
+	"gym-membership/controllers/transactionClass"
 	"gym-membership/controllers/users"
 	"gym-membership/controllers/videos"
 
@@ -16,9 +16,9 @@ import (
 )
 
 type ControllerList struct {
-	MembershipProductsController membership_products.MembershipProductsController
 	JWTMiddleware              middleware.JWTConfig
 	UserController             users.UserController
+	MembershipProductsController membership_products.MembershipProductsController
 	ClassController            class.ClassController
 	TrainerController          trainers.TrainerController
 	TransactionClassController transactionClass.TransactionClassController
@@ -32,7 +32,7 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	users := e.Group("users")
 	users.POST("", ctrlList.UserController.Register)
 	users.POST("/login", ctrlList.UserController.Login)
-  users.GET("/videos", ctrlList.VideoController.GetAll)
+  	users.GET("/videos", ctrlList.VideoController.GetAll)
 
 	membership_products := e.Group("membership-products")
 	membership_products.POST("", ctrlList.MembershipProductsController.Insert)
@@ -67,7 +67,7 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	classification.GET("", ctrlList.ClassificationController.GetAll)
 
 	admins := e.Group("admins")
-  admins.POST("", ctrlList.AdminController.Register)
+  	admins.POST("", ctrlList.AdminController.Register)
 	admins.POST("/login", ctrlList.AdminController.Login)
 	admins.POST("/videos", ctrlList.VideoController.Insert)
 	admins.PUT("/videos/:idVideo", ctrlList.VideoController.UpdateByID)
