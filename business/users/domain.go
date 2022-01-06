@@ -7,21 +7,23 @@ import (
 )
 
 type Domain struct {
-	ID        uint
-	UUID      uuid.UUID
-	Username  string
-	Password  string
-	Email     string
-	FullName  string
-	Gender    string
-	Telephone string
-	Address   string
-	CreatedAt time.Time
+	ID 			uint
+	UUID 		uuid.UUID
+	Username	string
+	Password	string
+	Email		string
+	FullName 	string
+	Gender 		string
+	Telephone 	string
+	Address 	string
+	CreatedAt 	time.Time
+	UrlImage	string
+	Token		string
 }
 
 type Usecase interface {
-	Register(userData *Domain) (string, error)
-	Login(username, password string) (string, error)
+	Register(userData *Domain) (error)
+	Login(username, password string) (Domain, error)
 }
 
 type Repository interface {

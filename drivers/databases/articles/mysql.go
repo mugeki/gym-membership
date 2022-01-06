@@ -30,7 +30,9 @@ func (mysqlRepo *mysqlArticlesRepo) GetAll(title string, offset, limit int) ([]a
 	}
 
 	copier.Copy(&domain, &rec)
-
+	for i := 0; i < len(rec); i++ {
+		domain[i].ClassificationName = rec[i].Classification.Name
+	}
 	return domain, totalData, nil
 
 }

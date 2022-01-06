@@ -46,6 +46,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"gorm.io/gorm"
 )
 
@@ -80,6 +81,10 @@ func main() {
 		ExpiresDuration: int64(EXPIRE),
 	}
 	e := echo.New()
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"http://localhost:3000"},
+  		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+	}))
 
 	userRepo := _driverFactory.NewUserRepository(db)
 	userUsecase := _userUsecase.NewUserUsecase(userRepo, &configJWT)
@@ -106,11 +111,10 @@ func main() {
 	articleUsecase := _articleService.NewArticleUsecase(articleRepo, classificationRepo)
 	articleCtrl := _articleController.NewArticleController(articleUsecase)
 
-	classificationRepo := _driverFactory.NewArticleRepository(db)
 	classificationUsecase := _classificationService.NewClassificationUsecase(classificationRepo)
 	classificationCtrl := _classificationController.NewClassificationController(classificationUsecase)
   
-  videoRepo := _driverFactory.NewVideoRepository(db)
+  	videoRepo := _driverFactory.NewVideoRepository(db)
 	videoUsecase := _videoService.NewVideoUsecase(videoRepo)
 	videoCtrl := _videoController.NewVideoController(videoUsecase)
   
