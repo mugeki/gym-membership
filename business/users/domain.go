@@ -30,4 +30,3 @@ type Repository interface {
 	Register(userData *Domain) (Domain, error)
 	GetByUsername(username string) (Domain, error)
 }
-

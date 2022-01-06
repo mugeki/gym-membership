@@ -10,6 +10,18 @@ import (
 	_userController "gym-membership/controllers/users"
 	_userRepo "gym-membership/drivers/databases/users"
 
+	_classService "gym-membership/business/class"
+	_classController "gym-membership/controllers/class"
+	_classRepo "gym-membership/drivers/databases/class"
+
+	_trainerService "gym-membership/business/trainers"
+	_trainerController "gym-membership/controllers/trainers"
+	_trainerRepo "gym-membership/drivers/databases/trainers"
+
+	_transactionClassService "gym-membership/business/transactionClass"
+	_transactionClassController "gym-membership/controllers/transactionClass"
+	_transactionClassRepo "gym-membership/drivers/databases/transactionClass"
+
 	_adminService "gym-membership/business/admins"
 	_adminController "gym-membership/controllers/admins"
 	_adminRepo "gym-membership/drivers/databases/admins"
@@ -27,6 +39,7 @@ import (
 
 	_classificationRepo "gym-membership/drivers/databases/classifications"
 
+
 	_middleware "gym-membership/app/middleware"
 	_routes "gym-membership/app/routes"
 	_dbDriver "gym-membership/drivers/mysql"
@@ -40,6 +53,9 @@ import (
 func dbMigrate(db *gorm.DB) {
 	db.AutoMigrate(
 		&_userRepo.Users{},
+		&_classRepo.Class{},
+		&_trainerRepo.Trainers{},
+		&_transactionClassRepo.TransactionClass{},
 		&_adminRepo.Admins{},
 		&_articleRepo.Articles{},
 		&_classificationRepo.Classification{},
@@ -74,6 +90,18 @@ func main() {
 	userUsecase := _userUsecase.NewUserUsecase(userRepo, &configJWT)
 	userCtrl := _userController.NewUserController(userUsecase)
 
+	classRepo := _driverFactory.NewClassRepository(db)
+	classUsecase := _classService.NewClassUsecase(classRepo, &configJWT)
+	classCtrl := _classController.NewClassController(classUsecase)
+
+	trainerRepo := _driverFactory.NewTrainerRepository(db)
+	trainerUsecase := _trainerService.NewTrainerUsecase(trainerRepo)
+	trainerCtrl := _trainerController.NewTrainerController(trainerUsecase)
+
+	transactionClassRepo := _driverFactory.NewTransactionClassRepository(db)
+	transactionClassUsecase := _transactionClassService.NewTransactionClassUsecase(transactionClassRepo, classRepo)
+	transactionClassCtrl := _transactionClassController.NewTransactionClassController(transactionClassUsecase)
+
 	adminRepo := _driverFactory.NewAdminRepository(db)
 	adminUsecase := _adminService.NewAdminUsecase(adminRepo, &configJWT)
 	adminCtrl := _adminController.NewAdminController(adminUsecase)
@@ -96,9 +124,10 @@ func main() {
 		AdminController:          *adminCtrl,
 		ArticleController:        *articleCtrl,
 		ClassificationController: *classificationCtrl,
-    VideoController:	*videoCtrl,	
-
-	
+    VideoController:	*videoCtrl,
+    ClassController:            *classCtrl,
+		TrainerController:          *trainerCtrl,
+		TransactionClassController: *transactionClassCtrl,
 	}
 	routesInit.RegisterRoute(e)
 
