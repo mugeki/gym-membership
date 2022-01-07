@@ -60,8 +60,8 @@ func (uc *transactionClassUsecase) GetActiveClass(idUser uint) ([]class.Domain, 
 	return res, nil
 }
 
-func (uc *transactionClassUsecase) UpdateStatus(id uint, status string) (string, error) {
-	_, err := uc.transactionClassRepository.UpdateStatus(id, status)
+func (uc *transactionClassUsecase) UpdateStatus(id, idAdmin uint, status string) (string, error) {
+	_, err := uc.transactionClassRepository.UpdateStatus(id, idAdmin, status)
 	if err != nil {
 		return "", business.ErrInternalServer
 	}

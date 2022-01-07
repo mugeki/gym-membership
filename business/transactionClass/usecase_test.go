@@ -140,14 +140,14 @@ func TestUpdateStatus(t *testing.T) {
 	t.Run("Valid Test", func(t *testing.T) {
 		mockTransactionClassRepo.On("UpdateStatus", mock.AnythingOfType("uint"), mock.AnythingOfType("string")).Return(transactionClassData, nil).Once()
 
-		resp, err := transactionClassUsecase.UpdateStatus(uint(1), "accepted")
+		resp, err := transactionClassUsecase.UpdateStatus(uint(1), uint(1), "accepted")
 
 		assert.Nil(t, err)
 		assert.Equal(t, "", resp)
 	})
 	t.Run("Invalid Test | Internal Server Error", func(t *testing.T) {
 		mockTransactionClassRepo.On("UpdateStatus", mock.AnythingOfType("uint"), mock.AnythingOfType("string")).Return(transactionClass.Domain{}, assert.AnError).Once()
-		resp, err := transactionClassUsecase.UpdateStatus(uint(1), "accepted")
+		resp, err := transactionClassUsecase.UpdateStatus(uint(1), uint(1), "accepted")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "", resp)

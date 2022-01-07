@@ -1,12 +1,12 @@
 package routes
 
 import (
-	"gym-membership/controllers/class"
-	"gym-membership/controllers/trainers"
-	"gym-membership/controllers/transactionClass"
 	"gym-membership/controllers/admins"
 	"gym-membership/controllers/articles"
+	"gym-membership/controllers/class"
 	"gym-membership/controllers/classifications"
+	"gym-membership/controllers/trainers"
+	"gym-membership/controllers/transactionClass"
 	"gym-membership/controllers/users"
 	"gym-membership/controllers/videos"
 
@@ -20,17 +20,17 @@ type ControllerList struct {
 	ClassController            class.ClassController
 	TrainerController          trainers.TrainerController
 	TransactionClassController transactionClass.TransactionClassController
-	AdminController          admins.AdminController
-	ArticleController        articles.ArticleController
-	ClassificationController classifications.ClassificationController
-	VideoController videos.VideoController
+	AdminController            admins.AdminController
+	ArticleController          articles.ArticleController
+	ClassificationController   classifications.ClassificationController
+	VideoController            videos.VideoController
 }
 
 func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	users := e.Group("users")
 	users.POST("", ctrlList.UserController.Register)
 	users.POST("/login", ctrlList.UserController.Login)
-  users.GET("/videos", ctrlList.VideoController.GetAll)
+	users.GET("/videos", ctrlList.VideoController.GetAll)
 
 	class := e.Group("class")
 	class.POST("", ctrlList.ClassController.Insert)
@@ -38,10 +38,10 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	class.PUT("/:idClass", ctrlList.ClassController.UpdateClassByID)
 	class.GET("/myShcedule/:idUser", ctrlList.ClassController.ScheduleByID)
 
-	transactionClass := e.Group("transactionClass")
+	transactionClass := e.Group("transaction-class")
 	transactionClass.GET("", ctrlList.TransactionClassController.GetAll)
 	transactionClass.POST("", ctrlList.TransactionClassController.Insert)
-	transactionClass.PUT("/updateStatus/:idClass", ctrlList.TransactionClassController.GetAll)
+	transactionClass.PUT("/update-status/:idTransactionClass", ctrlList.TransactionClassController.UpdateStatus)
 	transactionClass.GET("/active/:idUser", ctrlList.TransactionClassController.GetActiveClass)
 
 	trainers := e.Group("trainers")
@@ -58,7 +58,7 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	classification.GET("", ctrlList.ClassificationController.GetAll)
 
 	admins := e.Group("admins")
-  admins.POST("", ctrlList.AdminController.Register)
+	admins.POST("", ctrlList.AdminController.Register)
 	admins.POST("/login", ctrlList.AdminController.Login)
 	admins.POST("/videos", ctrlList.VideoController.Insert)
 	admins.PUT("/videos/:idVideo", ctrlList.VideoController.UpdateByID)

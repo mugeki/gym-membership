@@ -39,7 +39,6 @@ import (
 
 	_classificationRepo "gym-membership/drivers/databases/classifications"
 
-
 	_middleware "gym-membership/app/middleware"
 	_routes "gym-membership/app/routes"
 	_dbDriver "gym-membership/drivers/mysql"
@@ -106,22 +105,22 @@ func main() {
 	articleUsecase := _articleService.NewArticleUsecase(articleRepo, classificationRepo)
 	articleCtrl := _articleController.NewArticleController(articleUsecase)
 
-	classificationRepo := _driverFactory.NewArticleRepository(db)
+	// classificationRepo := _driverFactory.NewArticleRepository(db)
 	classificationUsecase := _classificationService.NewClassificationUsecase(classificationRepo)
 	classificationCtrl := _classificationController.NewClassificationController(classificationUsecase)
-  
-  videoRepo := _driverFactory.NewVideoRepository(db)
+
+	videoRepo := _driverFactory.NewVideoRepository(db)
 	videoUsecase := _videoService.NewVideoUsecase(videoRepo)
 	videoCtrl := _videoController.NewVideoController(videoUsecase)
-  
+
 	routesInit := _routes.ControllerList{
-		JWTMiddleware:            configJWT.Init(),
-		UserController:           *userCtrl,
-		AdminController:          *adminCtrl,
-		ArticleController:        *articleCtrl,
-		ClassificationController: *classificationCtrl,
-    VideoController:	*videoCtrl,
-    ClassController:            *classCtrl,
+		JWTMiddleware:              configJWT.Init(),
+		UserController:             *userCtrl,
+		AdminController:            *adminCtrl,
+		ArticleController:          *articleCtrl,
+		ClassificationController:   *classificationCtrl,
+		VideoController:            *videoCtrl,
+		ClassController:            *classCtrl,
 		TrainerController:          *trainerCtrl,
 		TransactionClassController: *transactionClassCtrl,
 	}
