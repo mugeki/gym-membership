@@ -1,6 +1,7 @@
 package calendarsApi
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
@@ -45,5 +46,7 @@ func getToken(w http.ResponseWriter, r *http.Request) {
 func RequestToken() *oauth2.Token {
 	http.HandleFunc("/GoogleLogin", getToken)
 	fmt.Println("token =========== ", tokenString)
+	tokenStashed, _ := json.Marshal(tokenString)
+	fmt.Println(tokenStashed, "token stashed ======")
 	return tokenString
 }

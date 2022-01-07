@@ -68,6 +68,7 @@ func main() {
 	// fmt.Println(client, "client print")
 	// defer client.Close()
 	calendarService, err := calendar.New(client)
+
 	if err != nil {
 		fmt.Println("error: ", err)
 	}
