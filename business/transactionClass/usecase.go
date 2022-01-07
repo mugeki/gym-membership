@@ -3,7 +3,6 @@ package transactionClass
 import (
 	"gym-membership/business"
 	"gym-membership/business/class"
-	"strings"
 	// "gym-membership/helper/encrypt"
 	// "github.com/google/uuid"
 )
@@ -46,8 +45,7 @@ func (uc *transactionClassUsecase) GetAll(status string, idUser uint, page int) 
 		offset = (page - 1) * 10
 	}
 
-	resStatus := strings.ReplaceAll(status, "-", " ")
-	res, totalData, err := uc.transactionClassRepository.GetAll(resStatus, idUser, offset, limit)
+	res, totalData, err := uc.transactionClassRepository.GetAll(status, idUser, offset, limit)
 	if err != nil {
 		return []Domain{}, -1, -1, -1, business.ErrInternalServer
 	}
