@@ -5,7 +5,6 @@ import (
 	"gym-membership/drivers/databases/users"
 
 	"gorm.io/gorm"
-	// "gym-membership/drivers/databases/admins"
 )
 
 type TransactionClass struct {

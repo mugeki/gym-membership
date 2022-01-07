@@ -46,8 +46,7 @@ func (ctrl *ClassController) Insert(c echo.Context) error {
 func (ctrl *ClassController) GetAll(c echo.Context) error {
 	title := c.QueryParam("name")
 	page, _ := strconv.Atoi(c.QueryParam("page"))
-	// status := c.QueryParam("status")
-	res := response.Class{}
+	res := []response.Class{}
 	if page <= 0 {
 		page = 1
 	}

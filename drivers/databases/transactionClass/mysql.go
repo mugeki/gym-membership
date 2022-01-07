@@ -31,7 +31,6 @@ func (mysqlRepo *mysqlTransactionClassRepo) Insert(transactionClassData *transac
 	}
 	copier.Copy(&domain, &recTransaction)
 	domain.Nominal = recTransaction.Class.Price
-	// domain.Location = recTransaction.Class.Location
 	println("ID: ", domain.ID, "   UserID: ", domain.UserID)
 	return domain, nil
 }
@@ -42,11 +41,11 @@ func (mysqlRepo *mysqlTransactionClassRepo) GetAll(status string, idUser uint, o
 	rec := []TransactionClass{}
 	var err error
 	if status != "" || idUser != 0 {
-		err = mysqlRepo.Conn.Limit(limit).Offset(offset).
-			Find(&rec, "status = ? OR user_id = ?", status, idUser).Count(&totalData).Order("updated_at desc").Error
+		err = mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").Joins("Class").
+			Find(&rec, "status = ? OR user_id = ?", status, idUser).Count(&totalData).Error
 	} else {
-		err = mysqlRepo.Conn.Limit(limit).Offset(offset).
-			Find(&rec).Count(&totalData).Order("updated_at desc").Error
+		err = mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").Joins("Class").
+			Find(&rec).Count(&totalData).Error
 	}
 
 	if err != nil {
@@ -54,6 +53,9 @@ func (mysqlRepo *mysqlTransactionClassRepo) GetAll(status string, idUser uint, o
 	}
 
 	copier.Copy(&domain, &rec)
+	for i := 0; i < len(rec); i++ {
+		domain[i].Nominal = rec[i].Class.Price
+	}
 	return domain, totalData, nil
 }
 
@@ -74,7 +76,6 @@ func (mysqlRepo *mysqlTransactionClassRepo) GetActiveClass(idUser uint) ([]class
 	domain := []transactionClass.Domain{}
 	domainArrClass := []class.Domain{}
 
-	// println("update to false")
 	err := mysqlRepo.Conn.Order("updated_at desc").Joins("Class").Find(&rec, "user_id = ? AND status = ?", idUser, "accepted").Error
 	if err != nil {
 		return []class.Domain{}, err

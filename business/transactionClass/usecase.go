@@ -4,21 +4,17 @@ import (
 	"gym-membership/business"
 	"gym-membership/business/class"
 	"strings"
-	// "gym-membership/helper/encrypt"
-	// "github.com/google/uuid"
 )
 
 type transactionClassUsecase struct {
 	transactionClassRepository Repository
 	classRepository            class.Repository
-	// jwtAuth                    *middleware.ConfigJWT
 }
 
 func NewTransactionClassUsecase(transactionClassRepo Repository, classRepository class.Repository) Usecase {
 	return &transactionClassUsecase{
 		transactionClassRepository: transactionClassRepo,
 		classRepository:            classRepository,
-		// jwtAuth:                    jwtauth,
 	}
 }
 
@@ -26,7 +22,7 @@ func (uc *transactionClassUsecase) Insert(transactionClassData *Domain) (Domain,
 	transactionClassData.Status = "waiting for payment"
 	data, err := uc.transactionClassRepository.Insert(transactionClassData)
 	if err != nil {
-		return Domain{}, business.ErrDuplicateData
+		return Domain{}, business.ErrInternalServer
 	}
 	idClass := transactionClassData.ClassID
 	_, errUpdateKuota := uc.classRepository.UpdateParticipant(idClass)
@@ -63,7 +59,8 @@ func (uc *transactionClassUsecase) GetActiveClass(idUser uint) ([]class.Domain, 
 }
 
 func (uc *transactionClassUsecase) UpdateStatus(id uint, status string) (string, error) {
-	_, err := uc.transactionClassRepository.UpdateStatus(id, status)
+	formattedStatus := strings.ReplaceAll(status, "-", " ")
+	_, err := uc.transactionClassRepository.UpdateStatus(id, formattedStatus)
 	if err != nil {
 		return "", business.ErrInternalServer
 	}
