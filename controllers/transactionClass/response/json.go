@@ -14,16 +14,3 @@ type Page struct {
 	Limit     int   `json:"limit"`
 	TotalData int64 `json:"total_data"`
 }
-
-type Class struct {
-	ID           uint
-	Name         string `json:"name"`
-	UrlImage     string `json:"url_image"`
-	TrainerName  string `json:"trainer_name"`
-	TrainerImage string `json:"trainer_image"`
-	Description  string `json:"description"`
-	IsOnline     bool   `json:"is_online"`
-	StartDate    string `json:"start_date"`
-	StartEnd     string `json:"start_end"`
-	Location     string `json:"location"`
-}

@@ -38,7 +38,7 @@ func (ctrl *TransactionClassController) Insert(c echo.Context) error {
 	copier.Copy(&domain, &req)
 	data, err := ctrl.transactionClassUsecase.Insert(&domain)
 	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusConflict, err)
+		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
 	copier.Copy(&res, &data)
 	return controller.NewSuccessResponse(c, http.StatusOK, res)
@@ -71,7 +71,6 @@ func (ctrl *TransactionClassController) GetAll(c echo.Context) error {
 
 func (ctrl *TransactionClassController) GetActiveClass(c echo.Context) error {
 	idUser, _ := strconv.Atoi(c.Param("idUser"))
-	// println(idUser, "id user")
 	data, err := ctrl.transactionClassUsecase.GetActiveClass(uint(idUser))
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
@@ -86,9 +85,9 @@ func (ctrl *TransactionClassController) GetActiveClass(c echo.Context) error {
 func (ctrl *TransactionClassController) UpdateStatus(c echo.Context) error {
 	classId, _ := strconv.Atoi(c.Param("idClass"))
 	status := c.QueryParam("status")
-	stringStatus, err := ctrl.transactionClassUsecase.UpdateStatus(uint(classId), status)
+	res, err := ctrl.transactionClassUsecase.UpdateStatus(uint(classId), status)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
-	return controller.NewSuccessResponse(c, http.StatusOK, stringStatus)
+	return controller.NewSuccessResponse(c, http.StatusOK, res)
 }

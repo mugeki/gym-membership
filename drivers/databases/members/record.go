@@ -10,6 +10,6 @@ import (
 type Members struct {
 	gorm.Model
 	UserID     uint
-	Users      users.Users `gorm:"constraint:OnUpdate:NO ACTION,OnDelete:NO ACTION"`
+	User      users.Users `gorm:"constraint:OnUpdate:NO ACTION,OnDelete:NO ACTION"`
 	ExpireDate time.Time
 }

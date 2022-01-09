@@ -31,7 +31,7 @@ func (mysqlRepo *mysqlTransactionClassRepo) Insert(transactionClassData *transac
 	}
 	copier.Copy(&domain, &recTransaction)
 	domain.Nominal = recTransaction.Class.Price
-	println("ID: ", domain.ID, "   UserID: ", domain.UserID)
+
 	return domain, nil
 }
 

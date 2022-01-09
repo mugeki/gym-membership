@@ -1,6 +1,7 @@
 package membership_transactions
 
 import (
+	"fmt"
 	"gym-membership/business/membership_transactions"
 
 	"github.com/jinzhu/copier"
@@ -18,16 +19,19 @@ func NewMySQLRepo(conn *gorm.DB) membership_transactions.Repository {
 }
 
 func (mysqlRepo *mysqlMembershipTransactionRepo) Insert(data *membership_transactions.Domain) (membership_transactions.Domain, error) {
+	fmt.Println(data.AdminID, data.MembershipProductID, data.UserID)
 	domain := membership_transactions.Domain{}
 	recTransaction := MembershipTransactions{}
 	copier.Copy(&recTransaction, &data)
+	fmt.Println(recTransaction.AdminID, recTransaction.MembershipProductID, recTransaction.UserID)
 	err := mysqlRepo.Conn.Create(&recTransaction).Error
-	mysqlRepo.Conn.Joins("MembershipProducts").Find(&recTransaction)
+	mysqlRepo.Conn.Joins("MembershipProduct").Find(&recTransaction)
 	if err != nil {
 		return membership_transactions.Domain{}, err
 	}
 	copier.Copy(&domain, &recTransaction)
 	domain.Nominal = recTransaction.MembershipProduct.Price
+	fmt.Println(domain.AdminID, domain.MembershipProductID, domain.UserID)
 	return domain, nil
 }
 
@@ -41,7 +45,7 @@ func (mysqlRepo *mysqlMembershipTransactionRepo) GetAll(status string, idUser ui
 			Find(&rec, "status = ? OR user_id = ?", status, idUser).Count(&totalData).Error
 	} else {
 		err = mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").
-			Joins("MembershipProducts").Find(&rec).Count(&totalData).Error
+			Joins("MembershipProduct").Find(&rec).Count(&totalData).Error
 	}
 
 	if err != nil {
@@ -58,7 +62,7 @@ func (mysqlRepo *mysqlMembershipTransactionRepo) GetAll(status string, idUser ui
 func (mysqlRepo *mysqlMembershipTransactionRepo) UpdateStatus(id uint, status string) (membership_transactions.Domain, error) {
 	rec := MembershipTransactions{}
 	domain := membership_transactions.Domain{}
-	errUpdate := mysqlRepo.Conn.Joins("MembershipProducts").First(&rec, "id = ?", id).Update("status", status).Error
+	errUpdate := mysqlRepo.Conn.Joins("MembershipProduct").First(&rec, "id = ?", id).Update("status", status).Error
 	if errUpdate != nil {
 		return membership_transactions.Domain{}, errUpdate
 	}

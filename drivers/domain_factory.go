@@ -1,10 +1,11 @@
 package drivers
 
 import (
-	usersDomain "gym-membership/business/users"
-	usersDB "gym-membership/drivers/databases/users"
 	membershipProductsDomain "gym-membership/business/membership_products"
 	membershipProductsDB "gym-membership/drivers/databases/membership_products"
+
+	usersDomain "gym-membership/business/users"
+	usersDB "gym-membership/drivers/databases/users"
 
 	classDomain "gym-membership/business/class"
 	classDB "gym-membership/drivers/databases/class"
@@ -14,6 +15,12 @@ import (
 
 	transactionClassDomain "gym-membership/business/transactionClass"
 	transactionClassDB "gym-membership/drivers/databases/transactionClass"
+
+	transactionMembershipDomain "gym-membership/business/membership_transactions"
+	transactionMembershipDB "gym-membership/drivers/databases/membership_transactions"
+
+	memberDomain "gym-membership/business/members"
+	memberDB "gym-membership/drivers/databases/members"
 
 	adminsDomain "gym-membership/business/admins"
 	adminsDB "gym-membership/drivers/databases/admins"
@@ -26,7 +33,6 @@ import (
 
 	videosDomain "gym-membership/business/videos"
 	videosDB "gym-membership/drivers/databases/videos"
-
 
 	"gorm.io/gorm"
 )
@@ -65,4 +71,12 @@ func NewClassificationRepository(conn *gorm.DB) classificationDomain.Repository 
 
 func NewVideoRepository(conn *gorm.DB) videosDomain.Repository{
 	return videosDB.NewMySQLRepo(conn)
+}
+
+func NewTransactionMembershipRepository(conn *gorm.DB) transactionMembershipDomain.Repository {
+	return transactionMembershipDB.NewMySQLRepo(conn)
+}
+
+func NewMemberRepository(conn *gorm.DB) memberDomain.Repository{
+	return memberDB.NewMySQLRepo(conn)
 }

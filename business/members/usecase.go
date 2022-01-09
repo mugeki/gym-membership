@@ -11,7 +11,7 @@ type memberUsecase struct {
 	memberRepository Repository
 }
 
-func NewTransactionClassUsecase(memberRepo Repository) Usecase {
+func NewMemberUsecase(memberRepo Repository) Usecase {
 	return &memberUsecase{
 		memberRepository: memberRepo,
 	}

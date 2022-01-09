@@ -5,7 +5,9 @@ import (
 	"gym-membership/controllers/articles"
 	"gym-membership/controllers/class"
 	"gym-membership/controllers/classifications"
+	"gym-membership/controllers/members"
 	"gym-membership/controllers/membership_products"
+	"gym-membership/controllers/membership_transactions"
 	"gym-membership/controllers/trainers"
 	"gym-membership/controllers/transactionClass"
 	"gym-membership/controllers/users"
@@ -26,6 +28,8 @@ type ControllerList struct {
 	ArticleController        articles.ArticleController
 	ClassificationController classifications.ClassificationController
 	VideoController videos.VideoController
+	MembershipTransactionController	membership_transactions.MembershipTransactionController
+	MemberController	members.MemberController
 }
 
 func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
@@ -72,4 +76,12 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	admins.POST("/videos", ctrlList.VideoController.Insert)
 	admins.PUT("/videos/:idVideo", ctrlList.VideoController.UpdateByID)
 	admins.DELETE("/videos/:idVideo", ctrlList.VideoController.DeleteByID)
+
+	transactionMembership := e.Group("transaction-membership")
+	transactionMembership.GET("", ctrlList.MembershipTransactionController.GetAll)
+	transactionMembership.POST("", ctrlList.MembershipTransactionController.Insert)
+	transactionMembership.PUT("/update-status/:idClass", ctrlList.MembershipTransactionController.UpdateStatus)
+
+	members := e.Group("members")
+	members.GET("/:userId", ctrlList.MemberController.GetByUserID)
 }

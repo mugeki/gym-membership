@@ -10,7 +10,7 @@ type Domain struct {
 	AdminID uint
 	Status  string
 	Nominal int
-	MembershiProductID uint
+	MembershipProductID uint
 	Date    time.Time
 }
 

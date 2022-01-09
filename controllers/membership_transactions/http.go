@@ -1,10 +1,10 @@
-package transactionClass
+package membership_transactions
 
 import (
-	"gym-membership/business/transactionClass"
+	"gym-membership/business/membership_transactions"
 	controller "gym-membership/controllers"
-	"gym-membership/controllers/transactionClass/request"
-	"gym-membership/controllers/transactionClass/response"
+	"gym-membership/controllers/membership_transactions/request"
+	"gym-membership/controllers/membership_transactions/response"
 	"net/http"
 	"strconv"
 
@@ -13,20 +13,20 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type TransactionClassController struct {
-	transactionClassUsecase transactionClass.Usecase
+type MembershipTransactionController struct {
+	membershipTransactionsUsecase membership_transactions.Usecase
 }
 
-func NewTransactionClassController(Usecase transactionClass.Usecase) *TransactionClassController {
-	return &TransactionClassController{
-		transactionClassUsecase: Usecase,
+func NewMembershipTransactionController(Usecase membership_transactions.Usecase) *MembershipTransactionController {
+	return &MembershipTransactionController{
+		membershipTransactionsUsecase: Usecase,
 	}
 }
 
-func (ctrl *TransactionClassController) Insert(c echo.Context) error {
-	req := request.TransactionClass{}
-	res := response.TransactionClass{}
-	domain := transactionClass.Domain{}
+func (ctrl *MembershipTransactionController) Insert(c echo.Context) error {
+	req := request.MembershipTransaction{}
+	res := response.MembershipTransaction{}
+	domain := membership_transactions.Domain{}
 	if err := c.Bind(&req); err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}
@@ -36,22 +36,22 @@ func (ctrl *TransactionClassController) Insert(c echo.Context) error {
 	}
 
 	copier.Copy(&domain, &req)
-	data, err := ctrl.transactionClassUsecase.Insert(&domain)
+	data, err := ctrl.membershipTransactionsUsecase.Insert(&domain)
 	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusConflict, err)
+		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
 	copier.Copy(&res, &data)
 	return controller.NewSuccessResponse(c, http.StatusOK, res)
 }
 
-func (ctrl *TransactionClassController) GetAll(c echo.Context) error {
+func (ctrl *MembershipTransactionController) GetAll(c echo.Context) error {
 	page, _ := strconv.Atoi(c.QueryParam("page"))
 	status := c.QueryParam("status")
 	idUser, _ := strconv.Atoi(c.QueryParam("idUser"))
 	if page <= 0 {
 		page = 1
 	}
-	data, offset, limit, totalData, err := ctrl.transactionClassUsecase.GetAll(status, uint(idUser), page)
+	data, offset, limit, totalData, err := ctrl.membershipTransactionsUsecase.GetAll(status, uint(idUser), page)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
@@ -60,7 +60,7 @@ func (ctrl *TransactionClassController) GetAll(c echo.Context) error {
 		Offset:    offset,
 		TotalData: totalData,
 	}
-	res := []response.TransactionClass{}
+	res := []response.MembershipTransaction{}
 	copier.Copy(&res, &data)
 	if len(data) == 0 {
 		return controller.NewSuccessResponse(c, http.StatusNoContent, res)
@@ -69,26 +69,13 @@ func (ctrl *TransactionClassController) GetAll(c echo.Context) error {
 	return controller.NewSuccessResponse(c, http.StatusOK, res, resPage)
 }
 
-func (ctrl *TransactionClassController) GetActiveClass(c echo.Context) error {
-	idUser, _ := strconv.Atoi(c.Param("idUser"))
-	// println(idUser, "id user")
-	data, err := ctrl.transactionClassUsecase.GetActiveClass(uint(idUser))
-	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
-	}
-	if len(data) == 0 {
-		return controller.NewSuccessResponse(c, http.StatusNoContent, data)
-	}
-
-	return controller.NewSuccessResponse(c, http.StatusOK, data)
-}
-
-func (ctrl *TransactionClassController) UpdateStatus(c echo.Context) error {
-	classId, _ := strconv.Atoi(c.Param("idClass"))
+func (ctrl *MembershipTransactionController) UpdateStatus(c echo.Context) error {
+	productId, _ := strconv.Atoi(c.Param("idProduct"))
 	status := c.QueryParam("status")
-	stringStatus, err := ctrl.transactionClassUsecase.UpdateStatus(uint(classId), status)
+	// adminId := c.QueryParam("admin")
+	err := ctrl.membershipTransactionsUsecase.UpdateStatus(uint(productId), status)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
-	return controller.NewSuccessResponse(c, http.StatusOK, stringStatus)
+	return controller.NewSuccessResponse(c, http.StatusOK, nil)
 }

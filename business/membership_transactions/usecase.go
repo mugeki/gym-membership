@@ -17,7 +17,7 @@ type membershipTransactionUsecase struct {
 	memberRepository            members.Repository
 }
 
-func NewTransactionClassUsecase(membershipTransactionRepo Repository, membershipProductRepo membership_products.Repository, memberRepo members.Repository) Usecase {
+func NewMembershipTransactionUsecase(membershipTransactionRepo Repository, membershipProductRepo membership_products.Repository, memberRepo members.Repository) Usecase {
 	return &membershipTransactionUsecase{
 		membershipTransactionRepository: membershipTransactionRepo,
 		membershipProductRepository: membershipProductRepo,
@@ -58,7 +58,7 @@ func (uc *membershipTransactionUsecase) UpdateStatus(id uint, status string) (er
 		return business.ErrInternalServer
 	}
 
-	dataProduct, err := uc.membershipProductRepository.GetByID(data.MembershiProductID)
+	dataProduct, err := uc.membershipProductRepository.GetByID(data.MembershipProductID)
 	if err != nil {
 		if errors.Is(gorm.ErrRecordNotFound, err){
 			return business.ErrProductNotFound
