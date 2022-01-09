@@ -20,27 +20,27 @@ func NewUserUsecase(userRepo Repository, jwtauth *middleware.ConfigJWT) Usecase 
 	}
 }
 
-func (uc *userUsecase) Register(userData *Domain) (string, error)  {
+func (uc *userUsecase) Register(userData *Domain) (error)  {
 	hashedPassword, _ := encrypt.Hash(userData.Password)
 	userData.Password = hashedPassword
 	userData.UUID = uuid.New()
 	_, err := uc.userRepository.Register(userData)
 	if err != nil {
-		return "", business.ErrDuplicateData
+		return business.ErrDuplicateData
 	}
-	return "item created", nil
+	return nil
 }
 
-func (uc *userUsecase) Login(username, password string) (string, error) {
+func (uc *userUsecase) Login(username, password string) (Domain, error) {
 	userDomain, err := uc.userRepository.GetByUsername(username)
 	if err != nil {
-		return "", business.ErrInvalidLoginInfo
+		return Domain{}, business.ErrInvalidLoginInfo
 	}
 
 	if !encrypt.ValidateHash(password, userDomain.Password){
-		return "", business.ErrInvalidLoginInfo
+		return Domain{}, business.ErrInvalidLoginInfo
 	}
 
-	token := uc.jwtAuth.GenerateToken(int(userDomain.ID))
-	return token, nil
+	userDomain.Token = uc.jwtAuth.GenerateToken(int(userDomain.ID))
+	return userDomain, nil
 }

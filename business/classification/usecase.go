@@ -1,6 +1,10 @@
 package classification
 
-import "gym-membership/business"
+import (
+	"gym-membership/business"
+
+	"github.com/jinzhu/copier"
+)
 
 type classificationUsecase struct {
 	classificationRepository Repository
@@ -17,7 +21,9 @@ func (uc *classificationUsecase) GetAll() ([]Domain, error) {
 	if err != nil {
 		return res, business.ErrInternalServer
 	}
-	return res, nil
+	domain := []Domain{}
+	copier.Copy(&domain, &res)
+	return domain, nil
 }
 
 func (uc *classificationUsecase) Insert(classification *Domain) (Domain, error) {
@@ -25,5 +31,7 @@ func (uc *classificationUsecase) Insert(classification *Domain) (Domain, error) 
 	if err != nil {
 		return res, business.ErrInternalServer
 	}
-	return res, nil
+	domain := Domain{}
+	copier.Copy(&domain, &res)
+	return domain, nil
 }

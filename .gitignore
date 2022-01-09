@@ -1,4 +1,5 @@
 Makefile
+*.pem
 
 # Binaries for programs and plugins
 *.exe
