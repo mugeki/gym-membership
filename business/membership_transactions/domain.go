@@ -16,12 +16,12 @@ type Domain struct {
 
 type Usecase interface {
 	Insert(membershipTransactionData *Domain) (Domain, error)
-	UpdateStatus(id uint, status string) (error)
+	UpdateStatus(id, idAdmin uint, status string) (error)
 	GetAll(status string, idUser uint, page int) ([]Domain, int, int, int64, error)
 }
 
 type Repository interface {
 	Insert(membershipTransactionData *Domain) (Domain, error)
-	UpdateStatus(id uint, status string) (Domain, error)
+	UpdateStatus(iid, idAdmin uint, status string) (Domain, error)
 	GetAll(status string, idUser uint, offset, limit int) ([]Domain, int64, error)
 }

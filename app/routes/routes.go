@@ -4,12 +4,12 @@ import (
 	"gym-membership/controllers/admins"
 	"gym-membership/controllers/articles"
 	"gym-membership/controllers/class"
+	"gym-membership/controllers/class_transactions"
 	"gym-membership/controllers/classifications"
 	"gym-membership/controllers/members"
 	"gym-membership/controllers/membership_products"
 	"gym-membership/controllers/membership_transactions"
 	"gym-membership/controllers/trainers"
-	"gym-membership/controllers/transactionClass"
 	"gym-membership/controllers/users"
 	"gym-membership/controllers/videos"
 
@@ -20,14 +20,14 @@ import (
 type ControllerList struct {
 	JWTMiddleware              middleware.JWTConfig
 	UserController             users.UserController
-	MembershipProductsController membership_products.MembershipProductsController
 	ClassController            class.ClassController
+	ClassTransactionController class_transactions.ClassTransactionController
 	TrainerController          trainers.TrainerController
-	TransactionClassController transactionClass.TransactionClassController
 	AdminController          admins.AdminController
 	ArticleController        articles.ArticleController
 	ClassificationController classifications.ClassificationController
 	VideoController videos.VideoController
+	MembershipProductsController membership_products.MembershipProductsController
 	MembershipTransactionController	membership_transactions.MembershipTransactionController
 	MemberController	members.MemberController
 }
@@ -51,11 +51,11 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	class.PUT("/:idClass", ctrlList.ClassController.UpdateClassByID)
 	class.GET("/my-schedule/:idUser", ctrlList.ClassController.ScheduleByID)
 
-	transactionClass := e.Group("transaction-class")
-	transactionClass.GET("", ctrlList.TransactionClassController.GetAll)
-	transactionClass.POST("", ctrlList.TransactionClassController.Insert)
-	transactionClass.PUT("/update-status/:idTransactionClass", ctrlList.TransactionClassController.UpdateStatus)
-	transactionClass.GET("/active/:idUser", ctrlList.TransactionClassController.GetActiveClass)
+	class_transactions := e.Group("transaction-class")
+	class_transactions.GET("", ctrlList.ClassTransactionController.GetAll)
+	class_transactions.POST("", ctrlList.ClassTransactionController.Insert)
+	class_transactions.PUT("/update-status/:idClassTransaction", ctrlList.ClassTransactionController.UpdateStatus)
+	class_transactions.GET("/active/:idUser", ctrlList.ClassTransactionController.GetActiveClass)
 
 	trainers := e.Group("trainers")
 	trainers.GET("", ctrlList.TrainerController.GetAll)

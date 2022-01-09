@@ -1,4 +1,4 @@
-package transactionClass
+package class_transactions
 
 import (
 	"gym-membership/drivers/databases/admins"
@@ -8,12 +8,12 @@ import (
 	"gorm.io/gorm"
 )
 
-type TransactionClass struct {
+type ClassTransaction struct {
 	gorm.Model
 	ID      uint
 	UserID  uint
 	User   users.Users `gorm:"constraint:OnUpdate:NO ACTION,OnDelete:NO ACTION"`
-	AdminID uint
+	AdminID uint	`gorm:"default:1"`
 	Admin	admins.Admins `gorm:"constraint:OnUpdate:NO ACTION,OnDelete:NO ACTION"`
 	Status  string
 	ClassID int

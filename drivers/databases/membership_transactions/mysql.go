@@ -19,11 +19,9 @@ func NewMySQLRepo(conn *gorm.DB) membership_transactions.Repository {
 }
 
 func (mysqlRepo *mysqlMembershipTransactionRepo) Insert(data *membership_transactions.Domain) (membership_transactions.Domain, error) {
-	fmt.Println(data.AdminID, data.MembershipProductID, data.UserID)
 	domain := membership_transactions.Domain{}
 	recTransaction := MembershipTransactions{}
 	copier.Copy(&recTransaction, &data)
-	fmt.Println(recTransaction.AdminID, recTransaction.MembershipProductID, recTransaction.UserID)
 	err := mysqlRepo.Conn.Create(&recTransaction).Error
 	mysqlRepo.Conn.Joins("MembershipProduct").Find(&recTransaction)
 	if err != nil {
@@ -31,7 +29,6 @@ func (mysqlRepo *mysqlMembershipTransactionRepo) Insert(data *membership_transac
 	}
 	copier.Copy(&domain, &recTransaction)
 	domain.Nominal = recTransaction.MembershipProduct.Price
-	fmt.Println(domain.AdminID, domain.MembershipProductID, domain.UserID)
 	return domain, nil
 }
 
@@ -40,8 +37,9 @@ func (mysqlRepo *mysqlMembershipTransactionRepo) GetAll(status string, idUser ui
 	domain := []membership_transactions.Domain{}
 	rec := []MembershipTransactions{}
 	var err error
+	fmt.Println(status, idUser)
 	if status != "" || idUser != 0 {
-		err = mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").Joins("MembershipProducts").
+		err = mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").Joins("MembershipProduct").
 			Find(&rec, "status = ? OR user_id = ?", status, idUser).Count(&totalData).Error
 	} else {
 		err = mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").
@@ -59,10 +57,11 @@ func (mysqlRepo *mysqlMembershipTransactionRepo) GetAll(status string, idUser ui
 	return domain, totalData, nil
 }
 
-func (mysqlRepo *mysqlMembershipTransactionRepo) UpdateStatus(id uint, status string) (membership_transactions.Domain, error) {
+func (mysqlRepo *mysqlMembershipTransactionRepo) UpdateStatus(id, idAdmin uint, status string) (membership_transactions.Domain, error) {
 	rec := MembershipTransactions{}
 	domain := membership_transactions.Domain{}
-	errUpdate := mysqlRepo.Conn.Joins("MembershipProduct").First(&rec, "id = ?", id).Update("status", status).Error
+	errUpdate := mysqlRepo.Conn.Joins("MembershipProduct").First(&rec, "id = ?", id).
+		Updates(map[string]interface{}{"status": status, "admin_id": idAdmin}).Error
 	if errUpdate != nil {
 		return membership_transactions.Domain{}, errUpdate
 	}

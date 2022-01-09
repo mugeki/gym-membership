@@ -72,8 +72,8 @@ func (ctrl *MembershipTransactionController) GetAll(c echo.Context) error {
 func (ctrl *MembershipTransactionController) UpdateStatus(c echo.Context) error {
 	productId, _ := strconv.Atoi(c.Param("idProduct"))
 	status := c.QueryParam("status")
-	// adminId := c.QueryParam("admin")
-	err := ctrl.membershipTransactionsUsecase.UpdateStatus(uint(productId), status)
+	idAdmin, _ := strconv.Atoi(c.QueryParam("admin"))
+	err := ctrl.membershipTransactionsUsecase.UpdateStatus(uint(productId), uint(idAdmin), status)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}

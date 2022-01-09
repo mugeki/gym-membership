@@ -22,13 +22,13 @@ import (
 	_trainerController "gym-membership/controllers/trainers"
 	_trainerRepo "gym-membership/drivers/databases/trainers"
 
-	_transactionClassUsecase "gym-membership/business/transactionClass"
-	_transactionClassController "gym-membership/controllers/transactionClass"
-	_transactionClassRepo "gym-membership/drivers/databases/transactionClass"
+	_classTransactionUsecase "gym-membership/business/class_transactions"
+	_classTransactionController "gym-membership/controllers/class_transactions"
+	_classTransactionRepo "gym-membership/drivers/databases/class_transactions"
 
-	_transactionMembershipUsecase "gym-membership/business/membership_transactions"
-	_transactionMembershipController "gym-membership/controllers/membership_transactions"
-	_transactionMembershipRepo "gym-membership/drivers/databases/membership_transactions"
+	_membershipTransactionUsecase "gym-membership/business/membership_transactions"
+	_membershipTransactionController "gym-membership/controllers/membership_transactions"
+	_membershipTransactionRepo "gym-membership/drivers/databases/membership_transactions"
 
 	_memberUsecase "gym-membership/business/members"
 	_memberController "gym-membership/controllers/members"
@@ -45,6 +45,7 @@ import (
 	_classificationUsecase "gym-membership/business/classification"
 	_classificationController "gym-membership/controllers/classifications"
 
+	_videoUsecase "gym-membership/business/videos"
 	_videoController "gym-membership/controllers/videos"
 	_videoRepo "gym-membership/drivers/databases/videos"
 
@@ -66,12 +67,12 @@ func dbMigrate(db *gorm.DB) {
 		&_membershipProductsRepo.MembershipProducts{},
 		&_classRepo.Class{},
 		&_trainerRepo.Trainers{},
-		&_transactionClassRepo.TransactionClass{},
+		&_classTransactionRepo.ClassTransaction{},
 		&_adminRepo.Admins{},
 		&_articleRepo.Articles{},
 		&_classificationRepo.Classification{},
 		&_videoRepo.Videos{},
-		&_transactionMembershipRepo.MembershipTransactions{},
+		&_membershipTransactionRepo.MembershipTransactions{},
 		&_memberRepo.Members{},
 	)
 }
@@ -115,17 +116,17 @@ func main() {
 	trainerUsecase := _trainerUsecase.NewTrainerUsecase(trainerRepo)
 	trainerCtrl := _trainerController.NewTrainerController(trainerUsecase)
 
-	transactionClassRepo := _driverFactory.NewTransactionClassRepository(db)
-	transactionClassUsecase := _transactionClassUsecase.NewTransactionClassUsecase(transactionClassRepo, classRepo)
-	transactionClassCtrl := _transactionClassController.NewTransactionClassController(transactionClassUsecase)
+	classTransactionRepo := _driverFactory.NewClassTransactionRepository(db)
+	classTransactionUsecase := _classTransactionUsecase.NewClassTransactionUsecase(classTransactionRepo, classRepo)
+	classTransactionCtrl := _classTransactionController.NewClassTransactionController(classTransactionUsecase)
 
 	memberRepo := _driverFactory.NewMemberRepository(db)
 	memberUsecase := _memberUsecase.NewMemberUsecase(memberRepo)
 	memberCtrl := _memberController.NewMemberController(memberUsecase)
 
-	transactionMembershipRepo := _driverFactory.NewTransactionMembershipRepository(db)
-	transactionMembershipUsecase := _transactionMembershipUsecase.NewMembershipTransactionUsecase(transactionMembershipRepo, membershipProductsRepo, memberRepo)
-	transactionMembershipCtrl := _transactionMembershipController.NewMembershipTransactionController(transactionMembershipUsecase)
+	membershipTransactionRepo := _driverFactory.NewMembershipTransactionRepository(db)
+	membershipTransactionUsecase := _membershipTransactionUsecase.NewMembershipTransactionUsecase(membershipTransactionRepo, membershipProductsRepo, memberRepo)
+	membershipTransactionCtrl := _membershipTransactionController.NewMembershipTransactionController(membershipTransactionUsecase)
 
 	adminRepo := _driverFactory.NewAdminRepository(db)
 	adminUsecase := _adminUsecase.NewAdminUsecase(adminRepo, &configJWT)
@@ -140,7 +141,7 @@ func main() {
 	classificationCtrl := _classificationController.NewClassificationController(classificationUsecase)
 
 	videoRepo := _driverFactory.NewVideoRepository(db)
-	videoUsecase := _videoService.NewVideoUsecase(videoRepo)
+	videoUsecase := _videoUsecase.NewVideoUsecase(videoRepo)
 	videoCtrl := _videoController.NewVideoController(videoUsecase)
 
 	routesInit := _routes.ControllerList{
@@ -152,10 +153,10 @@ func main() {
 		ClassificationController: 			*classificationCtrl,
     	VideoController:					*videoCtrl,
     	ClassController:            		*classCtrl,
-		TrainerController:          *trainerCtrl,
-		TransactionClassController: *transactionClassCtrl,
-		MemberController: *memberCtrl,
-		MembershipTransactionController: *transactionMembershipCtrl,
+		TrainerController:          		*trainerCtrl,
+		ClassTransactionController: 		*classTransactionCtrl,
+		MemberController: 					*memberCtrl,
+		MembershipTransactionController: 	*membershipTransactionCtrl,
 	}
 	routesInit.RegisterRoute(e)
 

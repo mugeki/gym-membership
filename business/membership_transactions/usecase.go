@@ -51,9 +51,9 @@ func (uc *membershipTransactionUsecase) GetAll(status string, idUser uint, page 
 	return res, offset, limit, totalData, nil
 }
 
-func (uc *membershipTransactionUsecase) UpdateStatus(id uint, status string) (error) {
+func (uc *membershipTransactionUsecase) UpdateStatus(id, idAdmin uint, status string) (error) {
 	formattedStatus := strings.ReplaceAll(status, "-", " ")
-	data, err := uc.membershipTransactionRepository.UpdateStatus(id, formattedStatus)
+	data, err := uc.membershipTransactionRepository.UpdateStatus(id, idAdmin, formattedStatus)
 	if err != nil {
 		return business.ErrInternalServer
 	}

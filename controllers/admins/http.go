@@ -32,12 +32,11 @@ func (ctrl *AdminController) Register(c echo.Context) error {
 	if _, err := govalidator.ValidateStruct(req); err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}
-	copier.Copy(domain, req)
+	copier.Copy(&domain, &req)
 	data, err := ctrl.adminUsecase.Register(&domain)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusConflict, err)
 	}
-	// println(req, "ff")
 
 	return controller.NewSuccessResponse(c, http.StatusOK, data)
 }

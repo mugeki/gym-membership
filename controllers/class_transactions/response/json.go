@@ -1,6 +1,6 @@
 package response
 
-type TransactionClass struct {
+type ClassTransaction struct {
 	ID      uint   `json:"id"`
 	UserID  uint   `json:"user_id"`
 	AdminID uint   `json:"admin_id"`

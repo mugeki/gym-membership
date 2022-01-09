@@ -12,7 +12,7 @@ type MembershipTransactions struct {
 	gorm.Model
 	UserID  uint
 	User   users.Users `gorm:"constraint:OnUpdate:NO ACTION,OnDelete:NO ACTION"`
-	AdminID uint
+	AdminID uint	`gorm:"default:1"`
 	Admin	admins.Admins `gorm:"constraint:OnUpdate:NO ACTION,OnDelete:NO ACTION"`
 	Status  string
 	MembershipProductID uint
