@@ -57,11 +57,11 @@ func (mysqlRepo *mysqlTransactionClassRepo) GetAll(status string, idUser uint, o
 	return domain, totalData, nil
 }
 
-func (mysqlRepo *mysqlTransactionClassRepo) UpdateStatus(id uint, status string) (transactionClass.Domain, error) {
+func (mysqlRepo *mysqlTransactionClassRepo) UpdateStatus(idTransactionClass, idAdmin uint, status string) (transactionClass.Domain, error) {
 	rec := TransactionClass{}
 	domain := transactionClass.Domain{}
-	// println("update to false")
-	errUpdate := mysqlRepo.Conn.First(&rec, "id = ?", id).Update("status", status).Error
+	println("id trans : ", idTransactionClass, "idAdmin : ", idAdmin)
+	errUpdate := mysqlRepo.Conn.First(&rec, "id = ?", idTransactionClass).Updates(map[string]interface{}{"status": status, "admin_id": idAdmin}).Error
 	if errUpdate != nil {
 		return transactionClass.Domain{}, errUpdate
 	}

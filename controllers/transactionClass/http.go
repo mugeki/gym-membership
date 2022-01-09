@@ -84,9 +84,15 @@ func (ctrl *TransactionClassController) GetActiveClass(c echo.Context) error {
 }
 
 func (ctrl *TransactionClassController) UpdateStatus(c echo.Context) error {
-	classId, _ := strconv.Atoi(c.Param("idClass"))
+	idTransactionClass, _ := strconv.Atoi(c.Param("idTransactionClass"))
 	status := c.QueryParam("status")
-	stringStatus, err := ctrl.transactionClassUsecase.UpdateStatus(uint(classId), status)
+	var idAdmin int
+	if status == "accepted" {
+		idAdmin = 1 //temp id admin
+	} else {
+		idAdmin = 0
+	}
+	stringStatus, err := ctrl.transactionClassUsecase.UpdateStatus(uint(idTransactionClass), uint(idAdmin), status)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
