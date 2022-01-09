@@ -138,7 +138,7 @@ func TestGetAll(t *testing.T) {
 
 func TestUpdateStatus(t *testing.T) {
 	t.Run("Valid Test", func(t *testing.T) {
-		mockTransactionClassRepo.On("UpdateStatus", mock.AnythingOfType("uint"), mock.AnythingOfType("string")).Return(transactionClassData, nil).Once()
+		mockTransactionClassRepo.On("UpdateStatus", mock.AnythingOfType("uint"), mock.AnythingOfType("uint"), mock.AnythingOfType("string")).Return(transactionClassData, nil).Once()
 
 		resp, err := transactionClassUsecase.UpdateStatus(uint(1), uint(1), "accepted")
 
@@ -146,7 +146,7 @@ func TestUpdateStatus(t *testing.T) {
 		assert.Equal(t, "", resp)
 	})
 	t.Run("Invalid Test | Internal Server Error", func(t *testing.T) {
-		mockTransactionClassRepo.On("UpdateStatus", mock.AnythingOfType("uint"), mock.AnythingOfType("string")).Return(transactionClass.Domain{}, assert.AnError).Once()
+		mockTransactionClassRepo.On("UpdateStatus", mock.AnythingOfType("uint"), mock.AnythingOfType("uint"), mock.AnythingOfType("string")).Return(transactionClass.Domain{}, assert.AnError).Once()
 		resp, err := transactionClassUsecase.UpdateStatus(uint(1), uint(1), "accepted")
 
 		assert.NotNil(t, err)
