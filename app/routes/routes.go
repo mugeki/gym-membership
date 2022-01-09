@@ -54,7 +54,7 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	transactionClass := e.Group("transaction-class")
 	transactionClass.GET("", ctrlList.TransactionClassController.GetAll)
 	transactionClass.POST("", ctrlList.TransactionClassController.Insert)
-	transactionClass.PUT("/update-status/:idClass", ctrlList.TransactionClassController.UpdateStatus)
+	transactionClass.PUT("/update-status/:idTransactionClass", ctrlList.TransactionClassController.UpdateStatus)
 	transactionClass.GET("/active/:idUser", ctrlList.TransactionClassController.GetActiveClass)
 
 	trainers := e.Group("trainers")

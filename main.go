@@ -45,7 +45,6 @@ import (
 	_classificationUsecase "gym-membership/business/classification"
 	_classificationController "gym-membership/controllers/classifications"
 
-	_videoUsecase "gym-membership/business/videos"
 	_videoController "gym-membership/controllers/videos"
 	_videoRepo "gym-membership/drivers/databases/videos"
 
@@ -139,20 +138,20 @@ func main() {
 
 	classificationUsecase := _classificationUsecase.NewClassificationUsecase(classificationRepo)
 	classificationCtrl := _classificationController.NewClassificationController(classificationUsecase)
-  
-  	videoRepo := _driverFactory.NewVideoRepository(db)
-	videoUsecase := _videoUsecase.NewVideoUsecase(videoRepo)
+
+	videoRepo := _driverFactory.NewVideoRepository(db)
+	videoUsecase := _videoService.NewVideoUsecase(videoRepo)
 	videoCtrl := _videoController.NewVideoController(videoUsecase)
-  
+
 	routesInit := _routes.ControllerList{
-		JWTMiddleware:            configJWT.Init(),
-		UserController:           *userCtrl,
-   		MembershipProductsController:     *membershipProductsCtrl,
-		AdminController:          *adminCtrl,
-		ArticleController:        *articleCtrl,
-		ClassificationController: *classificationCtrl,
-    	VideoController:	*videoCtrl,
-    	ClassController:            *classCtrl,
+		JWTMiddleware:            			configJWT.Init(),
+		UserController:           			*userCtrl,
+   		MembershipProductsController:		*membershipProductsCtrl,
+		AdminController:         			*adminCtrl,
+		ArticleController:        			*articleCtrl,
+		ClassificationController: 			*classificationCtrl,
+    	VideoController:					*videoCtrl,
+    	ClassController:            		*classCtrl,
 		TrainerController:          *trainerCtrl,
 		TransactionClassController: *transactionClassCtrl,
 		MemberController: *memberCtrl,

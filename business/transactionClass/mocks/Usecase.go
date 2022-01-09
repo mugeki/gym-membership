@@ -103,20 +103,20 @@ func (_m *Usecase) Insert(transactionClassData *transactionClass.Domain) (transa
 	return r0, r1
 }
 
-// UpdateStatus provides a mock function with given fields: id, status
-func (_m *Usecase) UpdateStatus(id uint, status string) (string, error) {
-	ret := _m.Called(id, status)
+// UpdateStatus provides a mock function with given fields: idTransactionClass, idAdmin, status
+func (_m *Usecase) UpdateStatus(idTransactionClass uint, idAdmin uint, status string) (string, error) {
+	ret := _m.Called(idTransactionClass, idAdmin, status)
 
 	var r0 string
-	if rf, ok := ret.Get(0).(func(uint, string) string); ok {
-		r0 = rf(id, status)
+	if rf, ok := ret.Get(0).(func(uint, uint, string) string); ok {
+		r0 = rf(idTransactionClass, idAdmin, status)
 	} else {
 		r0 = ret.Get(0).(string)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(uint, string) error); ok {
-		r1 = rf(id, status)
+	if rf, ok := ret.Get(1).(func(uint, uint, string) error); ok {
+		r1 = rf(idTransactionClass, idAdmin, status)
 	} else {
 		r1 = ret.Error(1)
 	}
