@@ -5,8 +5,8 @@ type Articles struct {
 	Title              string `json:"title"`
 	ClassificationName string `json:"classification"`
 	AdminID            uint   `json:"admin_id"`
-	MemberOnly         bool   `json:"memberOnly"`
-	UrlImage           string `json:"urlImage"`
+	MemberOnly         bool   `json:"member_only"`
+	UrlImage           string `json:"url_image"`
 	Text               string `json:"text"`
 }
 

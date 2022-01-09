@@ -32,7 +32,8 @@ func (mysqlRepo *mysqlUsersRepo) Register(userData *users.Domain) (users.Domain,
 func (mysqlRepo *mysqlUsersRepo) GetByUsername(username string) (users.Domain, error){
 	domain := users.Domain{}
 	rec := Users{}
-	err := mysqlRepo.Conn.First(&rec, "username = ?", username).Error
+	err := mysqlRepo.Conn.First(&rec, "username = ?", username).
+		Or(&rec, "email = ?", username).Error
 	if err != nil {
 		return users.Domain{}, err
 	}

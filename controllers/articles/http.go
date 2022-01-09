@@ -52,7 +52,6 @@ func (ctrl *ArticleController) GetAll(c echo.Context) error {
 
 func (ctrl *ArticleController) Insert(c echo.Context) error {
 	req := request.Articles{}
-	res := response.Articles{}
 	domain := articles.Domain{}
 	err := c.Bind(&req)
 	if err != nil {
@@ -64,16 +63,13 @@ func (ctrl *ArticleController) Insert(c echo.Context) error {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}
 
-	adminId := 1 //temporary adminID
-	req.AdminID = uint(adminId)
 	copier.Copy(&domain, &req)
-	data, err := ctrl.articleUsecase.Insert(&domain)
+	_, err = ctrl.articleUsecase.Insert(&domain)
 
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
-	copier.Copy(&res, &data)
-	return controller.NewSuccessResponse(c, http.StatusOK, res)
+	return controller.NewSuccessResponse(c, http.StatusOK, nil)
 }
 
 func (ctrl *ArticleController) UpdateArticleByID(c echo.Context) error {
@@ -91,8 +87,6 @@ func (ctrl *ArticleController) UpdateArticleByID(c echo.Context) error {
 	}
 
 	articleId, _ := strconv.Atoi(c.Param("idArticle"))
-	adminId := 1 //temporary adminID
-	req.AdminID = uint(adminId)
 	copier.Copy(&domain, &req)
 	data, err := ctrl.articleUsecase.UpdateArticleByID(uint(articleId), &domain)
 	if err != nil {

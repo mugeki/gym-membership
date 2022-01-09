@@ -8,7 +8,7 @@ type Domain struct {
 	ID               uint
 	Title            string
 	ClassificationID uint
-	// ClassificationName string
+	ClassificationName string
 	AdminID    uint
 	MemberOnly bool
 	UrlImage   string
