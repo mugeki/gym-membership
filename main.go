@@ -113,7 +113,7 @@ func main() {
 	classificationUsecase := _classificationService.NewClassificationUsecase(classificationRepo)
 	classificationCtrl := _classificationController.NewClassificationController(classificationUsecase)
 
-	videoRepo := _driverFactory.NewVideoRepository(db
+	videoRepo := _driverFactory.NewVideoRepository(db)
 	videoUsecase := _videoService.NewVideoUsecase(videoRepo)
 	videoCtrl := _videoController.NewVideoController(videoUsecase)
 
