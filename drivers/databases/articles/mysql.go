@@ -40,8 +40,7 @@ func (mysqlRepo *mysqlArticlesRepo) GetAll(title string, offset, limit int) ([]a
 func (mysqlRepo *mysqlArticlesRepo) Insert(videoData *articles.Domain) (articles.Domain, error) {
 	domain := articles.Domain{}
 	rec := Articles{}
-	// rec := fromDomain(*videoData)
-	// println(videoData.AdminID)
+
 	copier.Copy(&rec, videoData)
 	err := mysqlRepo.Conn.Create(&rec).Error
 	if err != nil {
@@ -52,13 +51,12 @@ func (mysqlRepo *mysqlArticlesRepo) Insert(videoData *articles.Domain) (articles
 }
 
 func (mysqlRepo *mysqlArticlesRepo) UpdateByID(id uint, videoData *articles.Domain) (articles.Domain, error) {
-	// println("cek id", id)
 	domain := articles.Domain{}
 	rec := Articles{}
-	// domainData := articles.Domain{}
 	recData := Articles{}
 	copier.Copy(recData, videoData)
-	err := mysqlRepo.Conn.First(&rec, "id = ?", id).Updates(recData).Error
+	err := mysqlRepo.Conn.First(&rec, "id = ?", id).Updates(recData).
+		Update("member_only",recData.MemberOnly).Error
 	if err != nil {
 		return articles.Domain{}, err
 	}
@@ -70,7 +68,6 @@ func (mysqlRepo *mysqlArticlesRepo) DeleteByID(id uint) error {
 	rec := Articles{}
 	err := mysqlRepo.Conn.First(&rec, id).Delete(&rec).Error
 	if rec.ID == 0 {
-		// println("not found", rec.Title)
 		return gorm.ErrRecordNotFound
 	}
 	if err != nil {
