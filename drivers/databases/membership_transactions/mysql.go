@@ -58,7 +58,7 @@ func (mysqlRepo *mysqlMembershipTransactionRepo) GetAll(status string, idUser ui
 func (mysqlRepo *mysqlMembershipTransactionRepo) UpdateStatus(id, idAdmin uint, status string) (membership_transactions.Domain, error) {
 	rec := MembershipTransactions{}
 	domain := membership_transactions.Domain{}
-	errUpdate := mysqlRepo.Conn.Joins("MembershipProduct").First(&rec, "id = ?", id).
+	errUpdate := mysqlRepo.Conn.First(&rec, "id = ?", id).
 		Updates(map[string]interface{}{"status": status, "admin_id": idAdmin}).Error
 	if errUpdate != nil {
 		return membership_transactions.Domain{}, errUpdate

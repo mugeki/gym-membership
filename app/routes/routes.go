@@ -77,10 +77,10 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	admins.PUT("/videos/:idVideo", ctrlList.VideoController.UpdateByID)
 	admins.DELETE("/videos/:idVideo", ctrlList.VideoController.DeleteByID)
 
-	transactionMembership := e.Group("transaction-membership")
-	transactionMembership.GET("", ctrlList.MembershipTransactionController.GetAll)
-	transactionMembership.POST("", ctrlList.MembershipTransactionController.Insert)
-	transactionMembership.PUT("/update-status/:idClass", ctrlList.MembershipTransactionController.UpdateStatus)
+	membership_transactions := e.Group("transaction-membership")
+	membership_transactions.GET("", ctrlList.MembershipTransactionController.GetAll)
+	membership_transactions.POST("", ctrlList.MembershipTransactionController.Insert)
+	membership_transactions.PUT("/update-status/:idMembershipTransaction", ctrlList.MembershipTransactionController.UpdateStatus)
 
 	members := e.Group("members")
 	members.GET("/:userId", ctrlList.MemberController.GetByUserID)
