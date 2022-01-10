@@ -30,7 +30,7 @@ func TestMain(m *testing.M) {
 		Status:  "waiting for payment",
 		Nominal: 100000,
 		ClassID: 2,
-		Date:    time.Date(2021, 12, 1, 0, 0, 0, 0, time.UTC),
+		CreatedAt:    time.Date(2021, 12, 1, 0, 0, 0, 0, time.UTC),
 	}
 	classTransactionInput = class_transactions.Domain{
 		UserID:  1,

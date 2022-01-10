@@ -6,13 +6,13 @@ import (
 )
 
 type Domain struct {
-	ID uint
-	UserID  uint
-	AdminID uint
-	Status  string
-	Nominal int
-	ClassID int
-	Date    time.Time
+	ID 			uint
+	UserID  	uint
+	AdminID 	uint
+	Status  	string
+	Nominal 	int
+	ClassID 	int
+	CreatedAt   time.Time
 }
 
 type Usecase interface {

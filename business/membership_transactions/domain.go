@@ -11,7 +11,7 @@ type Domain struct {
 	Status  string
 	Nominal int
 	MembershipProductID uint
-	Date    time.Time
+	CreatedAt  time.Time
 }
 
 type Usecase interface {

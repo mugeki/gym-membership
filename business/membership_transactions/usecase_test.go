@@ -34,7 +34,7 @@ func TestMain(m *testing.M) {
 		Status:  "waiting for payment",
 		Nominal: 100000,
 		MembershipProductID: 1,
-		Date:    time.Date(2021, 12, 1, 0, 0, 0, 0, time.UTC),
+		CreatedAt:    time.Date(2021, 12, 1, 0, 0, 0, 0, time.UTC),
 	}
 	membershipTransactionInput = membership_transactions.Domain{
 		UserID:  1,
