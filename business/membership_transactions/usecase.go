@@ -66,7 +66,7 @@ func (uc *membershipTransactionUsecase) UpdateStatus(id, idAdmin uint, status st
 		return business.ErrInternalServer
 	}
 	
-	if status == "completed" {
+	if status == "accepted" {
 		timePeriod := dataProduct.PeriodTime
 		expireDate := time.Now().Add(time.Hour * 24 * time.Duration(timePeriod))
 		dataMember := members.Domain{
@@ -74,10 +74,10 @@ func (uc *membershipTransactionUsecase) UpdateStatus(id, idAdmin uint, status st
 			ExpireDate : expireDate,
 		}
 		err = uc.memberRepository.Insert(&dataMember)
+		if err != nil {
+			return business.ErrInternalServer
+		}
 	}
 
-	if err != nil {
-		return business.ErrInternalServer
-	}
 	return nil
 }

@@ -1,7 +1,6 @@
 package membership_transactions
 
 import (
-	"fmt"
 	"gym-membership/business/membership_transactions"
 
 	"github.com/jinzhu/copier"
@@ -37,7 +36,6 @@ func (mysqlRepo *mysqlMembershipTransactionRepo) GetAll(status string, idUser ui
 	domain := []membership_transactions.Domain{}
 	rec := []MembershipTransactions{}
 	var err error
-	fmt.Println(status, idUser)
 	if status != "" || idUser != 0 {
 		err = mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").Joins("MembershipProduct").
 			Find(&rec, "status = ? OR user_id = ?", status, idUser).Count(&totalData).Error

@@ -22,6 +22,6 @@ type Usecase interface {
 
 type Repository interface {
 	Insert(membershipTransactionData *Domain) (Domain, error)
-	UpdateStatus(iid, idAdmin uint, status string) (Domain, error)
+	UpdateStatus(id, idAdmin uint, status string) (Domain, error)
 	GetAll(status string, idUser uint, offset, limit int) ([]Domain, int64, error)
 }
