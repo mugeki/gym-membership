@@ -82,7 +82,7 @@ func main() {
 	e := echo.New()
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"http://localhost:3000"},
-  		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
 
 	userRepo := _driverFactory.NewUserRepository(db)
@@ -113,7 +113,7 @@ func main() {
 	classificationUsecase := _classificationService.NewClassificationUsecase(classificationRepo)
 	classificationCtrl := _classificationController.NewClassificationController(classificationUsecase)
 
-	videoRepo := _driverFactory.NewVideoRepository(db
+	videoRepo := _driverFactory.NewVideoRepository(db)
 	videoUsecase := _videoService.NewVideoUsecase(videoRepo)
 	videoCtrl := _videoController.NewVideoController(videoUsecase)
 
