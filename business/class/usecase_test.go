@@ -136,18 +136,18 @@ func TestUpdateParticipant(t *testing.T) {
 
 func TestUpdateClassByID(t *testing.T) {
 	t.Run("Valid Test", func(t *testing.T) {
-		mockClassRepo.On("UpdateClassByID", mock.Anything, mock.Anything).Return(classData, nil).Once()
+		mockClassRepo.On("UpdateClassByID", mock.AnythingOfType("uint"), mock.Anything).Return(classInput, nil).Once()
 
 		resp, err := classUsecase.UpdateClassByID(uint(1), &classInput)
 
 		assert.Nil(t, err)
-		assert.Equal(t, "", resp)
+		assert.Equal(t, resp, classInput)
 	})
 	t.Run("Invalid Test | Internal Server Error", func(t *testing.T) {
 		mockClassRepo.On("UpdateClassByID", mock.Anything, mock.Anything).Return(class.Domain{}, assert.AnError).Once()
 		resp, err := classUsecase.UpdateClassByID(uint(1), &classInput)
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "", resp)
+		assert.Equal(t, resp, class.Domain{})
 	})
 }

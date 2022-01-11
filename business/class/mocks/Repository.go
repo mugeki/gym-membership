@@ -85,29 +85,6 @@ func (_m *Repository) IsExist(idClass int) (class.Domain, error) {
 	return r0, r1
 }
 
-// ScheduleByID provides a mock function with given fields: id
-func (_m *Repository) ScheduleByID(id uint) ([]class.Domain, error) {
-	ret := _m.Called(id)
-
-	var r0 []class.Domain
-	if rf, ok := ret.Get(0).(func(uint) []class.Domain); ok {
-		r0 = rf(id)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]class.Domain)
-		}
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func(uint) error); ok {
-		r1 = rf(id)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
 // UpdateClassByID provides a mock function with given fields: id, articleData
 func (_m *Repository) UpdateClassByID(id uint, articleData *class.Domain) (class.Domain, error) {
 	ret := _m.Called(id, articleData)
