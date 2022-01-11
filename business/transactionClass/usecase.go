@@ -22,7 +22,7 @@ func NewTransactionClassUsecase(transactionClassRepo Repository, classRepository
 }
 
 func (uc *transactionClassUsecase) Insert(transactionClassData *Domain) (Domain, error) {
-	transactionClassData.Status = "waiting for payment"
+	transactionClassData.Status = "waiting-for-payment"
 	data, err := uc.transactionClassRepository.Insert(transactionClassData)
 	if err != nil {
 		return Domain{}, business.ErrDuplicateData

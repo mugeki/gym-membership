@@ -27,8 +27,8 @@ type Usecase interface {
 	Insert(classData *Domain) (string, error)
 	UpdateParticipant(idClass int) (string, error)
 	GetAll(title string, page int) ([]Domain, int, int, int64, error)
-	UpdateClassByID(id uint, articleData *Domain) (string, error)
-	ScheduleByID(id uint) ([]Domain, error)
+	UpdateClassByID(id uint, articleData *Domain) (Domain, error)
+	// ScheduleByID(id uint) ([]Domain, error)
 }
 
 type Repository interface {
@@ -38,5 +38,5 @@ type Repository interface {
 	GetAll(title string, offset, limit int) ([]Domain, int64, error)
 	UpdateStatus(idClass int, status bool) (Domain, error)
 	IsExist(idClass int) (Domain, error)
-	ScheduleByID(id uint) ([]Domain, error)
+	// ScheduleByID(id uint) ([]Domain, error)
 }

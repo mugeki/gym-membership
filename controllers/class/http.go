@@ -47,7 +47,7 @@ func (ctrl *ClassController) GetAll(c echo.Context) error {
 	title := c.QueryParam("name")
 	page, _ := strconv.Atoi(c.QueryParam("page"))
 	// status := c.QueryParam("status")
-	res := response.Class{}
+	res := []response.Class{}
 	if page <= 0 {
 		page = 1
 	}
@@ -86,31 +86,7 @@ func (ctrl *ClassController) UpdateClassByID(c echo.Context) error {
 
 	articleId, _ := strconv.Atoi(c.Param("idClass"))
 	copier.Copy(&domain, &req)
-	data, err := ctrl.classUsecase.UpdateClassByID(uint(articleId), &domain)
-	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
-	}
-	copier.Copy(&res, &data)
-	return controller.NewSuccessResponse(c, http.StatusOK, res)
-}
-
-func (ctrl *ClassController) ScheduleByID(c echo.Context) error {
-	// println("cek param path", c.QueryParam("id"))
-	req := request.ClassUpdate{}
-	res := response.Class{}
-	domain := class.Domain{}
-	err := c.Bind(&req)
-	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
-	}
-
-	_, err = govalidator.ValidateStruct(req)
-	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
-	}
-
-	articleId, _ := strconv.Atoi(c.Param("idClass"))
-	copier.Copy(&domain, &req)
+	println("controller 1", req.Name)
 	data, err := ctrl.classUsecase.UpdateClassByID(uint(articleId), &domain)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)

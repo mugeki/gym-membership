@@ -71,7 +71,6 @@ func (ctrl *TransactionClassController) GetAll(c echo.Context) error {
 
 func (ctrl *TransactionClassController) GetActiveClass(c echo.Context) error {
 	idUser, _ := strconv.Atoi(c.Param("idUser"))
-	// println(idUser, "id user")
 	data, err := ctrl.transactionClassUsecase.GetActiveClass(uint(idUser))
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
