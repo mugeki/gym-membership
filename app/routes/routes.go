@@ -1,6 +1,9 @@
 package routes
 
 import (
+	_middleware "gym-membership/app/middleware"
+	"gym-membership/business"
+	"gym-membership/controllers"
 	"gym-membership/controllers/admins"
 	"gym-membership/controllers/articles"
 	"gym-membership/controllers/class"
@@ -12,6 +15,7 @@ import (
 	"gym-membership/controllers/trainers"
 	"gym-membership/controllers/users"
 	"gym-membership/controllers/videos"
+	"net/http"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -36,52 +40,95 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	users := e.Group("users")
 	users.POST("", ctrlList.UserController.Register)
 	users.POST("/login", ctrlList.UserController.Login)
-  	users.GET("/videos", ctrlList.VideoController.GetAll)
+	users.PUT("", ctrlList.UserController.Update, middleware.JWTWithConfig(ctrlList.JWTMiddleware))
+  	
+	videos := e.Group("videos", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
+	videos.GET("", ctrlList.VideoController.GetAll)
+	videos.POST("", ctrlList.VideoController.Insert, SuperAdminValidation())
+	videos.PUT("/:idVideo", ctrlList.VideoController.UpdateByID, SuperAdminValidation())
+	videos.DELETE("/:idVideo", ctrlList.VideoController.DeleteByID, SuperAdminValidation())
 
-	membership_products := e.Group("membership-products")
-	membership_products.POST("", ctrlList.MembershipProductsController.Insert)
+	membership_products := e.Group("membership-products", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
 	membership_products.GET("", ctrlList.MembershipProductsController.GetAll)
 	membership_products.GET("/:id", ctrlList.MembershipProductsController.GetByID)
-	membership_products.DELETE("/:id", ctrlList.MembershipProductsController.DeleteByID)
-	membership_products.PUT("/:id", ctrlList.MembershipProductsController.UpdateByID)
+	membership_products.POST("", ctrlList.MembershipProductsController.Insert, SuperAdminValidation())
+	membership_products.DELETE("/:id", ctrlList.MembershipProductsController.DeleteByID, SuperAdminValidation())
+	membership_products.PUT("/:id", ctrlList.MembershipProductsController.UpdateByID, SuperAdminValidation())
 
-	class := e.Group("class")
-	class.POST("", ctrlList.ClassController.Insert)
+	class := e.Group("class", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
 	class.GET("", ctrlList.ClassController.GetAll)
-	class.PUT("/:idClass", ctrlList.ClassController.UpdateClassByID)
-	class.GET("/my-schedule/:idUser", ctrlList.ClassController.ScheduleByID)
+	class.POST("", ctrlList.ClassController.Insert, SuperAdminValidation())
+	class.PUT("/:idClass", ctrlList.ClassController.UpdateClassByID, SuperAdminValidation())
+	// class.GET("/my-schedule/:idUser", ctrlList.ClassController.ScheduleByID)
 
-	class_transactions := e.Group("transaction-class")
+	class_transactions := e.Group("transaction-class", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
 	class_transactions.GET("", ctrlList.ClassTransactionController.GetAll)
-	class_transactions.POST("", ctrlList.ClassTransactionController.Insert)
-	class_transactions.PUT("/update-status/:idClassTransaction", ctrlList.ClassTransactionController.UpdateStatus)
+	class_transactions.POST("", ctrlList.ClassTransactionController.Insert, AdminValidation(), SuperAdminValidation())
+	class_transactions.PUT("/update-status/:idClassTransaction", ctrlList.ClassTransactionController.UpdateStatus, AdminValidation(), SuperAdminValidation())
 	class_transactions.GET("/active/:idUser", ctrlList.ClassTransactionController.GetActiveClass)
 
-	trainers := e.Group("trainers")
+	trainers := e.Group("trainers", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
 	trainers.GET("", ctrlList.TrainerController.GetAll)
 
-	article := e.Group("article")
+	article := e.Group("article", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
 	article.GET("", ctrlList.ArticleController.GetAll)
-	article.POST("", ctrlList.ArticleController.Insert)
-	article.DELETE("/:idArticle", ctrlList.ArticleController.DeleteByID)
-	article.PUT("/:idArticle", ctrlList.ArticleController.UpdateArticleByID)
+	article.POST("", ctrlList.ArticleController.Insert, SuperAdminValidation())
+	article.DELETE("/:idArticle", ctrlList.ArticleController.DeleteByID, SuperAdminValidation())
+	article.PUT("/:idArticle", ctrlList.ArticleController.UpdateArticleByID, SuperAdminValidation())
 
-	classification := e.Group("classification")
-	classification.POST("", ctrlList.ClassificationController.Insert)
+	classification := e.Group("classification", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
+	classification.POST("", ctrlList.ClassificationController.Insert, SuperAdminValidation())
 	classification.GET("", ctrlList.ClassificationController.GetAll)
 
 	admins := e.Group("admins")
   	admins.POST("", ctrlList.AdminController.Register)
 	admins.POST("/login", ctrlList.AdminController.Login)
-	admins.POST("/videos", ctrlList.VideoController.Insert)
-	admins.PUT("/videos/:idVideo", ctrlList.VideoController.UpdateByID)
-	admins.DELETE("/videos/:idVideo", ctrlList.VideoController.DeleteByID)
+	admins.PUT("", ctrlList.AdminController.Update, middleware.JWTWithConfig(ctrlList.JWTMiddleware), AdminValidation())
 
-	membership_transactions := e.Group("transaction-membership")
+	membership_transactions := e.Group("transaction-membership", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
 	membership_transactions.GET("", ctrlList.MembershipTransactionController.GetAll)
-	membership_transactions.POST("", ctrlList.MembershipTransactionController.Insert)
-	membership_transactions.PUT("/update-status/:idMembershipTransaction", ctrlList.MembershipTransactionController.UpdateStatus)
+	membership_transactions.POST("", ctrlList.MembershipTransactionController.Insert, AdminValidation(), SuperAdminValidation())
+	membership_transactions.PUT("/update-status/:idMembershipTransaction", ctrlList.MembershipTransactionController.UpdateStatus, AdminValidation(), SuperAdminValidation())
 
-	members := e.Group("members")
+	members := e.Group("members", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
 	members.GET("/:userId", ctrlList.MemberController.GetByUserID)
+}
+
+func AdminValidation() echo.MiddlewareFunc {
+	return func(hf echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			claims := _middleware.GetUser(c)
+			if claims.IsAdmin {
+				return hf(c)
+			} else {
+				return controllers.NewErrorResponse(c, http.StatusForbidden, business.ErrUnauthorized)
+			}
+		}
+	}
+}
+
+func SuperAdminValidation() echo.MiddlewareFunc {
+	return func(hf echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			claims := _middleware.GetUser(c)
+			if claims.IsSuperAdmin {
+				return hf(c)
+			} else {
+				return controllers.NewErrorResponse(c, http.StatusForbidden, business.ErrUnauthorized)
+			}
+		}
+	}
+}
+
+func MemberValidation() echo.MiddlewareFunc {
+	return func(hf echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			claims := _middleware.GetUser(c)
+			if claims.IsMember {
+				return hf(c)
+			} else {
+				return controllers.NewErrorResponse(c, http.StatusForbidden, business.ErrUnauthorized)
+			}
+		}
+	}
 }

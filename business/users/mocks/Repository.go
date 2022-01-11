@@ -54,3 +54,24 @@ func (_m *Repository) Register(userData *users.Domain) (users.Domain, error) {
 
 	return r0, r1
 }
+
+// Update provides a mock function with given fields: id, userData
+func (_m *Repository) Update(id uint, userData *users.Domain) (users.Domain, error) {
+	ret := _m.Called(id, userData)
+
+	var r0 users.Domain
+	if rf, ok := ret.Get(0).(func(uint, *users.Domain) users.Domain); ok {
+		r0 = rf(id, userData)
+	} else {
+		r0 = ret.Get(0).(users.Domain)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(uint, *users.Domain) error); ok {
+		r1 = rf(id, userData)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}

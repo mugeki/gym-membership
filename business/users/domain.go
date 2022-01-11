@@ -24,9 +24,11 @@ type Domain struct {
 type Usecase interface {
 	Register(userData *Domain) (error)
 	Login(username, password string) (Domain, error)
+	Update(id uint, userData *Domain) (Domain, error)
 }
 
 type Repository interface {
 	Register(userData *Domain) (Domain, error)
 	GetByUsername(username string) (Domain, error)
+	Update(id uint, userData *Domain) (Domain, error)
 }

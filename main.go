@@ -100,8 +100,12 @@ func main() {
   		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
 
+	memberRepo := _driverFactory.NewMemberRepository(db)
+	memberUsecase := _memberUsecase.NewMemberUsecase(memberRepo)
+	memberCtrl := _memberController.NewMemberController(memberUsecase)
+
 	userRepo := _driverFactory.NewUserRepository(db)
-	userUsecase := _userUsecase.NewUserUsecase(userRepo, &configJWT)
+	userUsecase := _userUsecase.NewUserUsecase(userRepo, memberRepo, &configJWT)
 	userCtrl := _userController.NewUserController(userUsecase)
 
 	membershipProductsRepo := _driverFactory.NewMembershipProductsRepository(db)
@@ -119,10 +123,6 @@ func main() {
 	classTransactionRepo := _driverFactory.NewClassTransactionRepository(db)
 	classTransactionUsecase := _classTransactionUsecase.NewClassTransactionUsecase(classTransactionRepo, classRepo)
 	classTransactionCtrl := _classTransactionController.NewClassTransactionController(classTransactionUsecase)
-
-	memberRepo := _driverFactory.NewMemberRepository(db)
-	memberUsecase := _memberUsecase.NewMemberUsecase(memberRepo)
-	memberCtrl := _memberController.NewMemberController(memberUsecase)
 
 	membershipTransactionRepo := _driverFactory.NewMembershipTransactionRepository(db)
 	membershipTransactionUsecase := _membershipTransactionUsecase.NewMembershipTransactionUsecase(membershipTransactionRepo, membershipProductsRepo, memberRepo)
