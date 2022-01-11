@@ -40,6 +40,6 @@ func (_m *Helper) ValidateHash(password string, hash string) bool {
 	} else {
 		r0 = ret.Get(0).(bool)
 	}
-
+	
 	return r0
 }

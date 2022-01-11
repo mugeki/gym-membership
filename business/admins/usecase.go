@@ -28,7 +28,7 @@ func (uc *adminUsecase) Register(userData *Domain) (string, error) {
 	if err != nil {
 		return "", business.ErrDuplicateData
 	}
-	return "item created", nil
+	return "", nil
 }
 
 func (uc *adminUsecase) Login(username, password string) (string, error) {

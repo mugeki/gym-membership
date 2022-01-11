@@ -1,7 +1,6 @@
 package classifications
 
 import (
-	"fmt"
 	"gym-membership/business/classification"
 
 	"github.com/jinzhu/copier"
@@ -29,7 +28,6 @@ func (mysqlRepo *mysqlClassificationRepo) GetAll() ([]classification.Domain, err
 	}
 
 	copier.Copy(&domain, &rec)
-
 	return domain, nil
 }
 
@@ -37,13 +35,12 @@ func (mysqlRepo *mysqlClassificationRepo) Insert(classificationData *classificat
 	rec := Classification{}
 	domain := classification.Domain{}
 	copier.Copy(&rec, &classificationData)
+	
 	err := mysqlRepo.Conn.Create(&rec).Error
 	if err != nil {
 		return classification.Domain{}, err
 	}
-	fmt.Println(rec)
 	
 	copier.Copy(&domain, &rec)
-	fmt.Println(domain)
 	return domain, nil
 }

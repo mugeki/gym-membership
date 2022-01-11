@@ -4,9 +4,12 @@ import (
 	"gym-membership/controllers/admins"
 	"gym-membership/controllers/articles"
 	"gym-membership/controllers/class"
+	"gym-membership/controllers/class_transactions"
 	"gym-membership/controllers/classifications"
+	"gym-membership/controllers/members"
+	"gym-membership/controllers/membership_products"
+	"gym-membership/controllers/membership_transactions"
 	"gym-membership/controllers/trainers"
-	"gym-membership/controllers/transactionClass"
 	"gym-membership/controllers/users"
 	"gym-membership/controllers/videos"
 
@@ -18,31 +21,41 @@ type ControllerList struct {
 	JWTMiddleware              middleware.JWTConfig
 	UserController             users.UserController
 	ClassController            class.ClassController
+	ClassTransactionController class_transactions.ClassTransactionController
 	TrainerController          trainers.TrainerController
-	TransactionClassController transactionClass.TransactionClassController
-	AdminController            admins.AdminController
-	ArticleController          articles.ArticleController
-	ClassificationController   classifications.ClassificationController
-	VideoController            videos.VideoController
+	AdminController          admins.AdminController
+	ArticleController        articles.ArticleController
+	ClassificationController classifications.ClassificationController
+	VideoController videos.VideoController
+	MembershipProductsController membership_products.MembershipProductsController
+	MembershipTransactionController	membership_transactions.MembershipTransactionController
+	MemberController	members.MemberController
 }
 
 func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	users := e.Group("users")
 	users.POST("", ctrlList.UserController.Register)
 	users.POST("/login", ctrlList.UserController.Login)
-	users.GET("/videos", ctrlList.VideoController.GetAll)
+  	users.GET("/videos", ctrlList.VideoController.GetAll)
+
+	membership_products := e.Group("membership-products")
+	membership_products.POST("", ctrlList.MembershipProductsController.Insert)
+	membership_products.GET("", ctrlList.MembershipProductsController.GetAll)
+	membership_products.GET("/:id", ctrlList.MembershipProductsController.GetByID)
+	membership_products.DELETE("/:id", ctrlList.MembershipProductsController.DeleteByID)
+	membership_products.PUT("/:id", ctrlList.MembershipProductsController.UpdateByID)
 
 	class := e.Group("class")
 	class.POST("", ctrlList.ClassController.Insert)
 	class.GET("", ctrlList.ClassController.GetAll)
 	class.PUT("/:idClass", ctrlList.ClassController.UpdateClassByID)
-	class.GET("/myShcedule/:idUser", ctrlList.ClassController.ScheduleByID)
+	class.GET("/my-schedule/:idUser", ctrlList.ClassController.ScheduleByID)
 
-	transactionClass := e.Group("transaction-class")
-	transactionClass.GET("", ctrlList.TransactionClassController.GetAll)
-	transactionClass.POST("", ctrlList.TransactionClassController.Insert)
-	transactionClass.PUT("/update-status/:idTransactionClass", ctrlList.TransactionClassController.UpdateStatus)
-	transactionClass.GET("/active/:idUser", ctrlList.TransactionClassController.GetActiveClass)
+	class_transactions := e.Group("transaction-class")
+	class_transactions.GET("", ctrlList.ClassTransactionController.GetAll)
+	class_transactions.POST("", ctrlList.ClassTransactionController.Insert)
+	class_transactions.PUT("/update-status/:idClassTransaction", ctrlList.ClassTransactionController.UpdateStatus)
+	class_transactions.GET("/active/:idUser", ctrlList.ClassTransactionController.GetActiveClass)
 
 	trainers := e.Group("trainers")
 	trainers.GET("", ctrlList.TrainerController.GetAll)
@@ -58,9 +71,17 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	classification.GET("", ctrlList.ClassificationController.GetAll)
 
 	admins := e.Group("admins")
-	admins.POST("", ctrlList.AdminController.Register)
+  	admins.POST("", ctrlList.AdminController.Register)
 	admins.POST("/login", ctrlList.AdminController.Login)
 	admins.POST("/videos", ctrlList.VideoController.Insert)
 	admins.PUT("/videos/:idVideo", ctrlList.VideoController.UpdateByID)
 	admins.DELETE("/videos/:idVideo", ctrlList.VideoController.DeleteByID)
+
+	membership_transactions := e.Group("transaction-membership")
+	membership_transactions.GET("", ctrlList.MembershipTransactionController.GetAll)
+	membership_transactions.POST("", ctrlList.MembershipTransactionController.Insert)
+	membership_transactions.PUT("/update-status/:idMembershipTransaction", ctrlList.MembershipTransactionController.UpdateStatus)
+
+	members := e.Group("members")
+	members.GET("/:userId", ctrlList.MemberController.GetByUserID)
 }

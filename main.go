@@ -10,30 +10,42 @@ import (
 	_userController "gym-membership/controllers/users"
 	_userRepo "gym-membership/drivers/databases/users"
 
-	_classService "gym-membership/business/class"
+	_membershipProductsUsecase "gym-membership/business/membership_products"
+	_membershipProductsController "gym-membership/controllers/membership_products"
+	_membershipProductsRepo "gym-membership/drivers/databases/membership_products"
+
+	_classUsecase "gym-membership/business/class"
 	_classController "gym-membership/controllers/class"
 	_classRepo "gym-membership/drivers/databases/class"
 
-	_trainerService "gym-membership/business/trainers"
+	_trainerUsecase "gym-membership/business/trainers"
 	_trainerController "gym-membership/controllers/trainers"
 	_trainerRepo "gym-membership/drivers/databases/trainers"
 
-	_transactionClassService "gym-membership/business/transactionClass"
-	_transactionClassController "gym-membership/controllers/transactionClass"
-	_transactionClassRepo "gym-membership/drivers/databases/transactionClass"
+	_classTransactionUsecase "gym-membership/business/class_transactions"
+	_classTransactionController "gym-membership/controllers/class_transactions"
+	_classTransactionRepo "gym-membership/drivers/databases/class_transactions"
 
-	_adminService "gym-membership/business/admins"
+	_membershipTransactionUsecase "gym-membership/business/membership_transactions"
+	_membershipTransactionController "gym-membership/controllers/membership_transactions"
+	_membershipTransactionRepo "gym-membership/drivers/databases/membership_transactions"
+
+	_memberUsecase "gym-membership/business/members"
+	_memberController "gym-membership/controllers/members"
+	_memberRepo "gym-membership/drivers/databases/members"
+
+	_adminUsecase "gym-membership/business/admins"
 	_adminController "gym-membership/controllers/admins"
 	_adminRepo "gym-membership/drivers/databases/admins"
 
-	_articleService "gym-membership/business/articles"
+	_articleUsecase "gym-membership/business/articles"
 	_articleController "gym-membership/controllers/articles"
 	_articleRepo "gym-membership/drivers/databases/articles"
 
-	_classificationService "gym-membership/business/classification"
+	_classificationUsecase "gym-membership/business/classification"
 	_classificationController "gym-membership/controllers/classifications"
 
-	_videoService "gym-membership/business/videos"
+	_videoUsecase "gym-membership/business/videos"
 	_videoController "gym-membership/controllers/videos"
 	_videoRepo "gym-membership/drivers/databases/videos"
 
@@ -52,13 +64,16 @@ import (
 func dbMigrate(db *gorm.DB) {
 	db.AutoMigrate(
 		&_userRepo.Users{},
+		&_membershipProductsRepo.MembershipProducts{},
 		&_classRepo.Class{},
 		&_trainerRepo.Trainers{},
-		&_transactionClassRepo.TransactionClass{},
+		&_classTransactionRepo.ClassTransaction{},
 		&_adminRepo.Admins{},
 		&_articleRepo.Articles{},
 		&_classificationRepo.Classification{},
 		&_videoRepo.Videos{},
+		&_membershipTransactionRepo.MembershipTransactions{},
+		&_memberRepo.Members{},
 	)
 }
 
@@ -89,44 +104,59 @@ func main() {
 	userUsecase := _userUsecase.NewUserUsecase(userRepo, &configJWT)
 	userCtrl := _userController.NewUserController(userUsecase)
 
+	membershipProductsRepo := _driverFactory.NewMembershipProductsRepository(db)
+	membershipProductsUsecase := _membershipProductsUsecase.NewMembershipProductsUsecase(membershipProductsRepo)
+	membershipProductsCtrl := _membershipProductsController.NewMembershipProductsController(membershipProductsUsecase)
+
 	classRepo := _driverFactory.NewClassRepository(db)
-	classUsecase := _classService.NewClassUsecase(classRepo, &configJWT)
+	classUsecase := _classUsecase.NewClassUsecase(classRepo, &configJWT)
 	classCtrl := _classController.NewClassController(classUsecase)
 
 	trainerRepo := _driverFactory.NewTrainerRepository(db)
-	trainerUsecase := _trainerService.NewTrainerUsecase(trainerRepo)
+	trainerUsecase := _trainerUsecase.NewTrainerUsecase(trainerRepo)
 	trainerCtrl := _trainerController.NewTrainerController(trainerUsecase)
 
-	transactionClassRepo := _driverFactory.NewTransactionClassRepository(db)
-	transactionClassUsecase := _transactionClassService.NewTransactionClassUsecase(transactionClassRepo, classRepo)
-	transactionClassCtrl := _transactionClassController.NewTransactionClassController(transactionClassUsecase)
+	classTransactionRepo := _driverFactory.NewClassTransactionRepository(db)
+	classTransactionUsecase := _classTransactionUsecase.NewClassTransactionUsecase(classTransactionRepo, classRepo)
+	classTransactionCtrl := _classTransactionController.NewClassTransactionController(classTransactionUsecase)
+
+	memberRepo := _driverFactory.NewMemberRepository(db)
+	memberUsecase := _memberUsecase.NewMemberUsecase(memberRepo)
+	memberCtrl := _memberController.NewMemberController(memberUsecase)
+
+	membershipTransactionRepo := _driverFactory.NewMembershipTransactionRepository(db)
+	membershipTransactionUsecase := _membershipTransactionUsecase.NewMembershipTransactionUsecase(membershipTransactionRepo, membershipProductsRepo, memberRepo)
+	membershipTransactionCtrl := _membershipTransactionController.NewMembershipTransactionController(membershipTransactionUsecase)
 
 	adminRepo := _driverFactory.NewAdminRepository(db)
-	adminUsecase := _adminService.NewAdminUsecase(adminRepo, &configJWT)
+	adminUsecase := _adminUsecase.NewAdminUsecase(adminRepo, &configJWT)
 	adminCtrl := _adminController.NewAdminController(adminUsecase)
 
 	articleRepo := _driverFactory.NewArticleRepository(db)
 	classificationRepo := _driverFactory.NewClassificationRepository(db)
-	articleUsecase := _articleService.NewArticleUsecase(articleRepo, classificationRepo)
+	articleUsecase := _articleUsecase.NewArticleUsecase(articleRepo, classificationRepo)
 	articleCtrl := _articleController.NewArticleController(articleUsecase)
 
-	classificationUsecase := _classificationService.NewClassificationUsecase(classificationRepo)
+	classificationUsecase := _classificationUsecase.NewClassificationUsecase(classificationRepo)
 	classificationCtrl := _classificationController.NewClassificationController(classificationUsecase)
 
 	videoRepo := _driverFactory.NewVideoRepository(db)
-	videoUsecase := _videoService.NewVideoUsecase(videoRepo)
+	videoUsecase := _videoUsecase.NewVideoUsecase(videoRepo)
 	videoCtrl := _videoController.NewVideoController(videoUsecase)
 
 	routesInit := _routes.ControllerList{
-		JWTMiddleware:              configJWT.Init(),
-		UserController:             *userCtrl,
-		AdminController:            *adminCtrl,
-		ArticleController:          *articleCtrl,
-		ClassificationController:   *classificationCtrl,
-		VideoController:            *videoCtrl,
-		ClassController:            *classCtrl,
-		TrainerController:          *trainerCtrl,
-		TransactionClassController: *transactionClassCtrl,
+		JWTMiddleware:            			configJWT.Init(),
+		UserController:           			*userCtrl,
+   		MembershipProductsController:		*membershipProductsCtrl,
+		AdminController:         			*adminCtrl,
+		ArticleController:        			*articleCtrl,
+		ClassificationController: 			*classificationCtrl,
+    	VideoController:					*videoCtrl,
+    	ClassController:            		*classCtrl,
+		TrainerController:          		*trainerCtrl,
+		ClassTransactionController: 		*classTransactionCtrl,
+		MemberController: 					*memberCtrl,
+		MembershipTransactionController: 	*membershipTransactionCtrl,
 	}
 	routesInit.RegisterRoute(e)
 

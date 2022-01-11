@@ -20,10 +20,9 @@ func NewClassUsecase(classRepo Repository, jwtauth *middleware.ConfigJWT) Usecas
 }
 
 func (uc *classUsecase) Insert(classData *Domain) (string, error) {
-	println("bussines classes", classData.Name)
 	_, err := uc.classRepository.Insert(classData)
 	if err != nil {
-		return "", business.ErrDuplicateData
+		return "", business.ErrInternalServer
 	}
 
 	return "", nil
