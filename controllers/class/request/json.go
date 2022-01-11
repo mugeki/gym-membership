@@ -16,8 +16,7 @@ type Class struct {
 }
 
 type ClassUpdate struct {
-	ID uint
-	// UUID      uuid.UUID
+	ID              uint
 	Name            string `json:"name"`
 	UrlImage        string `json:"url_image"`
 	Price           int    `json:"price"`

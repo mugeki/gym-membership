@@ -1,13 +1,16 @@
 package response
 
+import "time"
+
 type Articles struct {
-	ID                 uint   `json:"id"`
-	Title              string `json:"title"`
-	ClassificationName string `json:"classification"`
-	AdminID            uint   `json:"admin_id"`
-	MemberOnly         bool   `json:"member_only"`
-	UrlImage           string `json:"url_image"`
-	Text               string `json:"text"`
+	ID                 uint      `json:"id"`
+	Title              string    `json:"title"`
+	ClassificationName string    `json:"classification"`
+	AdminID            uint      `json:"admin_id"`
+	MemberOnly         bool      `json:"member_only"`
+	UrlImage           string    `json:"url_image"`
+	Text               string    `json:"text"`
+	CreatedAt          time.Time `json:"created_at"`
 }
 
 type Page struct {
