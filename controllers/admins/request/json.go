@@ -14,7 +14,7 @@ type Admins struct {
 	Gender    		string `json:"gender" valid:"required"`
 	Telephone 		string `json:"telephone" valid:"required,numeric"`
 	Address   		string `json:"address" valid:"-"`
-	IsSuperAdmin 	bool `json:"is_superadmin" valid:"-"`
+	IsSuperAdmin 	bool `json:"is_super_admin" valid:"-"`
 }
 
 type AdminsLogin struct {
