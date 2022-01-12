@@ -49,7 +49,7 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	class.POST("", ctrlList.ClassController.Insert)
 	class.GET("", ctrlList.ClassController.GetAll)
 	class.PUT("/:idClass", ctrlList.ClassController.UpdateClassByID)
-	class.GET("/my-schedule/:idUser", ctrlList.ClassController.ScheduleByID)
+	// class.GET("/my-shcedule/:idUser", ctrlList.ClassController.ScheduleByID)
 
 	class_transactions := e.Group("transaction-class")
 	class_transactions.GET("", ctrlList.ClassTransactionController.GetAll)

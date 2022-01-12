@@ -43,12 +43,12 @@ func (uc *classUsecase) GetAll(name string, page int) ([]Domain, int, int, int64
 	return res, offset, limit, totalData, nil
 }
 
-func (uc *classUsecase) UpdateClassByID(id uint, classData *Domain) (string, error) {
-	_, err := uc.classRepository.UpdateClassByID(id, classData)
+func (uc *classUsecase) UpdateClassByID(id uint, classData *Domain) (Domain, error) {
+	dataUpdated, err := uc.classRepository.UpdateClassByID(id, classData)
 	if err != nil {
-		return "", business.ErrInternalServer
+		return Domain{}, business.ErrInternalServer
 	}
-	return "", nil
+	return dataUpdated, nil
 }
 
 func (uc *classUsecase) UpdateParticipant(idClass int) (string, error) {
@@ -59,10 +59,10 @@ func (uc *classUsecase) UpdateParticipant(idClass int) (string, error) {
 	return "", nil
 }
 
-func (uc *classUsecase) ScheduleByID(idUser uint) ([]Domain, error) {
-	_, err := uc.classRepository.ScheduleByID(idUser)
-	if err != nil {
-		return []Domain{}, business.ErrInternalServer
-	}
-	return []Domain{}, nil
-}
+// func (uc *classUsecase) ScheduleByID(idUser uint) ([]Domain, error) {
+// 	_, err := uc.classRepository.ScheduleByID(idUser)
+// 	if err != nil {
+// 		return []Domain{}, business.ErrInternalServer
+// 	}
+// 	return []Domain{}, nil
+// }

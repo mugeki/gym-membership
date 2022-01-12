@@ -62,7 +62,13 @@ func (mysqlRepo *mysqlClassRepo) UpdateClassByID(id uint, classData *class.Domai
 	if err != nil {
 		return class.Domain{}, err
 	}
-	copier.Copy(domain, rec)
+	errJoin := mysqlRepo.Conn.Joins("Trainers").Find(&rec).Error
+	if errJoin != nil {
+		return class.Domain{}, err
+	}
+	copier.Copy(&domain, &rec)
+	domain.TrainerName = rec.Trainers.Fullname
+	domain.TrainerImage = rec.Trainers.UrlImage
 	return domain, nil
 }
 
@@ -110,21 +116,21 @@ func (mysqlRepo *mysqlClassRepo) UpdateParticipant(idClass int) (class.Domain, e
 	return domain, nil
 }
 
-func (mysqlRepo *mysqlClassRepo) ScheduleByID(idUser uint) ([]class.Domain, error) {
-	domain := []class.Domain{}
-	rec := []Class{}
+// func (mysqlRepo *mysqlClassRepo) ScheduleByID(idUser uint) ([]class.Domain, error) {
+// 	domain := []class.Domain{}
+// 	rec := []Class{}
 
-	// mysqlRepo.Conn.Joins("TransactionClass", DB.Where(&Company{Alive: true}))
-	err := mysqlRepo.Conn.Order("updated_at desc").Joins("Trainers").Find(&rec).Error
-	if err != nil {
-		return []class.Domain{}, err
-	}
+// 	// mysqlRepo.Conn.Joins("TransactionClass", DB.Where(&Company{Alive: true}))
+// 	err := mysqlRepo.Conn.Order("updated_at desc").Joins("Trainers").Find(&rec).Error
+// 	if err != nil {
+// 		return []class.Domain{}, err
+// 	}
 
-	copier.Copy(&domain, &rec)
-	for i := 0; i < len(rec); i++ {
-		domain[i].TrainerName = rec[i].Trainers.Fullname
-		domain[i].TrainerImage = rec[i].Trainers.UrlImage
-	}
+// 	copier.Copy(&domain, &rec)
+// 	for i := 0; i < len(rec); i++ {
+// 		domain[i].TrainerName = rec[i].Trainers.Fullname
+// 		domain[i].TrainerImage = rec[i].Trainers.UrlImage
+// 	}
 
-	return domain, nil
-}
+// 	return domain, nil
+// }
