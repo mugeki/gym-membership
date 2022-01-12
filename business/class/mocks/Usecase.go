@@ -78,38 +78,15 @@ func (_m *Usecase) Insert(classData *class.Domain) (string, error) {
 	return r0, r1
 }
 
-// ScheduleByID provides a mock function with given fields: id
-func (_m *Usecase) ScheduleByID(id uint) ([]class.Domain, error) {
-	ret := _m.Called(id)
-
-	var r0 []class.Domain
-	if rf, ok := ret.Get(0).(func(uint) []class.Domain); ok {
-		r0 = rf(id)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]class.Domain)
-		}
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func(uint) error); ok {
-		r1 = rf(id)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
 // UpdateClassByID provides a mock function with given fields: id, articleData
-func (_m *Usecase) UpdateClassByID(id uint, articleData *class.Domain) (string, error) {
+func (_m *Usecase) UpdateClassByID(id uint, articleData *class.Domain) (class.Domain, error) {
 	ret := _m.Called(id, articleData)
 
-	var r0 string
-	if rf, ok := ret.Get(0).(func(uint, *class.Domain) string); ok {
+	var r0 class.Domain
+	if rf, ok := ret.Get(0).(func(uint, *class.Domain) class.Domain); ok {
 		r0 = rf(id, articleData)
 	} else {
-		r0 = ret.Get(0).(string)
+		r0 = ret.Get(0).(class.Domain)
 	}
 
 	var r1 error
