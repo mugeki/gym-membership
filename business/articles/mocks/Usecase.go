@@ -71,6 +71,27 @@ func (_m *Usecase) GetAll(title string, page int) ([]articles.Domain, int, int, 
 	return r0, r1, r2, r3, r4
 }
 
+// GetByID provides a mock function with given fields: id
+func (_m *Usecase) GetByID(id uint) (articles.Domain, error) {
+	ret := _m.Called(id)
+
+	var r0 articles.Domain
+	if rf, ok := ret.Get(0).(func(uint) articles.Domain); ok {
+		r0 = rf(id)
+	} else {
+		r0 = ret.Get(0).(articles.Domain)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(uint) error); ok {
+		r1 = rf(id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Insert provides a mock function with given fields: articleData
 func (_m *Usecase) Insert(articleData *articles.Domain) (articles.Domain, error) {
 	ret := _m.Called(articleData)

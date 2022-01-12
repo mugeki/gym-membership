@@ -37,6 +37,9 @@ type ControllerList struct {
 }
 
 func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
+	auth := e.Group("auth")
+	auth.POST("/verify-jwt/:token", ctrlList.UserController.VerifyJWT)
+
 	users := e.Group("users")
 	users.POST("", ctrlList.UserController.Register)
 	users.POST("/login", ctrlList.UserController.Login)
@@ -55,7 +58,7 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	membership_products.DELETE("/:id", ctrlList.MembershipProductsController.DeleteByID, SuperAdminValidation())
 	membership_products.PUT("/:id", ctrlList.MembershipProductsController.UpdateByID, SuperAdminValidation())
 
-	class := e.Group("class", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
+	class := e.Group("classes", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
 	class.GET("", ctrlList.ClassController.GetAll)
 	class.POST("", ctrlList.ClassController.Insert, SuperAdminValidation())
 	class.PUT("/:idClass", ctrlList.ClassController.UpdateClassByID, SuperAdminValidation())
@@ -70,8 +73,9 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	trainers := e.Group("trainers", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
 	trainers.GET("", ctrlList.TrainerController.GetAll)
 
-	article := e.Group("article", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
+	article := e.Group("articles", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
 	article.GET("", ctrlList.ArticleController.GetAll)
+	article.GET("/:idArticle", ctrlList.ArticleController.GetByID)
 	article.POST("", ctrlList.ArticleController.Insert, SuperAdminValidation())
 	article.DELETE("/:idArticle", ctrlList.ArticleController.DeleteByID, SuperAdminValidation())
 	article.PUT("/:idArticle", ctrlList.ArticleController.UpdateArticleByID, SuperAdminValidation())

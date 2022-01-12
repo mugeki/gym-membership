@@ -11,6 +11,16 @@ type Users struct {
 	UrlImage  string `json:"url_image" valid:"-"`
 }
 
+type UsersUpdate struct {
+	Password  string `json:"password,omitempty" valid:"-"`
+	Email     string `json:"email" valid:"email"`
+	FullName  string `json:"fullname" valid:"-"`
+	Gender    string `json:"gender" valid:"-"`
+	Telephone string `json:"telephone" valid:"numeric"`
+	Address   string `json:"address" valid:"-"`
+	UrlImage  string `json:"url_image" valid:"-"`
+}
+
 type UsersLogin struct {
 	Username string `json:"username" valid:"required,minstringlength(6)"`
 	Password string `json:"password" valid:"required,minstringlength(6)"`

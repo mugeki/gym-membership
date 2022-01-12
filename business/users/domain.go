@@ -25,6 +25,7 @@ type Usecase interface {
 	Register(userData *Domain) (error)
 	Login(username, password string) (Domain, error)
 	Update(id uint, userData *Domain) (Domain, error)
+	VerifyJWT(token string) (error)
 }
 
 type Repository interface {

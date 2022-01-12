@@ -63,7 +63,7 @@ func (ctrl *UserController) Login(c echo.Context) error {
 }
 
 func (ctrl *UserController) Update(c echo.Context) error {
-	req := request.Users{}
+	req := request.UsersUpdate{}
 	domain := users.Domain{}
 	if err := c.Bind(&req); err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
@@ -82,4 +82,13 @@ func (ctrl *UserController) Update(c echo.Context) error {
 	res := response.Users{}
 	copier.Copy(&res, &data)
 	return controller.NewSuccessResponse(c, http.StatusOK, res)
+}
+
+func (ctrl *UserController) VerifyJWT(c echo.Context) error {
+	token := c.Param("token")
+	err := ctrl.userUsecase.VerifyJWT(token)
+	if err != nil {
+		return controller.NewErrorResponse(c, http.StatusUnauthorized, err)
+	}
+	return controller.NewSuccessResponse(c, http.StatusOK, nil)
 }

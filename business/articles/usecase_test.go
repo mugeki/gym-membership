@@ -1,6 +1,7 @@
 package articles_test
 
 import (
+	"gym-membership/business"
 	"gym-membership/business/articles"
 	_articleMock "gym-membership/business/articles/mocks"
 	_classificationMock "gym-membership/business/classification/mocks"
@@ -9,6 +10,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"gorm.io/gorm"
 )
 
 var (
@@ -86,6 +88,36 @@ func TestGetAll(t *testing.T) {
 		assert.Equal(t, expectLimit, limit)
 		assert.Equal(t, expectOffset, offset)
 		assert.Equal(t, expectTotalData, totalData)
+	})
+}
+
+func TestGetByID(t *testing.T) {
+	t.Run("Valid Test", func(t *testing.T){
+		mockArticleRepo.On("GetByID", mock.AnythingOfType("uint")).Return(articleData, nil).Once()
+
+		resp, err := articleUsecase.GetByID(uint(1))
+
+		assert.Nil(t, err)
+		assert.Equal(t, articleData, resp)
+	})
+	t.Run("Invalid Test | Article Not Found", func(t *testing.T){
+		mockArticleRepo.On("GetByID", mock.AnythingOfType("uint")).
+			Return(articles.Domain{}, gorm.ErrRecordNotFound).Once()
+
+		resp, err := articleUsecase.GetByID(uint(1))
+
+		assert.NotNil(t, err)
+		assert.Equal(t, business.ErrArticleNotFound, err)
+		assert.Equal(t, articles.Domain{}, resp)
+	})
+	t.Run("Invalid Test | Internal Server Error", func(t *testing.T){
+		mockArticleRepo.On("GetByID", mock.AnythingOfType("uint")).
+			Return(articles.Domain{}, assert.AnError).Once()
+
+		resp, err := articleUsecase.GetByID(uint(1))
+
+		assert.NotNil(t, err)
+		assert.Equal(t, articles.Domain{}, resp)
 	})
 }
 

@@ -7,6 +7,7 @@ import (
 	"gym-membership/helper/encrypt"
 	"time"
 
+	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
 )
 
@@ -55,9 +56,21 @@ func (uc *userUsecase) Login(username, password string) (Domain, error) {
 }
 
 func (uc *userUsecase) Update(id uint, userData *Domain) (Domain, error) {
+	hashedPassword, _ := encrypt.Hash(userData.Password)
+	userData.Password = hashedPassword
 	userDomain, err := uc.userRepository.Update(id, userData)
 	if err != nil {
 		return Domain{}, business.ErrInternalServer
 	}
 	return userDomain, nil
+}
+
+func (uc *userUsecase) VerifyJWT(token string) (error) {
+	claims := jwt.MapClaims{}
+	parsedToken, _ := jwt.ParseWithClaims(token, &claims, func(token *jwt.Token) (interface{}, error) {
+		return []byte(uc.jwtAuth.SecretJWT), nil})
+	if !parsedToken.Valid{
+		return business.ErrInvalidToken
+	}
+	return nil
 }
