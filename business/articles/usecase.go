@@ -35,6 +35,17 @@ func (uc *articleUsecase) GetAll(title string, page int) ([]Domain, int, int, in
 	return res, offset, limit, totalData, nil
 }
 
+func (uc *articleUsecase) GetByID(id uint) (Domain, error) {
+	data, err := uc.articleRepository.GetByID(id)
+	if err != nil {
+		if errors.Is(gorm.ErrRecordNotFound, err){
+			return Domain{}, business.ErrArticleNotFound
+		}
+		return Domain{}, business.ErrInternalServer
+	}
+	return data, nil
+}
+
 func (uc *articleUsecase) Insert(articleData *Domain) (Domain, error) {
 	// classificationID, _ := uc.classificationRepository.GetClassificationID(articleData.ClassificationName)
 	// println("cek data text", articleData.Text)

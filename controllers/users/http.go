@@ -1,6 +1,7 @@
 package users
 
 import (
+	"gym-membership/app/middleware"
 	"gym-membership/business/users"
 	controller "gym-membership/controllers"
 	"gym-membership/controllers/users/request"
@@ -59,4 +60,35 @@ func (ctrl *UserController) Login(c echo.Context) error {
 	res := response.Users{}
 	copier.Copy(&res, &data)
 	return controller.NewSuccessResponse(c, http.StatusOK, res)
+}
+
+func (ctrl *UserController) Update(c echo.Context) error {
+	req := request.UsersUpdate{}
+	domain := users.Domain{}
+	if err := c.Bind(&req); err != nil {
+		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+	}
+
+	if _, err := govalidator.ValidateStruct(req); err != nil {
+		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+	}
+
+	copier.Copy(&domain, &req)
+	userId := uint(middleware.GetUser(c).ID)
+	data, err := ctrl.userUsecase.Update(userId, &domain)
+	if err != nil {
+		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+	}
+	res := response.Users{}
+	copier.Copy(&res, &data)
+	return controller.NewSuccessResponse(c, http.StatusOK, res)
+}
+
+func (ctrl *UserController) VerifyJWT(c echo.Context) error {
+	token := c.Param("token")
+	err := ctrl.userUsecase.VerifyJWT(token)
+	if err != nil {
+		return controller.NewErrorResponse(c, http.StatusUnauthorized, err)
+	}
+	return controller.NewSuccessResponse(c, http.StatusOK, nil)
 }

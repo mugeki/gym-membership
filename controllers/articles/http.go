@@ -50,6 +50,17 @@ func (ctrl *ArticleController) GetAll(c echo.Context) error {
 	return controller.NewSuccessResponse(c, http.StatusOK, res, resPage)
 }
 
+func (ctrl *ArticleController) GetByID(c echo.Context) error {
+	idArticle, _ := strconv.Atoi(c.Param("idArticle"))
+	data, err := ctrl.articleUsecase.GetByID(uint(idArticle))
+	if err != nil {
+		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+	}
+	res := response.Articles{}
+	copier.Copy(&res, &data)
+	return controller.NewSuccessResponse(c, http.StatusOK, res)
+}
+
 func (ctrl *ArticleController) Insert(c echo.Context) error {
 	req := request.Articles{}
 	domain := articles.Domain{}

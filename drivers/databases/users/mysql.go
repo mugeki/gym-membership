@@ -32,8 +32,20 @@ func (mysqlRepo *mysqlUsersRepo) Register(userData *users.Domain) (users.Domain,
 func (mysqlRepo *mysqlUsersRepo) GetByUsername(username string) (users.Domain, error){
 	domain := users.Domain{}
 	rec := Users{}
-	err := mysqlRepo.Conn.First(&rec, "username = ?", username).
-		Or(&rec, "email = ?", username).Error
+	err := mysqlRepo.Conn.First(&rec, "username = ?", username).Error
+	if err != nil {
+		return users.Domain{}, err
+	}
+	copier.Copy(&domain, &rec)
+	return domain, nil
+}
+
+func (mysqlRepo *mysqlUsersRepo) Update(id uint, userData *users.Domain) (users.Domain, error) {
+	domain := users.Domain{}
+	rec := Users{}
+	recData := Users{}
+	copier.Copy(&recData, &userData)
+	err := mysqlRepo.Conn.First(&rec, "id = ?", id).Updates(recData).Error
 	if err != nil {
 		return users.Domain{}, err
 	}

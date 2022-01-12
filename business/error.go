@@ -11,4 +11,5 @@ var (
   	ErrVideoNotFound = errors.New("Video not found")
 	ErrInternalServer   = errors.New("Something went wrong")
 	ErrUnauthorized     = errors.New("User Unauthorized")
+	ErrInvalidToken 	= errors.New("Token invalid or expired")
 )

@@ -14,14 +14,14 @@ type Usecase struct {
 }
 
 // Login provides a mock function with given fields: username, password
-func (_m *Usecase) Login(username string, password string) (string, error) {
+func (_m *Usecase) Login(username string, password string) (users.Domain, error) {
 	ret := _m.Called(username, password)
 
-	var r0 string
-	if rf, ok := ret.Get(0).(func(string, string) string); ok {
+	var r0 users.Domain
+	if rf, ok := ret.Get(0).(func(string, string) users.Domain); ok {
 		r0 = rf(username, password)
 	} else {
-		r0 = ret.Get(0).(string)
+		r0 = ret.Get(0).(users.Domain)
 	}
 
 	var r1 error
@@ -35,19 +35,33 @@ func (_m *Usecase) Login(username string, password string) (string, error) {
 }
 
 // Register provides a mock function with given fields: userData
-func (_m *Usecase) Register(userData *users.Domain) (string, error) {
+func (_m *Usecase) Register(userData *users.Domain) error {
 	ret := _m.Called(userData)
 
-	var r0 string
-	if rf, ok := ret.Get(0).(func(*users.Domain) string); ok {
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*users.Domain) error); ok {
 		r0 = rf(userData)
 	} else {
-		r0 = ret.Get(0).(string)
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// Update provides a mock function with given fields: id, userData
+func (_m *Usecase) Update(id uint, userData *users.Domain) (users.Domain, error) {
+	ret := _m.Called(id, userData)
+
+	var r0 users.Domain
+	if rf, ok := ret.Get(0).(func(uint, *users.Domain) users.Domain); ok {
+		r0 = rf(id, userData)
+	} else {
+		r0 = ret.Get(0).(users.Domain)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(*users.Domain) error); ok {
-		r1 = rf(userData)
+	if rf, ok := ret.Get(1).(func(uint, *users.Domain) error); ok {
+		r1 = rf(id, userData)
 	} else {
 		r1 = ret.Error(1)
 	}
