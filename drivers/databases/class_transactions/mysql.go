@@ -52,6 +52,7 @@ func (mysqlRepo *mysqlClassTransactionRepo) GetAll(status string, idUser uint, o
 
 	copier.Copy(&domain, &rec)
 	for i := 0; i < len(rec); i++ {
+		domain[i].ProductName = rec[i].Class.Name
 		domain[i].Nominal = rec[i].Class.Price
 	}
 	return domain, totalData, nil
