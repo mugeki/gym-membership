@@ -47,6 +47,17 @@ func (ctrl *VideoController) GetAll(c echo.Context) error {
 	return controller.NewSuccessResponse(c, http.StatusOK, res, resPage)
 }
 
+func (ctrl *VideoController) GetByID(c echo.Context) error {
+	idVideo, _ := strconv.Atoi(c.Param("idVideo"))
+	data, err := ctrl.videoUsecase.GetByID(uint(idVideo))
+	if err != nil {
+		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+	}
+	res := response.Videos{}
+	copier.Copy(&res, &data)
+	return controller.NewSuccessResponse(c, http.StatusOK, res)
+}
+
 func (ctrl *VideoController) Insert(c echo.Context) error {
 	req := request.Videos{}
 	err := c.Bind(&req)

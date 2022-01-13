@@ -47,6 +47,7 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
   	
 	videos := e.Group("videos", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
 	videos.GET("", ctrlList.VideoController.GetAll)
+	videos.GET("/:idVideo", ctrlList.VideoController.GetByID)
 	videos.POST("", ctrlList.VideoController.Insert, SuperAdminValidation())
 	videos.PUT("/:idVideo", ctrlList.VideoController.UpdateByID, SuperAdminValidation())
 	videos.DELETE("/:idVideo", ctrlList.VideoController.DeleteByID, SuperAdminValidation())
