@@ -67,7 +67,7 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 
 	class_transactions := e.Group("transaction-class", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
 	class_transactions.GET("", ctrlList.ClassTransactionController.GetAll)
-	class_transactions.POST("", ctrlList.ClassTransactionController.Insert, AdminValidation(), SuperAdminValidation())
+	class_transactions.POST("", ctrlList.ClassTransactionController.Insert)
 	class_transactions.PUT("/update-status/:idClassTransaction", ctrlList.ClassTransactionController.UpdateStatus, AdminValidation(), SuperAdminValidation())
 	class_transactions.GET("/active/:idUser", ctrlList.ClassTransactionController.GetActiveClass)
 
@@ -92,7 +92,7 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 
 	membership_transactions := e.Group("transaction-membership", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
 	membership_transactions.GET("", ctrlList.MembershipTransactionController.GetAll)
-	membership_transactions.POST("", ctrlList.MembershipTransactionController.Insert, AdminValidation(), SuperAdminValidation())
+	membership_transactions.POST("", ctrlList.MembershipTransactionController.Insert)
 	membership_transactions.PUT("/update-status/:idMembershipTransaction", ctrlList.MembershipTransactionController.UpdateStatus, AdminValidation(), SuperAdminValidation())
 
 	members := e.Group("members", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
