@@ -6,7 +6,6 @@ import (
 
 type Domain struct {
 	ID uint
-	// UUID      uuid.UUID
 	Name            string
 	UrlImage        string
 	Price           int

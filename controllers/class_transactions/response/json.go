@@ -13,6 +13,13 @@ type ClassTransaction struct {
 	CreatedAt 	time.Time `json:"created_at"`
 }
 
+type ClassActive struct {
+	ID              uint   `json:"id"`
+	Name            string `json:"name"`
+	Date            string `json:"date"`
+	Location        string `json:"location"`
+}
+
 type Page struct {
 	Offset    int   `json:"offset"`
 	Limit     int   `json:"limit"`
