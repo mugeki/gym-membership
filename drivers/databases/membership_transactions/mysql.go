@@ -50,7 +50,6 @@ func (mysqlRepo *mysqlMembershipTransactionRepo) GetAll(status string, idUser ui
 
 	copier.Copy(&domain, &rec)
 	for i := 0; i < len(rec); i++ {
-		domain[i].ProductName = rec[i].MembershipProduct.Name
 		domain[i].Nominal = rec[i].MembershipProduct.Price
 	}
 	return domain, totalData, nil

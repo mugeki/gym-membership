@@ -52,7 +52,6 @@ func (mysqlRepo *mysqlClassTransactionRepo) GetAll(status string, idUser uint, o
 
 	copier.Copy(&domain, &rec)
 	for i := 0; i < len(rec); i++ {
-		domain[i].ProductName = rec[i].Class.Name
 		domain[i].Nominal = rec[i].Class.Price
 	}
 	return domain, totalData, nil
@@ -72,17 +71,19 @@ func (mysqlRepo *mysqlClassTransactionRepo) UpdateStatus(idClassTransaction, idA
 
 func (mysqlRepo *mysqlClassTransactionRepo) GetActiveClass(idUser uint) ([]class.Domain, error) {
 	rec := []ClassTransaction{}
-	domain := []class.Domain{}
+	domain := []class_transactions.Domain{}
+	domainArrClass := []class.Domain{}
 
 	err := mysqlRepo.Conn.Order("updated_at desc").Joins("Class").
 		Find(&rec, "user_id = ? AND status = ?", idUser, "accepted").Error
 	if err != nil {
 		return []class.Domain{}, err
 	}
-	
+	copier.Copy(&domain, &rec)
 	for i := 0; i < len(rec); i++ {
-		copier.Copy(&domain, &rec[i].Class)
+		domainClass := class.Domain{}
+		copier.Copy(&domainClass, &rec[i].Class)
+		domainArrClass = append(domainArrClass, domainClass)
 	}
-
-	return domain, nil
+	return domainArrClass, nil
 }
