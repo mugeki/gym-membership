@@ -75,14 +75,11 @@ func (ctrl *ClassTransactionController) GetActiveClass(c echo.Context) error {
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
-
-	res := []response.ClassActive{}
-	copier.Copy(&res, &data)
 	if len(data) == 0 {
-		return controller.NewSuccessResponse(c, http.StatusNoContent, res)
+		return controller.NewSuccessResponse(c, http.StatusNoContent, data)
 	}
 
-	return controller.NewSuccessResponse(c, http.StatusOK, res)
+	return controller.NewSuccessResponse(c, http.StatusOK, data)
 }
 
 func (ctrl *ClassTransactionController) UpdateStatus(c echo.Context) error {

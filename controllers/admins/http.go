@@ -56,7 +56,7 @@ func (ctrl *AdminController) Login(c echo.Context) error {
 
 	data, err := ctrl.adminUsecase.Login(req.Username, req.Password)
 	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusUnauthorized, err)
+		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
 	res := response.Admins{}
 	copier.Copy(&res, &data)

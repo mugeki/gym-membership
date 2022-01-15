@@ -36,18 +36,6 @@ func (mysqlRepo *mysqlVideosRepo) GetAll(title string, offset, limit int) ([]vid
 	return domain, totalData, nil
 }
 
-func (mysqlRepo *mysqlVideosRepo) GetByID(id uint) (videos.Domain, error) {
-	domain := videos.Domain{}
-	rec := Videos{}
-	err := mysqlRepo.Conn.Joins("Classification").First(&rec, id).Error
-	if err != nil {
-		return videos.Domain{}, err
-	}
-	copier.Copy(&domain, &rec)
-	domain.ClassificationName = rec.Classification.Name
-	return domain, nil
-}
-
 func (mysqlRepo *mysqlVideosRepo) Insert(videoData *videos.Domain) (videos.Domain, error){
 	domain := videos.Domain{}
 	rec := Videos{}

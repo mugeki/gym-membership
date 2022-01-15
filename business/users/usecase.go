@@ -56,17 +56,8 @@ func (uc *userUsecase) Login(username, password string) (Domain, error) {
 }
 
 func (uc *userUsecase) Update(id uint, userData *Domain) (Domain, error) {
-	if userData.Password != "" {
-		hashedPassword, _ := encrypt.Hash(userData.Password)
-		userData.Password = hashedPassword
-	} else {
-		data, err := uc.userRepository.GetByUsername(userData.Email)
-		if err != nil {
-			return Domain{}, business.ErrInternalServer
-		}
-		userData.Password = data.Password
-	}
-	
+	hashedPassword, _ := encrypt.Hash(userData.Password)
+	userData.Password = hashedPassword
 	userDomain, err := uc.userRepository.Update(id, userData)
 	if err != nil {
 		return Domain{}, business.ErrInternalServer

@@ -11,7 +11,6 @@ type Domain struct {
 	AdminID 	uint
 	Status  	string
 	Nominal 	int
-	ProductName string
 	ClassID 	int
 	CreatedAt   time.Time
 }
