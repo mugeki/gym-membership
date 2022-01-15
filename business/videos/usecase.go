@@ -32,6 +32,17 @@ func (uc *videoUsecase) GetAll(title string, page int) ([]Domain, int, int, int6
 	return res, offset, limit, totalData, nil
 }
 
+func (uc *videoUsecase) GetByID(id uint) (Domain, error) {
+	data, err := uc.videoRepository.GetByID(id)
+	if err != nil {
+		if errors.Is(gorm.ErrRecordNotFound, err){
+			return Domain{}, business.ErrArticleNotFound
+		}
+		return Domain{}, business.ErrInternalServer
+	}
+	return data, nil
+}
+
 func (uc *videoUsecase) Insert(videoData *Domain) (string, error) {
 	_, err := uc.videoRepository.Insert(videoData)
 	if err != nil {

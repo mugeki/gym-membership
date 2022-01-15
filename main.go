@@ -97,7 +97,13 @@ func main() {
 	e := echo.New()
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"http://localhost:3000"},
-		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+		AllowHeaders: []string{
+				echo.HeaderOrigin,
+				echo.HeaderContentType, 
+				echo.HeaderAccept,
+				echo.HeaderAccessControlAllowCredentials,
+				echo.HeaderAuthorization,
+			},
 	}))
 
 	memberRepo := _driverFactory.NewMemberRepository(db)

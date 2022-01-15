@@ -13,5 +13,6 @@ type Admins struct {
 	Gender    string
 	Telephone string
 	Address   string
+	UrlImage	string
 	IsSuperAdmin bool
 }

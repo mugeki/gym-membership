@@ -17,6 +17,7 @@ type Domain struct {
 
 type Usecase interface {
 	GetAll(title string, page int) ([]Domain, int, int, int64, error)
+	GetByID(id uint) (Domain, error)
 	Insert(videoData *Domain) (string, error)
 	UpdateByID(id uint, videoData *Domain) (string, error)
 	DeleteByID(id uint) (error)
@@ -24,6 +25,7 @@ type Usecase interface {
 
 type Repository interface {
 	GetAll(title string, offset, limit int) ([]Domain, int64, error)
+	GetByID(id uint) (Domain, error)
 	Insert(videoData *Domain) (Domain, error)
 	UpdateByID(id uint, videoData *Domain) (Domain, error)
 	DeleteByID(id uint) (error)
