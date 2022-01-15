@@ -1,6 +1,9 @@
 package drivers
 
 import (
+	membershipProductsDomain "gym-membership/business/membership_products"
+	membershipProductsDB "gym-membership/drivers/databases/membership_products"
+
 	usersDomain "gym-membership/business/users"
 	usersDB "gym-membership/drivers/databases/users"
 
@@ -10,8 +13,14 @@ import (
 	trainerDomain "gym-membership/business/trainers"
 	trainerDB "gym-membership/drivers/databases/trainers"
 
-	transactionClassDomain "gym-membership/business/transactionClass"
-	transactionClassDB "gym-membership/drivers/databases/transactionClass"
+	classTransactionDomain "gym-membership/business/class_transactions"
+	classTransactionDB "gym-membership/drivers/databases/class_transactions"
+
+	membershipTransactionDomain "gym-membership/business/membership_transactions"
+	membershipTransactionDB "gym-membership/drivers/databases/membership_transactions"
+
+	memberDomain "gym-membership/business/members"
+	memberDB "gym-membership/drivers/databases/members"
 
 	adminsDomain "gym-membership/business/admins"
 	adminsDB "gym-membership/drivers/databases/admins"
@@ -25,12 +34,15 @@ import (
 	videosDomain "gym-membership/business/videos"
 	videosDB "gym-membership/drivers/databases/videos"
 
-
 	"gorm.io/gorm"
 )
 
 func NewUserRepository(conn *gorm.DB) usersDomain.Repository {
 	return usersDB.NewMySQLRepo(conn)
+}
+
+func NewMembershipProductsRepository(conn *gorm.DB) membershipProductsDomain.Repository{
+	return membershipProductsDB.NewMySQLRepo(conn)
 }
 
 func NewClassRepository(conn *gorm.DB) classDomain.Repository {
@@ -41,8 +53,8 @@ func NewTrainerRepository(conn *gorm.DB) trainerDomain.Repository {
 	return trainerDB.NewMySQLRepo(conn)
 }
 
-func NewTransactionClassRepository(conn *gorm.DB) transactionClassDomain.Repository {
-	return transactionClassDB.NewMySQLRepo(conn)
+func NewClassTransactionRepository(conn *gorm.DB) classTransactionDomain.Repository {
+	return classTransactionDB.NewMySQLRepo(conn)
 }
 
 func NewAdminRepository(conn *gorm.DB) adminsDomain.Repository {
@@ -61,3 +73,10 @@ func NewVideoRepository(conn *gorm.DB) videosDomain.Repository{
 	return videosDB.NewMySQLRepo(conn)
 }
 
+func NewMembershipTransactionRepository(conn *gorm.DB) membershipTransactionDomain.Repository {
+	return membershipTransactionDB.NewMySQLRepo(conn)
+}
+
+func NewMemberRepository(conn *gorm.DB) memberDomain.Repository{
+	return memberDB.NewMySQLRepo(conn)
+}

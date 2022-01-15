@@ -1,12 +1,15 @@
 package response
 
+import "time"
+
 type Videos struct {
-	ID                 uint   `json:"id"`
-	Title              string `json:"title"`
-	ClassificationName string `json:"classification"`
-	AdminID            uint   `json:"admin_id"`
-	MemberOnly         bool   `json:"member_only"`
-	Url                string `json:"url"`
+	ID                 uint      `json:"id"`
+	Title              string    `json:"title"`
+	ClassificationName string    `json:"classification"`
+	AdminID            uint      `json:"admin_id"`
+	MemberOnly         bool      `json:"member_only"`
+	Url                string    `json:"url"`
+	CreatedAt          time.Time `json:"created_at"`
 }
 
 type Page struct {

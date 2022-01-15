@@ -1,6 +1,6 @@
 package request
 
-type TransactionClass struct {
+type ClassTransaction struct {
 	ID      uint
 	UserID  uint   `json:"user_id" valid:"required"`
 	AdminID uint   `json:"admin_id"`

@@ -56,7 +56,6 @@ func (ctrl *UserController) Login(c echo.Context) error {
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusUnauthorized, err)
 	}
-
 	res := response.Users{}
 	copier.Copy(&res, &data)
 	return controller.NewSuccessResponse(c, http.StatusOK, res)
