@@ -53,7 +53,7 @@ func (uc *classUsecase) UpdateClassByID(id uint, classData *Domain) (Domain, err
 }
 
 func (uc *classUsecase) UpdateParticipant(idClass int) (string, error) {
-	_, err := uc.classRepository.UpdateParticipant(idClass)
+	_, err := uc.classRepository.UpdateParticipant(uint(idClass))
 	if err != nil {
 		return "", business.ErrInternalServer
 	}

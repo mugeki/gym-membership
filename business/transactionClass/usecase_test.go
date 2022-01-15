@@ -62,7 +62,7 @@ func TestMain(m *testing.M) {
 func TestInsert(t *testing.T) {
 	t.Run("Valid Test", func(t *testing.T) {
 		mockTransactionClassRepo.On("Insert", mock.Anything).Return(transactionClassData, nil).Once()
-		mockClassRepo.On("UpdateParticipant", mock.AnythingOfType("int")).Return(classData, nil).Once()
+		mockClassRepo.On("UpdateParticipant", mock.AnythingOfType("uint")).Return(classData, nil).Once()
 
 		resp, err := transactionClassUsecase.Insert(&transactionClassInput)
 
@@ -78,7 +78,7 @@ func TestInsert(t *testing.T) {
 	})
 	t.Run("Invalid Test | Internal Server Error", func(t *testing.T) {
 		mockTransactionClassRepo.On("Insert", mock.Anything).Return(transactionClassData, nil).Once()
-		mockClassRepo.On("UpdateParticipant", mock.AnythingOfType("int")).Return(class.Domain{}, assert.AnError).Once()
+		mockClassRepo.On("UpdateParticipant", mock.AnythingOfType("uint")).Return(class.Domain{}, assert.AnError).Once()
 		resp, err := transactionClassUsecase.Insert(&transactionClassInput)
 
 		assert.NotNil(t, err)
@@ -151,5 +151,22 @@ func TestUpdateStatus(t *testing.T) {
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "", resp)
+	})
+}
+
+func TestGetActiveClass(t *testing.T) {
+	t.Run("Valid Test", func(t *testing.T) {
+		mockTransactionClassRepo.On("GetActiveClass", mock.AnythingOfType("uint")).Return([]class.Domain{classData}, nil).Once()
+		resp, err := transactionClassUsecase.GetActiveClass(uint(1))
+
+		assert.Nil(t, err)
+		assert.Equal(t, []class.Domain{classData}, resp)
+	})
+	t.Run("Invalid Test", func(t *testing.T) {
+		mockTransactionClassRepo.On("GetActiveClass", mock.AnythingOfType("uint")).Return([]class.Domain{}, assert.AnError).Once()
+		resp, err := transactionClassUsecase.GetActiveClass(uint(1))
+
+		assert.NotNil(t, err)
+		assert.Equal(t, []class.Domain{}, resp)
 	})
 }

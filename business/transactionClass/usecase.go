@@ -28,7 +28,7 @@ func (uc *transactionClassUsecase) Insert(transactionClassData *Domain) (Domain,
 		return Domain{}, business.ErrDuplicateData
 	}
 	idClass := transactionClassData.ClassID
-	_, errUpdateKuota := uc.classRepository.UpdateParticipant(idClass)
+	_, errUpdateKuota := uc.classRepository.UpdateParticipant(uint(idClass))
 
 	if errUpdateKuota != nil {
 		return Domain{}, business.ErrInternalServer

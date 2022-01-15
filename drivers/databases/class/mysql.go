@@ -72,7 +72,7 @@ func (mysqlRepo *mysqlClassRepo) UpdateClassByID(id uint, classData *class.Domai
 	return domain, nil
 }
 
-func (mysqlRepo *mysqlClassRepo) UpdateStatus(idClass int, status bool) (class.Domain, error) {
+func (mysqlRepo *mysqlClassRepo) UpdateStatus(idClass uint, status bool) (class.Domain, error) {
 	rec := Class{}
 	domain := class.Domain{}
 	// println("update to false")
@@ -84,7 +84,7 @@ func (mysqlRepo *mysqlClassRepo) UpdateStatus(idClass int, status bool) (class.D
 	return domain, nil
 }
 
-func (mysqlRepo *mysqlClassRepo) IsExist(idClass int) (class.Domain, error) {
+func (mysqlRepo *mysqlClassRepo) IsExist(idClass uint) (class.Domain, error) {
 	rec := Class{}
 	domain := class.Domain{}
 	err := mysqlRepo.Conn.First(&rec, "id = ?", idClass).Error
@@ -95,7 +95,7 @@ func (mysqlRepo *mysqlClassRepo) IsExist(idClass int) (class.Domain, error) {
 	return domain, nil
 }
 
-func (mysqlRepo *mysqlClassRepo) UpdateParticipant(idClass int) (class.Domain, error) {
+func (mysqlRepo *mysqlClassRepo) UpdateParticipant(idClass uint) (class.Domain, error) {
 	// println("repo classes")
 	rec := Class{}
 	domain := class.Domain{}

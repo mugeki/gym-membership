@@ -35,6 +35,7 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	class := e.Group("class")
 	class.POST("", ctrlList.ClassController.Insert)
 	class.GET("", ctrlList.ClassController.GetAll)
+	// class.GET("/:idClass", ctrlList.ClassController.GetAll)
 	class.PUT("/:idClass", ctrlList.ClassController.UpdateClassByID)
 	// class.GET("/my-shcedule/:idUser", ctrlList.ClassController.ScheduleByID)
 
