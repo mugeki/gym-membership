@@ -24,13 +24,13 @@ var (
 func TestMain(m *testing.M) {
 	classTransactionUsecase = class_transactions.NewClassTransactionUsecase(&mockClassTransactionRepo, &mockClassRepo)
 	classTransactionData = class_transactions.Domain{
-		ID:      1,
-		UserID:  1,
-		AdminID: 1,
-		Status:  "waiting for payment",
-		Nominal: 100000,
-		ClassID: 2,
-		CreatedAt:    time.Date(2021, 12, 1, 0, 0, 0, 0, time.UTC),
+		ID:        1,
+		UserID:    1,
+		AdminID:   1,
+		Status:    "waiting for payment",
+		Nominal:   100000,
+		ClassID:   2,
+		CreatedAt: time.Date(2021, 12, 1, 0, 0, 0, 0, time.UTC),
 	}
 	classTransactionInput = class_transactions.Domain{
 		UserID:  1,
@@ -62,7 +62,7 @@ func TestMain(m *testing.M) {
 func TestInsert(t *testing.T) {
 	t.Run("Valid Test", func(t *testing.T) {
 		mockClassTransactionRepo.On("Insert", mock.Anything).Return(classTransactionData, nil).Once()
-		mockClassRepo.On("UpdateParticipant", mock.AnythingOfType("int")).Return(classData, nil).Once()
+		mockClassRepo.On("UpdateParticipant", mock.AnythingOfType("uint")).Return(classData, nil).Once()
 
 		resp, err := classTransactionUsecase.Insert(&classTransactionInput)
 
@@ -78,7 +78,7 @@ func TestInsert(t *testing.T) {
 	})
 	t.Run("Invalid Test | Internal Server Error", func(t *testing.T) {
 		mockClassTransactionRepo.On("Insert", mock.Anything).Return(classTransactionData, nil).Once()
-		mockClassRepo.On("UpdateParticipant", mock.AnythingOfType("int")).Return(class.Domain{}, assert.AnError).Once()
+		mockClassRepo.On("UpdateParticipant", mock.AnythingOfType("uint")).Return(class.Domain{}, assert.AnError).Once()
 		resp, err := classTransactionUsecase.Insert(&classTransactionInput)
 
 		assert.NotNil(t, err)
@@ -151,5 +151,22 @@ func TestUpdateStatus(t *testing.T) {
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "", resp)
+	})
+}
+
+func TestGetActiveClass(t *testing.T) {
+	t.Run("Valid Test", func(t *testing.T) {
+		mockClassTransactionRepo.On("GetActiveClass", mock.AnythingOfType("uint")).Return([]class.Domain{classData}, nil).Once()
+		resp, err := classTransactionUsecase.GetActiveClass(uint(1))
+
+		assert.Nil(t, err)
+		assert.Equal(t, []class.Domain{classData}, resp)
+	})
+	t.Run("Invalid Test", func(t *testing.T) {
+		mockClassTransactionRepo.On("GetActiveClass", mock.AnythingOfType("uint")).Return([]class.Domain{}, assert.AnError).Once()
+		resp, err := classTransactionUsecase.GetActiveClass(uint(1))
+
+		assert.NotNil(t, err)
+		assert.Equal(t, []class.Domain{}, resp)
 	})
 }
