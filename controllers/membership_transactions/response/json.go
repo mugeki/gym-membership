@@ -8,6 +8,7 @@ type MembershipTransaction struct {
 	AdminID             uint      `json:"admin_id"`
 	Status              string    `json:"status"`
 	Nominal             int       `json:"nominal"`
+	ProductName 		string	  `json:"product_name"`
 	MembershipProductID int       `json:"membership_product_id"`
 	CreatedAt           time.Time `json:"created_at"`
 }
