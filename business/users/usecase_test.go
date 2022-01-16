@@ -2,6 +2,8 @@ package users_test
 
 import (
 	"gym-membership/app/middleware"
+	"gym-membership/business/members"
+	_memberMock "gym-membership/business/members/mocks"
 	"gym-membership/business/users"
 	_userMock "gym-membership/business/users/mocks"
 	"gym-membership/helper/encrypt"
@@ -15,18 +17,33 @@ import (
 )
 
 var (
-	mockUserRepo	_userMock.Repository
-	mockEncrypt		_encryptMock.Helper
-	userUsecase		users.Usecase
-	userData		users.Domain
-	hashedPassword	string
-	userUUID		uuid.UUID
+	mockMemberRepo  	_memberMock.Repository
+	mockUserRepo		_userMock.Repository
+	mockEncrypt			_encryptMock.Helper
+	userUsecase			users.Usecase
+	memberExpiredData	members.Domain
+	memberData			members.Domain
+	userData			users.Domain
+	hashedPassword		string
+	userUUID			uuid.UUID
 )
 
 func TestMain(m *testing.M){
-	userUsecase = users.NewUserUsecase(&mockUserRepo, &middleware.ConfigJWT{})
+	userUsecase = users.NewUserUsecase(&mockUserRepo, &mockMemberRepo, &middleware.ConfigJWT{})
 	hashedPassword, _ = encrypt.Hash("testpassword")
 	userUUID = uuid.New()
+	memberExpiredData = members.Domain{
+		ID			: 1,
+		UserID		: 1,
+		ExpireDate	: time.Date(2021,12,1,0,0,0,0,time.UTC),
+		CreatedAt	: time.Date(2021,12,1,0,0,0,0,time.UTC),
+	}
+	memberData = members.Domain{
+		ID			: 1,
+		UserID		: 1,
+		ExpireDate	: time.Date(2023,12,1,0,0,0,0,time.UTC),
+		CreatedAt	: time.Date(2021,12,1,0,0,0,0,time.UTC),
+	}
 	userData = users.Domain{
 		ID 			: 1,
 		UUID 		: userUUID,
@@ -85,7 +102,23 @@ func TestLogin(t *testing.T){
 	t.Run("Valid Test", func(t *testing.T){
 		mockUserRepo.On("GetByUsername", mock.AnythingOfType("string")).
 					Return(userData,nil).Once()
+		mockMemberRepo.On("GetByUserID", mock.AnythingOfType("uint")).
+					Return(memberExpiredData, nil).Once()
+
+		username := "test123"
+		password := "testpassword"
 		
+		resp, err := userUsecase.Login(username, password)
+
+		assert.Nil(t, err)
+		assert.NotEmpty(t, resp)
+	})
+	t.Run("Valid Test (Is Member)", func(t *testing.T){
+		mockUserRepo.On("GetByUsername", mock.AnythingOfType("string")).
+					Return(userData,nil).Once()
+		mockMemberRepo.On("GetByUserID", mock.AnythingOfType("uint")).
+					Return(memberData, nil).Once()
+
 		username := "test123"
 		password := "testpassword"
 		
@@ -119,5 +152,48 @@ func TestLogin(t *testing.T){
 
 		assert.NotNil(t, err)
 		assert.Equal(t, users.Domain{}, resp)
+	})
+}
+
+func TestUpdate(t *testing.T){
+	t.Run("Valid Test", func(t *testing.T){
+		mockUserRepo.On("Update", mock.AnythingOfType("uint"), mock.Anything).
+			Return(userData,nil).Once()
+
+		inputData := users.Domain{
+			Username	: "test123",
+			Password	: "testpassword",
+			Email		: "test@gmail.com",
+			FullName 	: "Test Name",
+			Gender 		: "Male",
+			Telephone 	: "88888000102",
+			Address 	: "Test Street",
+			CreatedAt 	: time.Date(2021,12,1,0,0,0,0,time.UTC),
+		}
+
+		res, err := userUsecase.Update(uint(1), &inputData)
+
+		assert.Nil(t, err)
+		assert.Equal(t, userData, res)
+	})
+	t.Run("Invalid Test | Duplicate Data", func(t *testing.T){
+		mockUserRepo.On("Update", mock.AnythingOfType("uint"), mock.Anything).
+			Return(users.Domain{},assert.AnError).Once()
+
+		inputData := users.Domain{
+			Username	: "test123",
+			Password	: "testpassword",
+			Email		: "test@gmail.com",
+			FullName 	: "Test Name",
+			Gender 		: "Male",
+			Telephone 	: "88888000102",
+			Address 	: "Test Street",
+			CreatedAt 	: time.Date(2021,12,1,0,0,0,0,time.UTC),
+		}
+
+		res, err := userUsecase.Update(uint(1), &inputData)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, users.Domain{}, res)
 	})
 }

@@ -9,5 +9,5 @@ type Users struct {
 	Telephone string `json:"telephone"`
 	Address   string `json:"address"`
 	UrlImage  string `json:"url_image"`
-	Token     string `json:"token"`
+	Token     string `json:"token,omitempty"`
 }

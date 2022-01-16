@@ -20,27 +20,35 @@ func NewAdminUsecase(adminRepo Repository, jwtauth *middleware.ConfigJWT) Usecas
 	}
 }
 
-func (uc *adminUsecase) Register(userData *Domain) (string, error) {
-	hashedPassword, _ := encrypt.Hash(userData.Password)
-	userData.Password = hashedPassword
-	userData.UUID = uuid.New()
-	_, err := uc.adminRepository.Register(userData)
+func (uc *adminUsecase) Register(adminData *Domain) (Domain, error) {
+	hashedPassword, _ := encrypt.Hash(adminData.Password)
+	adminData.Password = hashedPassword
+	adminData.UUID = uuid.New()
+	adminDomain, err := uc.adminRepository.Register(adminData)
 	if err != nil {
-		return "", business.ErrDuplicateData
+		return Domain{}, business.ErrDuplicateData
 	}
-	return "", nil
+	return adminDomain, nil
 }
 
-func (uc *adminUsecase) Login(username, password string) (string, error) {
-	userDomain, err := uc.adminRepository.GetByUsername(username)
+func (uc *adminUsecase) Login(username, password string) (Domain, error) {
+	adminDomain, err := uc.adminRepository.GetByUsername(username)
 	if err != nil {
-		return "", business.ErrInvalidLoginInfo
+		return adminDomain, business.ErrInvalidLoginInfo
 	}
 
-	if !encrypt.ValidateHash(password, userDomain.Password) {
-		return "", business.ErrInvalidLoginInfo
+	if !encrypt.ValidateHash(password, adminDomain.Password) {
+		return adminDomain, business.ErrInvalidLoginInfo
 	}
 
-	token := uc.jwtAuth.GenerateToken(int(userDomain.ID))
-	return token, nil
+	adminDomain.Token = uc.jwtAuth.GenerateToken(int(adminDomain.ID), false, true, adminDomain.IsSuperAdmin)
+	return adminDomain, nil
+}
+
+func (uc *adminUsecase) Update(id uint, adminData *Domain) (Domain, error) {
+	adminDomain, err := uc.adminRepository.Update(id, adminData)
+	if err != nil {
+		return Domain{}, business.ErrInternalServer
+	}
+	return adminDomain, nil
 }

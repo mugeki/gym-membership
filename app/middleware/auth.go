@@ -12,6 +12,9 @@ import (
 
 type JwtCustomClaims struct {
 	ID int `json:"id"`
+	IsMember bool `json:"is_member"`
+	IsAdmin bool `json:"is_admin"`
+	IsSuperAdmin bool `json:"is_super_admin"`
 	jwt.StandardClaims
 }
 
@@ -30,11 +33,15 @@ func (jwtConf *ConfigJWT) Init() middleware.JWTConfig{
 	}
 }
 
-func (jwtConf *ConfigJWT) GenerateToken(userID int) string {
+func (jwtConf *ConfigJWT) GenerateToken(userID int, isMember, isAdmin, isSuperAdmin bool) string {
 	claims := JwtCustomClaims{
 		userID,
+		isMember,
+		isAdmin,
+		isSuperAdmin,
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * time.Duration(jwtConf.ExpiresDuration)).Unix(),
+			
 		},
 	}
 	initToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
