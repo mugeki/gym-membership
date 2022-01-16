@@ -44,12 +44,15 @@ import (
 
 	_classificationUsecase "gym-membership/business/classification"
 	_classificationController "gym-membership/controllers/classifications"
+	_classificationRepo "gym-membership/drivers/databases/classifications"
 
 	_videoUsecase "gym-membership/business/videos"
 	_videoController "gym-membership/controllers/videos"
 	_videoRepo "gym-membership/drivers/databases/videos"
 
-	_classificationRepo "gym-membership/drivers/databases/classifications"
+	_paymentAccountUsecase "gym-membership/business/payment_accounts"
+	_paymentAccountController "gym-membership/controllers/payment_accounts"
+	_paymentAccountRepo "gym-membership/drivers/databases/payment_accounts"
 
 	_middleware "gym-membership/app/middleware"
 	_routes "gym-membership/app/routes"
@@ -74,6 +77,7 @@ func dbMigrate(db *gorm.DB) {
 		&_videoRepo.Videos{},
 		&_membershipTransactionRepo.MembershipTransactions{},
 		&_memberRepo.Members{},
+		&_paymentAccountRepo.PaymentAccount{},
 	)
 }
 
@@ -120,6 +124,10 @@ func main() {
 	trainerUsecase := _trainerUsecase.NewTrainerUsecase(trainerRepo)
 	trainerCtrl := _trainerController.NewTrainerController(trainerUsecase)
 
+	paymentAccountRepo := _driverFactory.NewPaymentAccountRepository(db)
+	paymentAccountUsecase := _paymentAccountUsecase.NewPaymentAccountUsecase(paymentAccountRepo)
+	paymentAccountCtrl := _paymentAccountController.NewPaymentAccountController(paymentAccountUsecase)
+
 	classTransactionRepo := _driverFactory.NewClassTransactionRepository(db)
 	classTransactionUsecase := _classTransactionUsecase.NewClassTransactionUsecase(classTransactionRepo, classRepo)
 	classTransactionCtrl := _classTransactionController.NewClassTransactionController(classTransactionUsecase)
@@ -145,18 +153,19 @@ func main() {
 	videoCtrl := _videoController.NewVideoController(videoUsecase)
 
 	routesInit := _routes.ControllerList{
-		JWTMiddleware:            			configJWT.Init(),
-		UserController:           			*userCtrl,
-   		MembershipProductsController:		*membershipProductsCtrl,
-		AdminController:         			*adminCtrl,
-		ArticleController:        			*articleCtrl,
-		ClassificationController: 			*classificationCtrl,
-    	VideoController:					*videoCtrl,
-    	ClassController:            		*classCtrl,
-		TrainerController:          		*trainerCtrl,
-		ClassTransactionController: 		*classTransactionCtrl,
-		MemberController: 					*memberCtrl,
-		MembershipTransactionController: 	*membershipTransactionCtrl,
+		JWTMiddleware:                   configJWT.Init(),
+		UserController:                  *userCtrl,
+		MembershipProductsController:    *membershipProductsCtrl,
+		AdminController:                 *adminCtrl,
+		ArticleController:               *articleCtrl,
+		ClassificationController:        *classificationCtrl,
+		VideoController:                 *videoCtrl,
+		ClassController:                 *classCtrl,
+		TrainerController:               *trainerCtrl,
+		ClassTransactionController:      *classTransactionCtrl,
+		MemberController:                *memberCtrl,
+		MembershipTransactionController: *membershipTransactionCtrl,
+		PaymentAccountController:        *paymentAccountCtrl,
 	}
 	routesInit.RegisterRoute(e)
 

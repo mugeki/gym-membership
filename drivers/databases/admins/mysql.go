@@ -1,6 +1,7 @@
 package admins
 
 import (
+	"fmt"
 	"gym-membership/business/admins"
 
 	"github.com/jinzhu/copier"
@@ -32,8 +33,10 @@ func (mysqlRepo *mysqlAdminsRepo) Register(adminData *admins.Domain) (admins.Dom
 func (mysqlRepo *mysqlAdminsRepo) GetByUsername(username string) (admins.Domain, error) {
 	domain := admins.Domain{}
 	rec := Admins{}
-	err := mysqlRepo.Conn.First(&rec, "username = ?", username).Error
+
+	err := mysqlRepo.Conn.Where("username = ?", username).First(&rec).Error
 	if err != nil {
+		fmt.Println(rec.Username, "=====")
 		return admins.Domain{}, err
 	}
 	copier.Copy(&domain, &rec)
@@ -46,7 +49,7 @@ func (mysqlRepo *mysqlAdminsRepo) Update(id uint, adminData *admins.Domain) (adm
 	recData := Admins{}
 	copier.Copy(&recData, &adminData)
 	err := mysqlRepo.Conn.First(&rec, "id = ?", id).Updates(recData).
-		Update("is_super_admin",adminData.IsSuperAdmin).Error
+		Update("is_super_admin", adminData.IsSuperAdmin).Error
 	if err != nil {
 		return admins.Domain{}, err
 	}

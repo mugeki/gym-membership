@@ -12,6 +12,7 @@ import (
 	"gym-membership/controllers/members"
 	"gym-membership/controllers/membership_products"
 	"gym-membership/controllers/membership_transactions"
+	"gym-membership/controllers/payment_accounts"
 	"gym-membership/controllers/trainers"
 	"gym-membership/controllers/users"
 	"gym-membership/controllers/videos"
@@ -22,18 +23,19 @@ import (
 )
 
 type ControllerList struct {
-	JWTMiddleware              middleware.JWTConfig
-	UserController             users.UserController
-	ClassController            class.ClassController
-	ClassTransactionController class_transactions.ClassTransactionController
-	TrainerController          trainers.TrainerController
-	AdminController          admins.AdminController
-	ArticleController        articles.ArticleController
-	ClassificationController classifications.ClassificationController
-	VideoController videos.VideoController
-	MembershipProductsController membership_products.MembershipProductsController
-	MembershipTransactionController	membership_transactions.MembershipTransactionController
-	MemberController	members.MemberController
+	JWTMiddleware                   middleware.JWTConfig
+	UserController                  users.UserController
+	ClassController                 class.ClassController
+	ClassTransactionController      class_transactions.ClassTransactionController
+	TrainerController               trainers.TrainerController
+	AdminController                 admins.AdminController
+	ArticleController               articles.ArticleController
+	ClassificationController        classifications.ClassificationController
+	VideoController                 videos.VideoController
+	MembershipProductsController    membership_products.MembershipProductsController
+	MembershipTransactionController membership_transactions.MembershipTransactionController
+	MemberController                members.MemberController
+	PaymentAccountController        payment_accounts.PaymentAccountController
 }
 
 func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
@@ -44,7 +46,7 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	users.POST("", ctrlList.UserController.Register)
 	users.POST("/login", ctrlList.UserController.Login)
 	users.PUT("", ctrlList.UserController.Update, middleware.JWTWithConfig(ctrlList.JWTMiddleware))
-  	
+
 	videos := e.Group("videos", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
 	videos.GET("", ctrlList.VideoController.GetAll)
 	videos.POST("", ctrlList.VideoController.Insert, SuperAdminValidation())
@@ -84,8 +86,12 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	classification.POST("", ctrlList.ClassificationController.Insert, SuperAdminValidation())
 	classification.GET("", ctrlList.ClassificationController.GetAll)
 
+	payment_account := e.Group("payment-account", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
+	payment_account.POST("", ctrlList.PaymentAccountController.Insert, SuperAdminValidation())
+	payment_account.GET("", ctrlList.PaymentAccountController.GetAll)
+
 	admins := e.Group("admins")
-  	admins.POST("", ctrlList.AdminController.Register)
+	admins.POST("", ctrlList.AdminController.Register)
 	admins.POST("/login", ctrlList.AdminController.Login)
 	admins.PUT("", ctrlList.AdminController.Update, middleware.JWTWithConfig(ctrlList.JWTMiddleware), AdminValidation())
 
