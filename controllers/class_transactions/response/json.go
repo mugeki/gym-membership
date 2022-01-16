@@ -18,6 +18,7 @@ type ClassActive struct {
 	Name            string `json:"name"`
 	Date            string `json:"date"`
 	Location        string `json:"location"`
+	UrlImage		string `json:"url_image"`
 }
 
 type Page struct {
