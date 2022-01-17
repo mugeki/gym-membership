@@ -5,18 +5,28 @@ import (
 )
 
 type Domain struct {
-	ID uint
-	UserID  uint
-	AdminID uint
-	Status  string
-	Nominal int
+	ID                  uint
+	UserID              uint
+	AdminID             uint
+	Status              string
+	Nominal             int
 	MembershipProductID uint
-	CreatedAt  time.Time
+	UrlImageOfReceipt   string
+	CreatedAt           time.Time
+	UpdatedAt           time.Time
+	Payment             PaymentAccount
+}
+type PaymentAccount struct {
+	ID        uint
+	Name      string
+	NoCard    string
+	OwnerName string
+	Desc      string
 }
 
 type Usecase interface {
 	Insert(membershipTransactionData *Domain) (Domain, error)
-	UpdateStatus(id, idAdmin uint, status string) (error)
+	UpdateStatus(id, idAdmin uint, status string) error
 	GetAll(status string, idUser uint, page int) ([]Domain, int, int, int64, error)
 }
 

@@ -6,4 +6,6 @@ type MembershipTransaction struct {
 	Status              string `json:"status"`
 	Nominal             int    `json:"nominal"`
 	MembershipProductID uint   `json:"membership_product_id" valid:"required"`
+	UrlImageOfReceipt   string `json:"url_image_of_receipt"`
+	PaymentID           uint   `json:"payment_id" valid:"required"`
 }

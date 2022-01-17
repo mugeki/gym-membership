@@ -6,14 +6,16 @@ import (
 )
 
 type Domain struct {
-	ID        uint
-	UserID    uint
-	AdminID   uint
-	Status    string
-	Nominal   int
-	ClassID   int
-	UpdatedAt time.Time
-	Payment   PaymentAccount
+	ID                uint
+	UserID            uint
+	AdminID           uint
+	UrlImageOfReceipt string
+	Status            string
+	Nominal           int
+	ClassID           int
+	UpdatedAt         time.Time
+	CreatedAt         time.Time
+	Payment           PaymentAccount
 }
 
 type PaymentAccount struct {

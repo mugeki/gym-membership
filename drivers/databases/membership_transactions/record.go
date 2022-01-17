@@ -13,6 +13,7 @@ type MembershipTransactions struct {
 	gorm.Model
 	UserID              uint
 	User                users.Users   `gorm:"constraint:OnUpdate:NO ACTION,OnDelete:NO ACTION"`
+	UrlImageOfReceipt   string        `json:"url_image_of_receipt"`
 	AdminID             uint          `gorm:"default:1"`
 	Admin               admins.Admins `gorm:"constraint:OnUpdate:NO ACTION,OnDelete:NO ACTION"`
 	Status              string

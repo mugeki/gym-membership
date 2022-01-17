@@ -11,6 +11,7 @@ type MembershipTransaction struct {
 	MembershipProductID int            `json:"membership_product_id"`
 	CreatedAt           time.Time      `json:"created_at"`
 	UpdatedAt           time.Time      `json:"updated_at"`
+	UrlImageOfReceipt   string         `json:"url_image_of_receipt"`
 	Payment             PaymentAccount `json:"payment"`
 }
 
