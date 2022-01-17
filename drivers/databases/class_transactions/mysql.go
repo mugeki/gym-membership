@@ -70,6 +70,18 @@ func (mysqlRepo *mysqlClassTransactionRepo) UpdateStatus(idClassTransaction, idA
 	return domain, nil
 }
 
+func (mysqlRepo *mysqlClassTransactionRepo) UpdateReceipt(idClassTransaction uint, urlImage string) (class_transactions.Domain, error) {
+	rec := ClassTransaction{}
+	domain := class_transactions.Domain{}
+	errUpdate := mysqlRepo.Conn.First(&rec, "id = ?", idClassTransaction).
+		Updates(map[string]interface{}{"url_image_of_receipt": urlImage}).Error
+	if errUpdate != nil {
+		return class_transactions.Domain{}, errUpdate
+	}
+	copier.Copy(&domain, &rec)
+	return domain, nil
+}
+
 func (mysqlRepo *mysqlClassTransactionRepo) GetActiveClass(idUser uint) ([]class.Domain, error) {
 	rec := []ClassTransaction{}
 	domain := []class_transactions.Domain{}

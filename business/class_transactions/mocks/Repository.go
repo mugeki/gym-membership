@@ -88,6 +88,27 @@ func (_m *Repository) Insert(classTransactioData *class_transactions.Domain) (cl
 	return r0, r1
 }
 
+// UpdateReceipt provides a mock function with given fields: idTransactionClass, urlImage
+func (_m *Repository) UpdateReceipt(idTransactionClass uint, urlImage string) (class_transactions.Domain, error) {
+	ret := _m.Called(idTransactionClass, urlImage)
+
+	var r0 class_transactions.Domain
+	if rf, ok := ret.Get(0).(func(uint, string) class_transactions.Domain); ok {
+		r0 = rf(idTransactionClass, urlImage)
+	} else {
+		r0 = ret.Get(0).(class_transactions.Domain)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(uint, string) error); ok {
+		r1 = rf(idTransactionClass, urlImage)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // UpdateStatus provides a mock function with given fields: idTransactionClass, idAdmin, status
 func (_m *Repository) UpdateStatus(idTransactionClass uint, idAdmin uint, status string) (class_transactions.Domain, error) {
 	ret := _m.Called(idTransactionClass, idAdmin, status)

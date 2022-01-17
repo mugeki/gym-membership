@@ -102,6 +102,27 @@ func (_m *Usecase) Insert(classTransactioData *class_transactions.Domain) (class
 	return r0, r1
 }
 
+// UpdateReceipt provides a mock function with given fields: idTransactionClass, urlImage
+func (_m *Usecase) UpdateReceipt(idTransactionClass uint, urlImage string) (string, error) {
+	ret := _m.Called(idTransactionClass, urlImage)
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func(uint, string) string); ok {
+		r0 = rf(idTransactionClass, urlImage)
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(uint, string) error); ok {
+		r1 = rf(idTransactionClass, urlImage)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // UpdateStatus provides a mock function with given fields: idTransactionClass, idAdmin, status
 func (_m *Usecase) UpdateStatus(idTransactionClass uint, idAdmin uint, status string) (string, error) {
 	ret := _m.Called(idTransactionClass, idAdmin, status)

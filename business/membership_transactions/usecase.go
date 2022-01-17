@@ -13,15 +13,15 @@ import (
 
 type membershipTransactionUsecase struct {
 	membershipTransactionRepository Repository
-	membershipProductRepository membership_products.Repository
-	memberRepository            members.Repository
+	membershipProductRepository     membership_products.Repository
+	memberRepository                members.Repository
 }
 
 func NewMembershipTransactionUsecase(membershipTransactionRepo Repository, membershipProductRepo membership_products.Repository, memberRepo members.Repository) Usecase {
 	return &membershipTransactionUsecase{
 		membershipTransactionRepository: membershipTransactionRepo,
-		membershipProductRepository: membershipProductRepo,
-		memberRepository:            memberRepo,
+		membershipProductRepository:     membershipProductRepo,
+		memberRepository:                memberRepo,
 	}
 }
 
@@ -51,7 +51,7 @@ func (uc *membershipTransactionUsecase) GetAll(status string, idUser uint, page 
 	return res, offset, limit, totalData, nil
 }
 
-func (uc *membershipTransactionUsecase) UpdateStatus(id, idAdmin uint, status string) (error) {
+func (uc *membershipTransactionUsecase) UpdateStatus(id, idAdmin uint, status string) error {
 	formattedStatus := strings.ReplaceAll(status, "-", " ")
 	data, err := uc.membershipTransactionRepository.UpdateStatus(id, idAdmin, formattedStatus)
 	if err != nil {
@@ -60,18 +60,18 @@ func (uc *membershipTransactionUsecase) UpdateStatus(id, idAdmin uint, status st
 
 	dataProduct, err := uc.membershipProductRepository.GetByID(data.MembershipProductID)
 	if err != nil {
-		if errors.Is(gorm.ErrRecordNotFound, err){
+		if errors.Is(gorm.ErrRecordNotFound, err) {
 			return business.ErrProductNotFound
 		}
 		return business.ErrInternalServer
 	}
-	
+
 	if status == "accepted" {
 		timePeriod := dataProduct.PeriodTime
 		expireDate := time.Now().Add(time.Hour * 24 * time.Duration(timePeriod))
 		dataMember := members.Domain{
-			UserID     : data.UserID,
-			ExpireDate : expireDate,
+			UserID:     data.UserID,
+			ExpireDate: expireDate,
 		}
 		err = uc.memberRepository.Insert(&dataMember)
 		if err != nil {
@@ -80,4 +80,13 @@ func (uc *membershipTransactionUsecase) UpdateStatus(id, idAdmin uint, status st
 	}
 
 	return nil
+}
+
+func (uc *membershipTransactionUsecase) UpdateReceipt(id uint, urlImage string) (string, error) {
+	// formattedStatus := strings.ReplaceAll(urlImage, "-", " ")
+	_, err := uc.membershipTransactionRepository.UpdateReceipt(id, urlImage)
+	if err != nil {
+		return "", business.ErrInternalServer
+	}
+	return "", nil
 }

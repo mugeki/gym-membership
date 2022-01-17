@@ -9,3 +9,7 @@ type MembershipTransaction struct {
 	UrlImageOfReceipt   string `json:"url_image_of_receipt"`
 	PaymentID           uint   `json:"payment_id" valid:"required"`
 }
+
+type UpdateReceipt struct {
+	UrlImageOfReceipt string `json:"url_image_of_receipt"`
+}

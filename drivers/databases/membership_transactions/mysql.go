@@ -66,3 +66,15 @@ func (mysqlRepo *mysqlMembershipTransactionRepo) UpdateStatus(id, idAdmin uint, 
 	copier.Copy(&domain, &rec)
 	return domain, nil
 }
+
+func (mysqlRepo *mysqlMembershipTransactionRepo) UpdateReceipt(id uint, urlImage string) (membership_transactions.Domain, error) {
+	rec := MembershipTransactions{}
+	domain := membership_transactions.Domain{}
+	errUpdate := mysqlRepo.Conn.First(&rec, "id = ?", id).
+		Updates(map[string]interface{}{"status": urlImage}).Error
+	if errUpdate != nil {
+		return membership_transactions.Domain{}, errUpdate
+	}
+	copier.Copy(&domain, &rec)
+	return domain, nil
+}

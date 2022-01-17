@@ -3,7 +3,6 @@ package class_transactions
 import (
 	"gym-membership/business"
 	"gym-membership/business/class"
-	"strings"
 )
 
 type classTransactionUsecase struct {
@@ -58,8 +57,17 @@ func (uc *classTransactionUsecase) GetActiveClass(idUser uint) ([]class.Domain, 
 }
 
 func (uc *classTransactionUsecase) UpdateStatus(id, idAdmin uint, status string) (string, error) {
-	formattedStatus := strings.ReplaceAll(status, "-", " ")
-	_, err := uc.classTransactionRepository.UpdateStatus(id, idAdmin, formattedStatus)
+	// formattedStatus := strings.ReplaceAll(status, "-", " ")
+	_, err := uc.classTransactionRepository.UpdateStatus(id, idAdmin, status)
+	if err != nil {
+		return "", business.ErrInternalServer
+	}
+	return "", nil
+}
+
+func (uc *classTransactionUsecase) UpdateReceipt(id uint, urlImage string) (string, error) {
+	// formattedStatus := strings.ReplaceAll(urlImage, "-", " ")
+	_, err := uc.classTransactionRepository.UpdateReceipt(id, urlImage)
 	if err != nil {
 		return "", business.ErrInternalServer
 	}
