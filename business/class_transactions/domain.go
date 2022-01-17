@@ -6,13 +6,22 @@ import (
 )
 
 type Domain struct {
-	ID 			uint
-	UserID  	uint
-	AdminID 	uint
-	Status  	string
-	Nominal 	int
-	ClassID 	int
-	CreatedAt   time.Time
+	ID        uint
+	UserID    uint
+	AdminID   uint
+	Status    string
+	Nominal   int
+	ClassID   int
+	UpdatedAt time.Time
+	Payment   PaymentAccount
+}
+
+type PaymentAccount struct {
+	ID        uint
+	Name      string
+	NoCard    string
+	OwnerName string
+	Desc      string
 }
 
 type Usecase interface {

@@ -1,6 +1,7 @@
 package class_transactions
 
 import (
+	"fmt"
 	"gym-membership/business/class"
 	"gym-membership/business/class_transactions"
 
@@ -39,18 +40,18 @@ func (mysqlRepo *mysqlClassTransactionRepo) GetAll(status string, idUser uint, o
 	rec := []ClassTransaction{}
 	var err error
 	if status != "" || idUser != 0 {
-		err = mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").Joins("Class").
+		err = mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").Joins("Class").Joins("Payment").
 			Find(&rec, "status = ? OR user_id = ?", status, idUser).Count(&totalData).Error
 	} else {
-		err = mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").Joins("Class").
+		err = mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").Joins("Class").Joins("Payment").
 			Find(&rec).Count(&totalData).Error
 	}
 
 	if err != nil {
 		return nil, 0, err
 	}
-
 	copier.Copy(&domain, &rec)
+	fmt.Println("len", len(rec))
 	for i := 0; i < len(rec); i++ {
 		domain[i].Nominal = rec[i].Class.Price
 	}
