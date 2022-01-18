@@ -81,6 +81,29 @@ func (_m *Usecase) GetAll(status string, idUser uint, page int) ([]class_transac
 	return r0, r1, r2, r3, r4
 }
 
+// GetAllByUser provides a mock function with given fields: idUser
+func (_m *Usecase) GetAllByUser(idUser uint) ([]class_transactions.Domain, error) {
+	ret := _m.Called(idUser)
+
+	var r0 []class_transactions.Domain
+	if rf, ok := ret.Get(0).(func(uint) []class_transactions.Domain); ok {
+		r0 = rf(idUser)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]class_transactions.Domain)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(uint) error); ok {
+		r1 = rf(idUser)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Insert provides a mock function with given fields: classTransactioData
 func (_m *Usecase) Insert(classTransactioData *class_transactions.Domain) (class_transactions.Domain, error) {
 	ret := _m.Called(classTransactioData)

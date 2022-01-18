@@ -13,6 +13,7 @@ type Domain struct {
 	Status            string
 	Nominal           int
 	ClassID           int
+	ClassName         string
 	UpdatedAt         time.Time
 	CreatedAt         time.Time
 	Payment           PaymentAccount
@@ -31,6 +32,7 @@ type Usecase interface {
 	UpdateStatus(idTransactionClass, idAdmin uint, status string) (string, error)
 	UpdateReceipt(idTransactionClass uint, urlImage string) (string, error)
 	GetAll(status string, idUser uint, page int) ([]Domain, int, int, int64, error)
+	GetAllByUser(idUser uint) ([]Domain, error)
 	GetActiveClass(idUser uint) ([]class.Domain, error)
 }
 
@@ -39,5 +41,6 @@ type Repository interface {
 	UpdateStatus(idTransactionClass, idAdmin uint, status string) (Domain, error)
 	UpdateReceipt(idTransactionClass uint, urlImage string) (Domain, error)
 	GetAll(status string, idUser uint, offset, limit int) ([]Domain, int64, error)
+	GetAllByUser(idUser uint) ([]Domain, error)
 	GetActiveClass(idUser uint) ([]class.Domain, error)
 }
