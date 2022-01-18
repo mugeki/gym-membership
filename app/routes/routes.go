@@ -68,7 +68,8 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	// class.GET("/my-schedule/:idUser", ctrlList.ClassController.ScheduleByID)
 
 	class_transactions := e.Group("transaction-class", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
-	class_transactions.GET("", ctrlList.ClassTransactionController.GetAll)
+	class_transactions.GET("", ctrlList.ClassTransactionController.GetAll, AdminValidation(), SuperAdminValidation())
+	class_transactions.GET("/user", ctrlList.ClassTransactionController.GetAllByUser)
 	class_transactions.POST("", ctrlList.ClassTransactionController.Insert)
 	class_transactions.PUT("/update-status/:idClassTransaction", ctrlList.ClassTransactionController.UpdateStatus, AdminValidation(), SuperAdminValidation())
 	class_transactions.PUT("/update-receipt/:idClassTransaction", ctrlList.ClassTransactionController.UpdateReceipt)

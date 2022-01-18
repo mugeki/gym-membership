@@ -8,7 +8,7 @@ import (
 type Domain struct {
 	ID                uint
 	UserID            uint
-  UserName	        string
+  	UserName	        string
 	AdminID           uint
 	UrlImageOfReceipt string
 	Status            string
@@ -17,7 +17,7 @@ type Domain struct {
 	ClassName         string
 	UpdatedAt         time.Time
 	CreatedAt         time.Time
-  PaymentID         uint
+  	PaymentID         uint
 	Payment           PaymentAccount
 }
 

@@ -1,7 +1,6 @@
 package class_transactions
 
 import (
-	"fmt"
 	"gym-membership/business/class"
 	"gym-membership/business/class_transactions"
 
@@ -51,10 +50,9 @@ func (mysqlRepo *mysqlClassTransactionRepo) GetAll(status string, idUser uint, o
 		return nil, 0, err
 	}
 	copier.Copy(&domain, &rec)
-	fmt.Println("len", len(rec))
 	for i := 0; i < len(rec); i++ {  
 		domain[i].UserName = rec[i].User.FullName
-		domain[i].ProductName = rec[i].Class.Name
+		domain[i].ClassName = rec[i].Class.Name
 		domain[i].Nominal = rec[i].Class.Price
 	}
 	return domain, totalData, nil
@@ -98,5 +96,22 @@ func (mysqlRepo *mysqlClassTransactionRepo) GetActiveClass(idUser uint) ([]class
 		copier.Copy(&domain, &rec[i].Class)
 	}
 
+	return domain, nil
+}
+
+func (mysqlRepo *mysqlClassTransactionRepo) GetAllByUser(idUser uint) ([]class_transactions.Domain, error) {
+	domain := []class_transactions.Domain{}
+	rec := []ClassTransaction{}
+	err := mysqlRepo.Conn.Order("updated_at desc").Joins("Class").Joins("Payment").Joins("User").
+		Find(&rec, "user_id = ?", idUser).Error
+	if err != nil {
+		return []class_transactions.Domain{}, err
+	}
+	copier.Copy(&domain, &rec)
+	for i := 0; i < len(rec); i++ {
+		domain[i].UserName = rec[i].User.FullName
+		domain[i].Nominal = rec[i].Class.Price
+		domain[i].ClassName = rec[i].Class.Name
+	}
 	return domain, nil
 }
