@@ -1,25 +1,20 @@
 package admins
 
-import (
-	"time"
-
-	"github.com/google/uuid"
-)
+import "time"
 
 type Domain struct {
-	ID        		uint
-	UUID      		uuid.UUID
-	Username  		string
-	Password  		string
-	Email     		string
-	FullName  		string
-	Gender    		string
-	Telephone 		string
-	Address   		string
-	Token			string
-	IsSuperAdmin 	bool
-	CreatedAt 		time.Time
-	DeletedAt 		time.Time
+	ID           uint
+	Username     string
+	Password     string
+	Email        string
+	FullName     string
+	Gender       string
+	Telephone    string
+	Address      string
+	UrlImage     string
+	Token        string
+	IsSuperAdmin bool
+	CreatedAt    time.Time
 }
 
 type Usecase interface {

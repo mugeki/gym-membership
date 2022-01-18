@@ -5,9 +5,11 @@ import "time"
 type MembershipTransaction struct {
 	ID                  uint      `json:"id"`
 	UserID              uint      `json:"user_id"`
+	UserName			string	  `json:"user_name"`
 	AdminID             uint      `json:"admin_id"`
 	Status              string    `json:"status"`
 	Nominal             int       `json:"nominal"`
+	ProductName 		string	  `json:"product_name"`
 	MembershipProductID int       `json:"membership_product_id"`
 	CreatedAt           time.Time `json:"created_at"`
 }

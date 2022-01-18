@@ -8,9 +8,11 @@ import (
 type Domain struct {
 	ID 			uint
 	UserID  	uint
+	UserName	string
 	AdminID 	uint
 	Status  	string
 	Nominal 	int
+	ProductName string
 	ClassID 	int
 	CreatedAt   time.Time
 }
