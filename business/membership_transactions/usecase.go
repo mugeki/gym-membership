@@ -83,10 +83,17 @@ func (uc *membershipTransactionUsecase) UpdateStatus(id, idAdmin uint, status st
 }
 
 func (uc *membershipTransactionUsecase) UpdateReceipt(id uint, urlImage string) (string, error) {
-	// formattedStatus := strings.ReplaceAll(urlImage, "-", " ")
 	_, err := uc.membershipTransactionRepository.UpdateReceipt(id, urlImage)
 	if err != nil {
 		return "", business.ErrInternalServer
 	}
 	return "", nil
+}
+
+func (uc *membershipTransactionUsecase) GetAllByUser(idUser uint) ([]Domain, error) {
+	res, err := uc.membershipTransactionRepository.GetAllByUser(idUser)
+	if err != nil {
+		return []Domain{}, business.ErrInternalServer
+	}
+	return res, nil
 }

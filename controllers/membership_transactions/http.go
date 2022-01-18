@@ -1,6 +1,7 @@
 package membership_transactions
 
 import (
+	"gym-membership/app/middleware"
 	"gym-membership/business/membership_transactions"
 	controller "gym-membership/controllers"
 	"gym-membership/controllers/membership_transactions/request"
@@ -81,7 +82,7 @@ func (ctrl *MembershipTransactionController) UpdateStatus(c echo.Context) error 
 }
 
 func (ctrl *MembershipTransactionController) UpdateReceipt(c echo.Context) error {
-	idClassTransaction, _ := strconv.Atoi(c.Param("idClassTransaction"))
+	idMembershipTransaction, _ := strconv.Atoi(c.Param("idMembershipTransaction"))
 	req := request.UpdateReceipt{}
 
 	if err := c.Bind(&req); err != nil {
@@ -91,9 +92,26 @@ func (ctrl *MembershipTransactionController) UpdateReceipt(c echo.Context) error
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}
 	urlImage := req.UrlImageOfReceipt
-	_, err := ctrl.membershipTransactionsUsecase.UpdateReceipt(uint(idClassTransaction), urlImage)
+	_, err := ctrl.membershipTransactionsUsecase.UpdateReceipt(uint(idMembershipTransaction), urlImage)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
 	return controller.NewSuccessResponse(c, http.StatusOK, nil)
+}
+
+func (ctrl *MembershipTransactionController) GetAllByUser(c echo.Context) error {
+	jwtClaims := middleware.GetUser(c)
+	idUser := jwtClaims.ID
+	data, err := ctrl.membershipTransactionsUsecase.GetAllByUser(uint(idUser))
+	if err != nil {
+		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+	}
+
+	res := []response.MembershipTransaction{}
+	copier.Copy(&res, &data)
+	if len(data) == 0 {
+		return controller.NewSuccessResponse(c, http.StatusNoContent, res)
+	}
+
+	return controller.NewSuccessResponse(c, http.StatusOK, res)
 }

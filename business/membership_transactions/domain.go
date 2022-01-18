@@ -32,6 +32,7 @@ type Usecase interface {
 	UpdateStatus(id, idAdmin uint, status string) error
 	UpdateReceipt(idTransactionClass uint, urlImage string) (string, error)
 	GetAll(status string, idUser uint, page int) ([]Domain, int, int, int64, error)
+	GetAllByUser(idUser uint) ([]Domain, error)
 }
 
 type Repository interface {
@@ -39,4 +40,5 @@ type Repository interface {
 	UpdateStatus(id, idAdmin uint, status string) (Domain, error)
 	UpdateReceipt(idTransactionClass uint, urlImage string) (Domain, error)
 	GetAll(status string, idUser uint, offset, limit int) ([]Domain, int64, error)
+	GetAllByUser(idUser uint) ([]Domain, error)
 }
