@@ -38,9 +38,9 @@ func (mysqlRepo *mysqlMembershipTransactionRepo) GetAll(status string, idUser ui
 	var err error
 	if status != "" || idUser != 0 {
 		err = mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").Joins("MembershipProduct").
-			Find(&rec, "status = ? OR user_id = ?", status, idUser).Count(&totalData).Error
+			Joins("User").Find(&rec, "status = ? OR user_id = ?", status, idUser).Count(&totalData).Error
 	} else {
-		err = mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").
+		err = mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").Joins("User").
 			Joins("MembershipProduct").Find(&rec).Count(&totalData).Error
 	}
 
@@ -50,6 +50,7 @@ func (mysqlRepo *mysqlMembershipTransactionRepo) GetAll(status string, idUser ui
 
 	copier.Copy(&domain, &rec)
 	for i := 0; i < len(rec); i++ {
+		domain[i].UserName = rec[i].User.FullName
 		domain[i].ProductName = rec[i].MembershipProduct.Name
 		domain[i].Nominal = rec[i].MembershipProduct.Price
 	}

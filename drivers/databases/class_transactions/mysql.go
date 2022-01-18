@@ -40,10 +40,10 @@ func (mysqlRepo *mysqlClassTransactionRepo) GetAll(status string, idUser uint, o
 	var err error
 	if status != "" || idUser != 0 {
 		err = mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").Joins("Class").
-			Find(&rec, "status = ? OR user_id = ?", status, idUser).Count(&totalData).Error
+			Joins("User").Find(&rec, "status = ? OR user_id = ?", status, idUser).Count(&totalData).Error
 	} else {
 		err = mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").Joins("Class").
-			Find(&rec).Count(&totalData).Error
+			Joins("User").Find(&rec).Count(&totalData).Error
 	}
 
 	if err != nil {
@@ -52,6 +52,7 @@ func (mysqlRepo *mysqlClassTransactionRepo) GetAll(status string, idUser uint, o
 
 	copier.Copy(&domain, &rec)
 	for i := 0; i < len(rec); i++ {
+		domain[i].UserName = rec[i].User.FullName
 		domain[i].ProductName = rec[i].Class.Name
 		domain[i].Nominal = rec[i].Class.Price
 	}

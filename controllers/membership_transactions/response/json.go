@@ -5,6 +5,7 @@ import "time"
 type MembershipTransaction struct {
 	ID                  uint      `json:"id"`
 	UserID              uint      `json:"user_id"`
+	UserName			string	  `json:"user_name"`
 	AdminID             uint      `json:"admin_id"`
 	Status              string    `json:"status"`
 	Nominal             int       `json:"nominal"`
