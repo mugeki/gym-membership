@@ -1,6 +1,7 @@
 package class_transactions
 
 import (
+	"gym-membership/app/middleware"
 	"gym-membership/business/class_transactions"
 	controller "gym-membership/controllers"
 	"gym-membership/controllers/class_transactions/request"
@@ -94,4 +95,39 @@ func (ctrl *ClassTransactionController) UpdateStatus(c echo.Context) error {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
 	return controller.NewSuccessResponse(c, http.StatusOK, nil)
+}
+
+func (ctrl *ClassTransactionController) UpdateReceipt(c echo.Context) error {
+	idClassTransaction, _ := strconv.Atoi(c.Param("idClassTransaction"))
+	req := request.UpdateReceipt{}
+
+	if err := c.Bind(&req); err != nil {
+		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+	}
+	if _, err := govalidator.ValidateStruct(req); err != nil {
+		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+	}
+	urlImage := req.UrlImageOfReceipt
+	_, err := ctrl.class_transactionsUsecase.UpdateReceipt(uint(idClassTransaction), urlImage)
+	if err != nil {
+		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+	}
+	return controller.NewSuccessResponse(c, http.StatusOK, nil)
+}
+
+func (ctrl *ClassTransactionController) GetAllByUser(c echo.Context) error {
+	jwtClaims := middleware.GetUser(c)
+	idUser := jwtClaims.ID
+	data, err := ctrl.class_transactionsUsecase.GetAllByUser(uint(idUser))
+	if err != nil {
+		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+	}
+
+	res := []response.ClassTransaction{}
+	copier.Copy(&res, &data)
+	if len(data) == 0 {
+		return controller.NewSuccessResponse(c, http.StatusNoContent, res)
+	}
+
+	return controller.NewSuccessResponse(c, http.StatusOK, res)
 }

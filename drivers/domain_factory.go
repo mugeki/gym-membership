@@ -34,6 +34,9 @@ import (
 	videosDomain "gym-membership/business/videos"
 	videosDB "gym-membership/drivers/databases/videos"
 
+	paymentAccountDomain "gym-membership/business/payment_accounts"
+	paymentAccountDB "gym-membership/drivers/databases/payment_accounts"
+
 	"gorm.io/gorm"
 )
 
@@ -41,7 +44,7 @@ func NewUserRepository(conn *gorm.DB) usersDomain.Repository {
 	return usersDB.NewMySQLRepo(conn)
 }
 
-func NewMembershipProductsRepository(conn *gorm.DB) membershipProductsDomain.Repository{
+func NewMembershipProductsRepository(conn *gorm.DB) membershipProductsDomain.Repository {
 	return membershipProductsDB.NewMySQLRepo(conn)
 }
 
@@ -69,7 +72,7 @@ func NewClassificationRepository(conn *gorm.DB) classificationDomain.Repository 
 	return classificationDB.NewMySQLRepo(conn)
 }
 
-func NewVideoRepository(conn *gorm.DB) videosDomain.Repository{
+func NewVideoRepository(conn *gorm.DB) videosDomain.Repository {
 	return videosDB.NewMySQLRepo(conn)
 }
 
@@ -77,6 +80,10 @@ func NewMembershipTransactionRepository(conn *gorm.DB) membershipTransactionDoma
 	return membershipTransactionDB.NewMySQLRepo(conn)
 }
 
-func NewMemberRepository(conn *gorm.DB) memberDomain.Repository{
+func NewMemberRepository(conn *gorm.DB) memberDomain.Repository {
 	return memberDB.NewMySQLRepo(conn)
+}
+
+func NewPaymentAccountRepository(conn *gorm.DB) paymentAccountDomain.Repository {
+	return paymentAccountDB.NewMySQLRepo(conn)
 }

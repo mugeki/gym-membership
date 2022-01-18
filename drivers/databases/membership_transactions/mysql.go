@@ -37,7 +37,7 @@ func (mysqlRepo *mysqlMembershipTransactionRepo) GetAll(status string, idUser ui
 	rec := []MembershipTransactions{}
 	var err error
 	if status != "" || idUser != 0 {
-		err = mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").Joins("MembershipProduct").
+		err = mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").Joins("MembershipProduct").Joins("Payment").
 			Joins("User").Find(&rec, "status = ? OR user_id = ?", status, idUser).Count(&totalData).Error
 	} else {
 		err = mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").Joins("User").
@@ -62,6 +62,18 @@ func (mysqlRepo *mysqlMembershipTransactionRepo) UpdateStatus(id, idAdmin uint, 
 	domain := membership_transactions.Domain{}
 	errUpdate := mysqlRepo.Conn.First(&rec, "id = ?", id).
 		Updates(map[string]interface{}{"status": status, "admin_id": idAdmin}).Error
+	if errUpdate != nil {
+		return membership_transactions.Domain{}, errUpdate
+	}
+	copier.Copy(&domain, &rec)
+	return domain, nil
+}
+
+func (mysqlRepo *mysqlMembershipTransactionRepo) UpdateReceipt(id uint, urlImage string) (membership_transactions.Domain, error) {
+	rec := MembershipTransactions{}
+	domain := membership_transactions.Domain{}
+	errUpdate := mysqlRepo.Conn.First(&rec, "id = ?", id).
+		Updates(map[string]interface{}{"status": urlImage}).Error
 	if errUpdate != nil {
 		return membership_transactions.Domain{}, errUpdate
 	}

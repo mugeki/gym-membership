@@ -79,3 +79,21 @@ func (ctrl *MembershipTransactionController) UpdateStatus(c echo.Context) error 
 	}
 	return controller.NewSuccessResponse(c, http.StatusOK, nil)
 }
+
+func (ctrl *MembershipTransactionController) UpdateReceipt(c echo.Context) error {
+	idClassTransaction, _ := strconv.Atoi(c.Param("idClassTransaction"))
+	req := request.UpdateReceipt{}
+
+	if err := c.Bind(&req); err != nil {
+		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+	}
+	if _, err := govalidator.ValidateStruct(req); err != nil {
+		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+	}
+	urlImage := req.UrlImageOfReceipt
+	_, err := ctrl.membershipTransactionsUsecase.UpdateReceipt(uint(idClassTransaction), urlImage)
+	if err != nil {
+		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+	}
+	return controller.NewSuccessResponse(c, http.StatusOK, nil)
+}

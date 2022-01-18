@@ -13,17 +13,30 @@ type Domain struct {
 	Nominal int
 	ProductName string
 	MembershipProductID uint
-	CreatedAt  time.Time
+	UrlImageOfReceipt   string
+	CreatedAt           time.Time
+	UpdatedAt           time.Time
+  	PaymentID           uint
+	Payment             PaymentAccount
+}
+type PaymentAccount struct {
+	ID        uint
+	Name      string
+	NoCard    string
+	OwnerName string
+	Desc      string
 }
 
 type Usecase interface {
 	Insert(membershipTransactionData *Domain) (Domain, error)
-	UpdateStatus(id, idAdmin uint, status string) (error)
+	UpdateStatus(id, idAdmin uint, status string) error
+	UpdateReceipt(idTransactionClass uint, urlImage string) (string, error)
 	GetAll(status string, idUser uint, page int) ([]Domain, int, int, int64, error)
 }
 
 type Repository interface {
 	Insert(membershipTransactionData *Domain) (Domain, error)
 	UpdateStatus(id, idAdmin uint, status string) (Domain, error)
+	UpdateReceipt(idTransactionClass uint, urlImage string) (Domain, error)
 	GetAll(status string, idUser uint, offset, limit int) ([]Domain, int64, error)
 }

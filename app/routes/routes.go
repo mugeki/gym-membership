@@ -12,6 +12,7 @@ import (
 	"gym-membership/controllers/members"
 	"gym-membership/controllers/membership_products"
 	"gym-membership/controllers/membership_transactions"
+	"gym-membership/controllers/payment_accounts"
 	"gym-membership/controllers/trainers"
 	"gym-membership/controllers/users"
 	"gym-membership/controllers/videos"
@@ -22,18 +23,19 @@ import (
 )
 
 type ControllerList struct {
-	JWTMiddleware              middleware.JWTConfig
-	UserController             users.UserController
-	ClassController            class.ClassController
-	ClassTransactionController class_transactions.ClassTransactionController
-	TrainerController          trainers.TrainerController
-	AdminController          admins.AdminController
-	ArticleController        articles.ArticleController
-	ClassificationController classifications.ClassificationController
-	VideoController videos.VideoController
-	MembershipProductsController membership_products.MembershipProductsController
-	MembershipTransactionController	membership_transactions.MembershipTransactionController
-	MemberController	members.MemberController
+	JWTMiddleware                   middleware.JWTConfig
+	UserController                  users.UserController
+	ClassController                 class.ClassController
+	ClassTransactionController      class_transactions.ClassTransactionController
+	TrainerController               trainers.TrainerController
+	AdminController                 admins.AdminController
+	ArticleController               articles.ArticleController
+	ClassificationController        classifications.ClassificationController
+	VideoController                 videos.VideoController
+	MembershipProductsController    membership_products.MembershipProductsController
+	MembershipTransactionController membership_transactions.MembershipTransactionController
+	MemberController                members.MemberController
+	PaymentAccountController        payment_accounts.PaymentAccountController
 }
 
 func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
@@ -44,7 +46,7 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	users.POST("", ctrlList.UserController.Register)
 	users.POST("/login", ctrlList.UserController.Login)
 	users.PUT("", ctrlList.UserController.Update, middleware.JWTWithConfig(ctrlList.JWTMiddleware))
-  	
+
 	videos := e.Group("videos", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
 	videos.GET("", ctrlList.VideoController.GetAll)
 	videos.GET("/:idVideo", ctrlList.VideoController.GetByID)
@@ -66,9 +68,11 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	// class.GET("/my-schedule/:idUser", ctrlList.ClassController.ScheduleByID)
 
 	class_transactions := e.Group("transaction-class", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
-	class_transactions.GET("", ctrlList.ClassTransactionController.GetAll)
+	class_transactions.GET("", ctrlList.ClassTransactionController.GetAll, AdminValidation(), SuperAdminValidation())
+	class_transactions.GET("/user", ctrlList.ClassTransactionController.GetAllByUser)
 	class_transactions.POST("", ctrlList.ClassTransactionController.Insert)
 	class_transactions.PUT("/update-status/:idClassTransaction", ctrlList.ClassTransactionController.UpdateStatus, AdminValidation(), SuperAdminValidation())
+	class_transactions.PUT("/update-receipt/:idClassTransaction", ctrlList.ClassTransactionController.UpdateReceipt)
 	class_transactions.GET("/active/:idUser", ctrlList.ClassTransactionController.GetActiveClass)
 
 	trainers := e.Group("trainers", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
@@ -85,8 +89,12 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	classification.POST("", ctrlList.ClassificationController.Insert, SuperAdminValidation())
 	classification.GET("", ctrlList.ClassificationController.GetAll)
 
+	payment_account := e.Group("payment-account", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
+	payment_account.POST("", ctrlList.PaymentAccountController.Insert, SuperAdminValidation())
+	payment_account.GET("", ctrlList.PaymentAccountController.GetAll)
+
 	admins := e.Group("admins")
-  	admins.POST("", ctrlList.AdminController.Register)
+	admins.POST("", ctrlList.AdminController.Register)
 	admins.POST("/login", ctrlList.AdminController.Login)
 	admins.PUT("", ctrlList.AdminController.Update, middleware.JWTWithConfig(ctrlList.JWTMiddleware), AdminValidation())
 
@@ -94,6 +102,7 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	membership_transactions.GET("", ctrlList.MembershipTransactionController.GetAll)
 	membership_transactions.POST("", ctrlList.MembershipTransactionController.Insert)
 	membership_transactions.PUT("/update-status/:idMembershipTransaction", ctrlList.MembershipTransactionController.UpdateStatus, AdminValidation(), SuperAdminValidation())
+	membership_transactions.PUT("/update-receipt/:idClassTransaction", ctrlList.MembershipTransactionController.UpdateReceipt)
 
 	members := e.Group("members", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
 	members.GET("/:userId", ctrlList.MemberController.GetByUserID)
