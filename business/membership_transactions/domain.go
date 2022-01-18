@@ -16,7 +16,7 @@ type Domain struct {
 	UrlImageOfReceipt   string
 	CreatedAt           time.Time
 	UpdatedAt           time.Time
-  PaymentID           uint
+  	PaymentID           uint
 	Payment             PaymentAccount
 }
 type PaymentAccount struct {
