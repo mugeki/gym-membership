@@ -78,20 +78,20 @@ func (_m *Usecase) Insert(classData *class.Domain) (string, error) {
 	return r0, r1
 }
 
-// UpdateClassByID provides a mock function with given fields: id, articleData
-func (_m *Usecase) UpdateClassByID(id uint, articleData *class.Domain) (class.Domain, error) {
-	ret := _m.Called(id, articleData)
+// UpdateClassByID provides a mock function with given fields: id, classData
+func (_m *Usecase) UpdateClassByID(id uint, classData *class.Domain) (class.Domain, error) {
+	ret := _m.Called(id, classData)
 
 	var r0 class.Domain
 	if rf, ok := ret.Get(0).(func(uint, *class.Domain) class.Domain); ok {
-		r0 = rf(id, articleData)
+		r0 = rf(id, classData)
 	} else {
 		r0 = ret.Get(0).(class.Domain)
 	}
 
 	var r1 error
 	if rf, ok := ret.Get(1).(func(uint, *class.Domain) error); ok {
-		r1 = rf(id, articleData)
+		r1 = rf(id, classData)
 	} else {
 		r1 = ret.Error(1)
 	}

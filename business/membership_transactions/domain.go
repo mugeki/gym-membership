@@ -5,15 +5,18 @@ import (
 )
 
 type Domain struct {
-	ID                  uint
-	UserID              uint
-	AdminID             uint
-	Status              string
-	Nominal             int
+	ID uint
+	UserID  uint
+	UserName string
+	AdminID uint
+	Status  string
+	Nominal int
+	ProductName string
 	MembershipProductID uint
 	UrlImageOfReceipt   string
 	CreatedAt           time.Time
 	UpdatedAt           time.Time
+  PaymentID           uint
 	Payment             PaymentAccount
 }
 type PaymentAccount struct {

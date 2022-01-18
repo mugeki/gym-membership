@@ -5,6 +5,7 @@ import "time"
 type ClassTransaction struct {
 	ID                uint           `json:"id"`
 	UserID            uint           `json:"user_id"`
+  UserName	        string	  `json:"user_name"`
 	AdminID           uint           `json:"admin_id"`
 	Status            string         `json:"status"`
 	Nominal           int            `json:"nominal"`
@@ -13,6 +14,14 @@ type ClassTransaction struct {
 	UpdatedAt         time.Time      `json:"updated_at"`
 	CreatedAt         time.Time      `json:"created_at"`
 	Payment           PaymentAccount `json:"payment"`
+}
+
+type ClassActive struct {
+	ID              uint   `json:"id"`
+	Name            string `json:"name"`
+	Date            string `json:"date"`
+	Location        string `json:"location"`
+	UrlImage		string `json:"url_image"`
 }
 
 type Page struct {

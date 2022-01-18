@@ -6,6 +6,7 @@ type Class struct {
 	UrlImage        string `json:"url_image"`
 	Price           int    `json:"price"`
 	Kuota           int    `json:"kuota"`
+	Participant     int    `json:"participant"`
 	TrainerName     string `json:"trainer_name"`
 	TrainerImage    string `json:"trainer_image"`
 	Description     string `json:"description"`

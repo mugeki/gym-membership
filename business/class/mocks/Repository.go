@@ -65,18 +65,18 @@ func (_m *Repository) Insert(classData *class.Domain) (class.Domain, error) {
 }
 
 // IsExist provides a mock function with given fields: idClass
-func (_m *Repository) IsExist(idClass int) (class.Domain, error) {
+func (_m *Repository) IsExist(idClass uint) (class.Domain, error) {
 	ret := _m.Called(idClass)
 
 	var r0 class.Domain
-	if rf, ok := ret.Get(0).(func(int) class.Domain); ok {
+	if rf, ok := ret.Get(0).(func(uint) class.Domain); ok {
 		r0 = rf(idClass)
 	} else {
 		r0 = ret.Get(0).(class.Domain)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(int) error); ok {
+	if rf, ok := ret.Get(1).(func(uint) error); ok {
 		r1 = rf(idClass)
 	} else {
 		r1 = ret.Error(1)
@@ -85,20 +85,20 @@ func (_m *Repository) IsExist(idClass int) (class.Domain, error) {
 	return r0, r1
 }
 
-// UpdateClassByID provides a mock function with given fields: id, articleData
-func (_m *Repository) UpdateClassByID(id uint, articleData *class.Domain) (class.Domain, error) {
-	ret := _m.Called(id, articleData)
+// UpdateClassByID provides a mock function with given fields: id, classData
+func (_m *Repository) UpdateClassByID(id uint, classData *class.Domain) (class.Domain, error) {
+	ret := _m.Called(id, classData)
 
 	var r0 class.Domain
 	if rf, ok := ret.Get(0).(func(uint, *class.Domain) class.Domain); ok {
-		r0 = rf(id, articleData)
+		r0 = rf(id, classData)
 	} else {
 		r0 = ret.Get(0).(class.Domain)
 	}
 
 	var r1 error
 	if rf, ok := ret.Get(1).(func(uint, *class.Domain) error); ok {
-		r1 = rf(id, articleData)
+		r1 = rf(id, classData)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -107,18 +107,18 @@ func (_m *Repository) UpdateClassByID(id uint, articleData *class.Domain) (class
 }
 
 // UpdateParticipant provides a mock function with given fields: idClass
-func (_m *Repository) UpdateParticipant(idClass int) (class.Domain, error) {
+func (_m *Repository) UpdateParticipant(idClass uint) (class.Domain, error) {
 	ret := _m.Called(idClass)
 
 	var r0 class.Domain
-	if rf, ok := ret.Get(0).(func(int) class.Domain); ok {
+	if rf, ok := ret.Get(0).(func(uint) class.Domain); ok {
 		r0 = rf(idClass)
 	} else {
 		r0 = ret.Get(0).(class.Domain)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(int) error); ok {
+	if rf, ok := ret.Get(1).(func(uint) error); ok {
 		r1 = rf(idClass)
 	} else {
 		r1 = ret.Error(1)
@@ -128,18 +128,18 @@ func (_m *Repository) UpdateParticipant(idClass int) (class.Domain, error) {
 }
 
 // UpdateStatus provides a mock function with given fields: idClass, status
-func (_m *Repository) UpdateStatus(idClass int, status bool) (class.Domain, error) {
+func (_m *Repository) UpdateStatus(idClass uint, status bool) (class.Domain, error) {
 	ret := _m.Called(idClass, status)
 
 	var r0 class.Domain
-	if rf, ok := ret.Get(0).(func(int, bool) class.Domain); ok {
+	if rf, ok := ret.Get(0).(func(uint, bool) class.Domain); ok {
 		r0 = rf(idClass, status)
 	} else {
 		r0 = ret.Get(0).(class.Domain)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(int, bool) error); ok {
+	if rf, ok := ret.Get(1).(func(uint, bool) error); ok {
 		r1 = rf(idClass, status)
 	} else {
 		r1 = ret.Error(1)

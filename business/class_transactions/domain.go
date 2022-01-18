@@ -8,6 +8,7 @@ import (
 type Domain struct {
 	ID                uint
 	UserID            uint
+  UserName	        string
 	AdminID           uint
 	UrlImageOfReceipt string
 	Status            string
@@ -16,6 +17,7 @@ type Domain struct {
 	ClassName         string
 	UpdatedAt         time.Time
 	CreatedAt         time.Time
+  PaymentID         uint
 	Payment           PaymentAccount
 }
 
@@ -24,7 +26,7 @@ type PaymentAccount struct {
 	Name      string
 	NoCard    string
 	OwnerName string
-	Desc      string
+  Desc      string
 }
 
 type Usecase interface {

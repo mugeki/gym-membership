@@ -41,10 +41,10 @@ func (mysqlRepo *mysqlClassTransactionRepo) GetAll(status string, idUser uint, o
 	var err error
 	if status != "" || idUser != 0 {
 		err = mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").Joins("Class").Joins("Payment").
-			Find(&rec, "status = ? OR user_id = ?", status, idUser).Count(&totalData).Error
+			Joins("User").Find(&rec, "status = ? OR user_id = ?", status, idUser).Count(&totalData).Error
 	} else {
 		err = mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").Joins("Class").Joins("Payment").
-			Find(&rec).Count(&totalData).Error
+			Joins("User").Find(&rec).Count(&totalData).Error
 	}
 
 	if err != nil {
@@ -52,7 +52,9 @@ func (mysqlRepo *mysqlClassTransactionRepo) GetAll(status string, idUser uint, o
 	}
 	copier.Copy(&domain, &rec)
 	fmt.Println("len", len(rec))
-	for i := 0; i < len(rec); i++ {
+	for i := 0; i < len(rec); i++ {  
+		domain[i].UserName = rec[i].User.FullName
+		domain[i].ProductName = rec[i].Class.Name
 		domain[i].Nominal = rec[i].Class.Price
 	}
 	return domain, totalData, nil
@@ -84,19 +86,17 @@ func (mysqlRepo *mysqlClassTransactionRepo) UpdateReceipt(idClassTransaction uin
 
 func (mysqlRepo *mysqlClassTransactionRepo) GetActiveClass(idUser uint) ([]class.Domain, error) {
 	rec := []ClassTransaction{}
-	domain := []class_transactions.Domain{}
-	domainArrClass := []class.Domain{}
+	domain := []class.Domain{}
 
 	err := mysqlRepo.Conn.Order("updated_at desc").Joins("Class").
 		Find(&rec, "user_id = ? AND status = ?", idUser, "accepted").Error
 	if err != nil {
 		return []class.Domain{}, err
 	}
-	copier.Copy(&domain, &rec)
+	
 	for i := 0; i < len(rec); i++ {
-		domainClass := class.Domain{}
-		copier.Copy(&domainClass, &rec[i].Class)
-		domainArrClass = append(domainArrClass, domainClass)
+		copier.Copy(&domain, &rec[i].Class)
 	}
-	return domainArrClass, nil
+
+	return domain, nil
 }

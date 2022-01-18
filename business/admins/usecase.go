@@ -4,8 +4,6 @@ import (
 	"gym-membership/app/middleware"
 	"gym-membership/business"
 	"gym-membership/helper/encrypt"
-
-	"github.com/google/uuid"
 )
 
 type adminUsecase struct {
@@ -23,7 +21,6 @@ func NewAdminUsecase(adminRepo Repository, jwtauth *middleware.ConfigJWT) Usecas
 func (uc *adminUsecase) Register(adminData *Domain) (Domain, error) {
 	hashedPassword, _ := encrypt.Hash(adminData.Password)
 	adminData.Password = hashedPassword
-	adminData.UUID = uuid.New()
 	adminDomain, err := uc.adminRepository.Register(adminData)
 	if err != nil {
 		return Domain{}, business.ErrDuplicateData
@@ -34,11 +31,11 @@ func (uc *adminUsecase) Register(adminData *Domain) (Domain, error) {
 func (uc *adminUsecase) Login(username, password string) (Domain, error) {
 	adminDomain, err := uc.adminRepository.GetByUsername(username)
 	if err != nil {
-		return adminDomain, business.ErrInvalidLoginInfo
+		return Domain{}, business.ErrInvalidLoginInfo
 	}
 
 	if !encrypt.ValidateHash(password, adminDomain.Password) {
-		return adminDomain, business.ErrInvalidLoginInfo
+		return Domain{}, business.ErrInvalidLoginInfo
 	}
 
 	adminDomain.Token = uc.jwtAuth.GenerateToken(int(adminDomain.ID), false, true, adminDomain.IsSuperAdmin)
