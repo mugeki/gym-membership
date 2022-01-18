@@ -3,6 +3,7 @@ package class_transactions
 import (
 	"gym-membership/business/class"
 	"gym-membership/business/class_transactions"
+	"time"
 
 	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
@@ -33,17 +34,18 @@ func (mysqlRepo *mysqlClassTransactionRepo) Insert(transactionClassData *class_t
 	return domain, nil
 }
 
-func (mysqlRepo *mysqlClassTransactionRepo) GetAll(status string, idUser uint, offset, limit int) ([]class_transactions.Domain, int64, error) {
+func (mysqlRepo *mysqlClassTransactionRepo) GetAll(date time.Time, status string, idUser uint, offset, limit int) ([]class_transactions.Domain, int64, error) {
 	var totalData int64
 	domain := []class_transactions.Domain{}
 	rec := []ClassTransaction{}
 	var err error
 	if status != "" || idUser != 0 {
 		err = mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").Joins("Class").Joins("Payment").
-			Joins("User").Find(&rec, "status = ? OR user_id = ?", status, idUser).Count(&totalData).Error
+			Joins("User").Where("class_transactions.created_at <= ?", date).Find(&rec, "status = ? OR user_id = ?", status, idUser).
+			Count(&totalData).Error
 	} else {
 		err = mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").Joins("Class").Joins("Payment").
-			Joins("User").Find(&rec).Count(&totalData).Error
+			Joins("User").Where("class_transactions.created_at <= ?", date).Find(&rec).Count(&totalData).Error
 	}
 
 	if err != nil {

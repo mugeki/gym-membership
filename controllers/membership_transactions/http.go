@@ -8,6 +8,7 @@ import (
 	"gym-membership/controllers/membership_transactions/response"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/jinzhu/copier"
@@ -49,10 +50,15 @@ func (ctrl *MembershipTransactionController) GetAll(c echo.Context) error {
 	page, _ := strconv.Atoi(c.QueryParam("page"))
 	status := c.QueryParam("status")
 	idUser, _ := strconv.Atoi(c.QueryParam("idUser"))
+	dateString := c.QueryParam("date")
+	date := time.Now()
+	if dateString != "" {
+		date, _ = time.Parse(time.RFC3339, dateString)
+	}
 	if page <= 0 {
 		page = 1
 	}
-	data, offset, limit, totalData, err := ctrl.membershipTransactionsUsecase.GetAll(status, uint(idUser), page)
+	data, offset, limit, totalData, err := ctrl.membershipTransactionsUsecase.GetAll(date, status, uint(idUser), page)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
