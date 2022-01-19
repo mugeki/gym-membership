@@ -43,6 +43,50 @@ func (_m *Repository) GetAll(status string, idUser uint, offset int, limit int) 
 	return r0, r1, r2
 }
 
+// GetAllByUser provides a mock function with given fields: idUser
+func (_m *Repository) GetAllByUser(idUser uint) ([]membership_transactions.Domain, error) {
+	ret := _m.Called(idUser)
+
+	var r0 []membership_transactions.Domain
+	if rf, ok := ret.Get(0).(func(uint) []membership_transactions.Domain); ok {
+		r0 = rf(idUser)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]membership_transactions.Domain)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(uint) error); ok {
+		r1 = rf(idUser)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetByID provides a mock function with given fields: idTransaction
+func (_m *Repository) GetByID(idTransaction uint) (membership_transactions.Domain, error) {
+	ret := _m.Called(idTransaction)
+
+	var r0 membership_transactions.Domain
+	if rf, ok := ret.Get(0).(func(uint) membership_transactions.Domain); ok {
+		r0 = rf(idTransaction)
+	} else {
+		r0 = ret.Get(0).(membership_transactions.Domain)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(uint) error); ok {
+		r1 = rf(idTransaction)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Insert provides a mock function with given fields: membershipTransactionData
 func (_m *Repository) Insert(membershipTransactionData *membership_transactions.Domain) (membership_transactions.Domain, error) {
 	ret := _m.Called(membershipTransactionData)

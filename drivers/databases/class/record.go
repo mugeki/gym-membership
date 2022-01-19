@@ -19,7 +19,7 @@ type Class struct {
 	Trainers        trainers.Trainers `gorm:"constraint:OnUpdate:NO ACTION,OnDelete:NO ACTION;foreignKey:TrainerId"`
 	Description     string
 	AvailableStatus bool
-	IsOnline        bool
+	IsOnline        bool `gorm:"type:bool"`
 	Date            string
 	Location        string
 	CreatedAt       time.Time

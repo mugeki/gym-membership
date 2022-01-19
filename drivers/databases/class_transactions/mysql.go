@@ -50,7 +50,7 @@ func (mysqlRepo *mysqlClassTransactionRepo) GetAll(status string, idUser uint, o
 		return nil, 0, err
 	}
 	copier.Copy(&domain, &rec)
-	for i := 0; i < len(rec); i++ {  
+	for i := 0; i < len(rec); i++ {
 		domain[i].UserName = rec[i].User.FullName
 		domain[i].ClassName = rec[i].Class.Name
 		domain[i].Nominal = rec[i].Class.Price
@@ -91,10 +91,28 @@ func (mysqlRepo *mysqlClassTransactionRepo) GetActiveClass(idUser uint) ([]class
 	if err != nil {
 		return []class.Domain{}, err
 	}
-	
+
 	for i := 0; i < len(rec); i++ {
 		copier.Copy(&domain, &rec[i].Class)
 	}
+
+	return domain, nil
+}
+
+func (mysqlRepo *mysqlClassTransactionRepo) GetByID(idTransaction uint) (class_transactions.Domain, error) {
+	rec := ClassTransaction{}
+	domain := class_transactions.Domain{}
+
+	err := mysqlRepo.Conn.Order("updated_at desc").Joins("Class").Joins("Payment").Joins("User").
+		First(&rec, idTransaction).Error
+	if err != nil {
+		return class_transactions.Domain{}, err
+	}
+
+	copier.Copy(&domain, &rec)
+	domain.UserName = rec.User.FullName
+	domain.ClassName = rec.Class.Name
+	domain.Nominal = rec.Class.Price
 
 	return domain, nil
 }

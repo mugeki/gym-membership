@@ -57,6 +57,41 @@ func (mysqlRepo *mysqlMembershipTransactionRepo) GetAll(status string, idUser ui
 	return domain, totalData, nil
 }
 
+func (mysqlRepo *mysqlMembershipTransactionRepo) GetAllByUser(idUser uint) ([]membership_transactions.Domain, error) {
+	domain := []membership_transactions.Domain{}
+	rec := []MembershipTransactions{}
+	var err error
+	err = mysqlRepo.Conn.Order("updated_at desc").Joins("MembershipProduct").Joins("Payment").
+		Joins("User").Find(&rec, "user_id = ?", idUser).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	copier.Copy(&domain, &rec)
+	for i := 0; i < len(rec); i++ {
+		domain[i].UserName = rec[i].User.FullName
+		domain[i].ProductName = rec[i].MembershipProduct.Name
+		domain[i].Nominal = rec[i].MembershipProduct.Price
+	}
+	return domain, nil
+}
+
+func (mysqlRepo *mysqlMembershipTransactionRepo) GetByID(idTransaction uint) (membership_transactions.Domain, error) {
+	rec := MembershipTransactions{}
+	domain := membership_transactions.Domain{}
+	err := mysqlRepo.Conn.Order("updated_at desc").Joins("MembershipProduct").Joins("Payment").Joins("User").
+		First(&rec, idTransaction).Error
+	if err != nil {
+		return membership_transactions.Domain{}, err
+	}
+	copier.Copy(&domain, &rec)
+	domain.UserName = rec.User.FullName
+	domain.ProductName = rec.MembershipProduct.Name
+	domain.Nominal = rec.MembershipProduct.Price
+	return domain, nil
+}
+
 func (mysqlRepo *mysqlMembershipTransactionRepo) UpdateStatus(id, idAdmin uint, status string) (membership_transactions.Domain, error) {
 	rec := MembershipTransactions{}
 	domain := membership_transactions.Domain{}

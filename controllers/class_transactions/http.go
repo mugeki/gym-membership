@@ -131,3 +131,20 @@ func (ctrl *ClassTransactionController) GetAllByUser(c echo.Context) error {
 
 	return controller.NewSuccessResponse(c, http.StatusOK, res)
 }
+
+func (ctrl *ClassTransactionController) GetByID(c echo.Context) error {
+	idClassTransaction, _ := strconv.Atoi(c.Param("idClassTransaction"))
+
+	data, err := ctrl.class_transactionsUsecase.GetByID(uint(idClassTransaction))
+	if err != nil {
+		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+	}
+
+	res := []response.ClassTransaction{}
+	copier.Copy(&res, &data)
+	if len(res) == 0 {
+		return controller.NewSuccessResponse(c, http.StatusNoContent, res)
+	}
+
+	return controller.NewSuccessResponse(c, http.StatusOK, res)
+}
