@@ -75,12 +75,14 @@ func (ctrl *ArticleController) Insert(c echo.Context) error {
 	}
 
 	copier.Copy(&domain, &req)
-	_, err = ctrl.articleUsecase.Insert(&domain)
+	data, err := ctrl.articleUsecase.Insert(&domain)
 
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
-	return controller.NewSuccessResponse(c, http.StatusOK, nil)
+	res := response.Articles{}
+	copier.Copy(&res, &data)
+	return controller.NewSuccessResponse(c, http.StatusOK, res)
 }
 
 func (ctrl *ArticleController) UpdateArticleByID(c echo.Context) error {

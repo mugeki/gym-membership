@@ -55,14 +55,14 @@ func TestInsert(t *testing.T) {
 		resp, err := classUsecase.Insert(&classInput)
 
 		assert.Nil(t, err)
-		assert.Equal(t, "", resp)
+		assert.Equal(t, classData, resp)
 	})
 	t.Run("Invalid Test | Internal Server Error", func(t *testing.T) {
 		mockClassRepo.On("Insert", mock.Anything).Return(class.Domain{}, assert.AnError).Once()
 		resp, err := classUsecase.Insert(&classInput)
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "", resp)
+		assert.Equal(t, class.Domain{}, resp)
 	})
 }
 

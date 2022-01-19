@@ -32,18 +32,20 @@ func TestMain(m *testing.M){
 
 func TestInsert(t *testing.T){
 	t.Run("Valid Test", func(t *testing.T){
-		mockMembershipProductRepo.On("Insert", mock.Anything).Return(nil).Once()
+		mockMembershipProductRepo.On("Insert", mock.Anything).Return(productData, nil).Once()
 		
-		err := productUsecase.Insert(&productData)
+		resp, err := productUsecase.Insert(&productData)
 
 		assert.Nil(t, err)
+		assert.Equal(t, productData, resp)
 	})
 	t.Run("Invalid Test | Internal Server Error", func(t *testing.T){
-		mockMembershipProductRepo.On("Insert", mock.Anything).Return(assert.AnError).Once()
+		mockMembershipProductRepo.On("Insert", mock.Anything).Return(membership_products.Domain{}, assert.AnError).Once()
 		
-		err := productUsecase.Insert(&productData)
+		resp, err := productUsecase.Insert(&productData)
 
 		assert.NotNil(t, err)
+		assert.Equal(t, membership_products.Domain{}, resp)
 	})
 }
 
@@ -102,28 +104,31 @@ func TestGetByID(t *testing.T){
 func TestUpdateByID(t *testing.T){
 	t.Run("Valid Test", func(t *testing.T){
 		mockMembershipProductRepo.On("UpdateByID", mock.AnythingOfType("uint"), mock.Anything).
-			Return(nil).Once()
+			Return(productData, nil).Once()
 
-		err := productUsecase.UpdateByID(1, &productData)
+		resp, err := productUsecase.UpdateByID(1, &productData)
 
 		assert.Nil(t, err)
+		assert.Equal(t, productData, resp)
 	})
 	t.Run("Invalid Test | Internal Server Error", func(t *testing.T){
 		mockMembershipProductRepo.On("UpdateByID", mock.AnythingOfType("uint"), mock.Anything).
-			Return(assert.AnError).Once()
+			Return(membership_products.Domain{}, assert.AnError).Once()
 
-		err := productUsecase.UpdateByID(1, &productData)
+		resp, err := productUsecase.UpdateByID(1, &productData)
 
 		assert.NotNil(t, err)
+		assert.Equal(t, membership_products.Domain{}, resp)
 	})
 	t.Run("Invalid Test | Record Not Found", func(t *testing.T){
 		mockMembershipProductRepo.On("UpdateByID", mock.AnythingOfType("uint"), mock.Anything).
-			Return(gorm.ErrRecordNotFound).Once()
+			Return(membership_products.Domain{}, gorm.ErrRecordNotFound).Once()
 
-		err := productUsecase.UpdateByID(1, &productData)
+		resp, err := productUsecase.UpdateByID(1, &productData)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, business.ErrProductNotFound, err)
+		assert.Equal(t, membership_products.Domain{}, resp)
 	})
 }
 

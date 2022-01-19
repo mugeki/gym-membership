@@ -114,14 +114,14 @@ func (_m *Usecase) Insert(articleData *articles.Domain) (articles.Domain, error)
 }
 
 // UpdateArticleByID provides a mock function with given fields: id, articleData
-func (_m *Usecase) UpdateArticleByID(id uint, articleData *articles.Domain) (string, error) {
+func (_m *Usecase) UpdateArticleByID(id uint, articleData *articles.Domain) (articles.Domain, error) {
 	ret := _m.Called(id, articleData)
 
-	var r0 string
-	if rf, ok := ret.Get(0).(func(uint, *articles.Domain) string); ok {
+	var r0 articles.Domain
+	if rf, ok := ret.Get(0).(func(uint, *articles.Domain) articles.Domain); ok {
 		r0 = rf(id, articleData)
 	} else {
-		r0 = ret.Get(0).(string)
+		r0 = ret.Get(0).(articles.Domain)
 	}
 
 	var r1 error

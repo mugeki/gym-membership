@@ -25,6 +25,7 @@ func NewClassController(Usecase class.Usecase) *ClassController {
 
 func (ctrl *ClassController) Insert(c echo.Context) error {
 	req := request.Class{}
+	res := response.Class{}
 	domain := class.Domain{}
 	if err := c.Bind(&req); err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
@@ -39,8 +40,8 @@ func (ctrl *ClassController) Insert(c echo.Context) error {
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusConflict, err)
 	}
-
-	return controller.NewSuccessResponse(c, http.StatusOK, data)
+	copier.Copy(&res, &data)
+	return controller.NewSuccessResponse(c, http.StatusOK, res)
 }
 
 func (ctrl *ClassController) GetAll(c echo.Context) error {

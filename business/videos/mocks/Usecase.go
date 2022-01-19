@@ -93,14 +93,14 @@ func (_m *Usecase) GetByID(id uint) (videos.Domain, error) {
 }
 
 // Insert provides a mock function with given fields: videoData
-func (_m *Usecase) Insert(videoData *videos.Domain) (string, error) {
+func (_m *Usecase) Insert(videoData *videos.Domain) (videos.Domain, error) {
 	ret := _m.Called(videoData)
 
-	var r0 string
-	if rf, ok := ret.Get(0).(func(*videos.Domain) string); ok {
+	var r0 videos.Domain
+	if rf, ok := ret.Get(0).(func(*videos.Domain) videos.Domain); ok {
 		r0 = rf(videoData)
 	} else {
-		r0 = ret.Get(0).(string)
+		r0 = ret.Get(0).(videos.Domain)
 	}
 
 	var r1 error
@@ -114,14 +114,14 @@ func (_m *Usecase) Insert(videoData *videos.Domain) (string, error) {
 }
 
 // UpdateByID provides a mock function with given fields: id, videoData
-func (_m *Usecase) UpdateByID(id uint, videoData *videos.Domain) (string, error) {
+func (_m *Usecase) UpdateByID(id uint, videoData *videos.Domain) (videos.Domain, error) {
 	ret := _m.Called(id, videoData)
 
-	var r0 string
-	if rf, ok := ret.Get(0).(func(uint, *videos.Domain) string); ok {
+	var r0 videos.Domain
+	if rf, ok := ret.Get(0).(func(uint, *videos.Domain) videos.Domain); ok {
 		r0 = rf(id, videoData)
 	} else {
-		r0 = ret.Get(0).(string)
+		r0 = ret.Get(0).(videos.Domain)
 	}
 
 	var r1 error

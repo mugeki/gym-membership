@@ -56,12 +56,12 @@ func (uc *articleUsecase) Insert(articleData *Domain) (Domain, error) {
 	return data, nil
 }
 
-func (uc *articleUsecase) UpdateArticleByID(id uint, videoData *Domain) (string, error) {
-	_, err := uc.articleRepository.UpdateByID(id, videoData)
+func (uc *articleUsecase) UpdateArticleByID(id uint, videoData *Domain) (Domain, error) {
+	data, err := uc.articleRepository.UpdateByID(id, videoData)
 	if err != nil {
-		return "", business.ErrInternalServer
+		return Domain{}, business.ErrInternalServer
 	}
-	return "", nil
+	return data, nil
 }
 
 func (uc *articleUsecase) DeleteByID(id uint) error {
