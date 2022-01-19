@@ -5,6 +5,7 @@ import "time"
 type Articles struct {
 	ID                 uint      `json:"id"`
 	Title              string    `json:"title"`
+	ClassificationID   int		 `json:"classification_id"`
 	ClassificationName string    `json:"classification"`
 	AdminID            uint      `json:"admin_id"`
 	MemberOnly         bool      `json:"member_only"`
