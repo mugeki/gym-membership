@@ -106,7 +106,7 @@ func (ctrl *ArticleController) UpdateArticleByID(c echo.Context) error {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
 	copier.Copy(&res, &data)
-	return controller.NewSuccessResponse(c, http.StatusOK, data)
+	return controller.NewSuccessResponse(c, http.StatusOK, res)
 }
 
 func (ctrl *ArticleController) DeleteByID(c echo.Context) error {
