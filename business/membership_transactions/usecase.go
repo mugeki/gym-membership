@@ -5,7 +5,7 @@ import (
 	"gym-membership/business"
 	"gym-membership/business/members"
 	"gym-membership/business/membership_products"
-	"strings"
+
 	"time"
 
 	"gorm.io/gorm"
@@ -26,7 +26,7 @@ func NewMembershipTransactionUsecase(membershipTransactionRepo Repository, membe
 }
 
 func (uc *membershipTransactionUsecase) Insert(membershipTransactionData *Domain) (Domain, error) {
-	membershipTransactionData.Status = "waiting for payment"
+	membershipTransactionData.Status = "waiting-for-payment"
 	data, err := uc.membershipTransactionRepository.Insert(membershipTransactionData)
 	if err != nil {
 		return Domain{}, business.ErrInternalServer
@@ -43,7 +43,6 @@ func (uc *membershipTransactionUsecase) GetAll(status string, idUser uint, page 
 		offset = (page - 1) * 10
 	}
 
-	resStatus := strings.ReplaceAll(status, "-", " ")
 	res, totalData, err := uc.membershipTransactionRepository.GetAll(resStatus, idUser, offset, limit)
 	if err != nil {
 		return []Domain{}, -1, -1, -1, business.ErrInternalServer
@@ -51,9 +50,25 @@ func (uc *membershipTransactionUsecase) GetAll(status string, idUser uint, page 
 	return res, offset, limit, totalData, nil
 }
 
+func (uc *membershipTransactionUsecase) GetAllByUser(idUser uint) ([]Domain, error) {
+
+	res, err := uc.membershipTransactionRepository.GetAllByUser(idUser)
+	if err != nil {
+		return []Domain{}, business.ErrInternalServer
+	}
+	return res, nil
+}
+
+func (uc *membershipTransactionUsecase) GetByID(idTransaction uint) (Domain, error) {
+	res, err := uc.membershipTransactionRepository.GetByID(idTransaction)
+	if err != nil {
+		return Domain{}, business.ErrInternalServer
+	}
+	return res, nil
+}
+
 func (uc *membershipTransactionUsecase) UpdateStatus(id, idAdmin uint, status string) error {
-	formattedStatus := strings.ReplaceAll(status, "-", " ")
-	data, err := uc.membershipTransactionRepository.UpdateStatus(id, idAdmin, formattedStatus)
+	data, err := uc.membershipTransactionRepository.UpdateStatus(id, idAdmin, status)
 	if err != nil {
 		return business.ErrInternalServer
 	}
@@ -83,7 +98,7 @@ func (uc *membershipTransactionUsecase) UpdateStatus(id, idAdmin uint, status st
 }
 
 func (uc *membershipTransactionUsecase) UpdateReceipt(id uint, urlImage string) (string, error) {
-	// formattedStatus := strings.ReplaceAll(urlImage, "-", " ")
+
 	_, err := uc.membershipTransactionRepository.UpdateReceipt(id, urlImage)
 	if err != nil {
 		return "", business.ErrInternalServer
