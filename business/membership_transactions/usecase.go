@@ -43,7 +43,7 @@ func (uc *membershipTransactionUsecase) GetAll(status string, idUser uint, page 
 		offset = (page - 1) * 10
 	}
 
-	res, totalData, err := uc.membershipTransactionRepository.GetAll(resStatus, idUser, offset, limit)
+	res, totalData, err := uc.membershipTransactionRepository.GetAll(status, idUser, offset, limit)
 	if err != nil {
 		return []Domain{}, -1, -1, -1, business.ErrInternalServer
 	}

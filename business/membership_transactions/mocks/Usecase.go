@@ -57,20 +57,43 @@ func (_m *Usecase) GetAll(status string, idUser uint, page int) ([]membership_tr
 	return r0, r1, r2, r3, r4
 }
 
-// GetByID provides a mock function with given fields: idTrasaction
-func (_m *Usecase) GetByID(idTrasaction uint) (membership_transactions.Domain, error) {
-	ret := _m.Called(idTrasaction)
+// GetAllByUser provides a mock function with given fields: idUser
+func (_m *Usecase) GetAllByUser(idUser uint) ([]membership_transactions.Domain, error) {
+	ret := _m.Called(idUser)
+
+	var r0 []membership_transactions.Domain
+	if rf, ok := ret.Get(0).(func(uint) []membership_transactions.Domain); ok {
+		r0 = rf(idUser)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]membership_transactions.Domain)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(uint) error); ok {
+		r1 = rf(idUser)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetByID provides a mock function with given fields: idTransaction
+func (_m *Usecase) GetByID(idTransaction uint) (membership_transactions.Domain, error) {
+	ret := _m.Called(idTransaction)
 
 	var r0 membership_transactions.Domain
 	if rf, ok := ret.Get(0).(func(uint) membership_transactions.Domain); ok {
-		r0 = rf(idTrasaction)
+		r0 = rf(idTransaction)
 	} else {
 		r0 = ret.Get(0).(membership_transactions.Domain)
 	}
 
 	var r1 error
 	if rf, ok := ret.Get(1).(func(uint) error); ok {
-		r1 = rf(idTrasaction)
+		r1 = rf(idTransaction)
 	} else {
 		r1 = ret.Error(1)
 	}
