@@ -44,7 +44,7 @@ func (ctrl *ArticleController) GetAll(c echo.Context) error {
 	}
 	copier.Copy(&res, &data)
 	if len(data) == 0 {
-		return controller.NewSuccessResponse(c, http.StatusNoContent, data)
+		return controller.NewSuccessResponse(c, http.StatusNoContent, res)
 	}
 
 	return controller.NewSuccessResponse(c, http.StatusOK, res, resPage)
