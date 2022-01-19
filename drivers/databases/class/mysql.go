@@ -1,6 +1,7 @@
 package class
 
 import (
+	"fmt"
 	"gym-membership/business/class"
 
 	"github.com/jinzhu/copier"
@@ -31,14 +32,28 @@ func (mysqlRepo *mysqlClassRepo) Insert(userData *class.Domain) (class.Domain, e
 	return domain, nil
 }
 
-func (mysqlRepo *mysqlClassRepo) GetAll(name string, offset, limit int) ([]class.Domain, int64, error) {
+func (mysqlRepo *mysqlClassRepo) GetAll(name string, classType string, offset, limit int) ([]class.Domain, int64, error) {
 	var totalData int64
 	domain := []class.Domain{}
 	rec := []Class{}
-
-	mysqlRepo.Conn.Find(&rec, "name LIKE ?", "%"+name+"%").Count(&totalData)
-	err := mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").
-		Joins("Trainers").Find(&rec).Error
+	var err error
+	if name != "" {
+		err = mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").
+			Joins("Trainers").Find(&rec, "name LIKE ?", "%"+name+"%").Count(&totalData).Error
+	} else if classType != "" {
+		var isOnline bool
+		if classType == "offline" {
+			isOnline = false
+		} else if classType == "online" {
+			isOnline = true
+		}
+		fmt.Println(isOnline, "type repo")
+		err = mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").
+			Joins("Trainers").Find(&rec, "is_online LIKE ?", isOnline).Count(&totalData).Error
+	} else {
+		err = mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").
+			Joins("Trainers").Find(&rec).Count(&totalData).Error
+	}
 	if err != nil {
 		return nil, 0, err
 	}
@@ -48,12 +63,10 @@ func (mysqlRepo *mysqlClassRepo) GetAll(name string, offset, limit int) ([]class
 		domain[i].TrainerName = rec[i].Trainers.Fullname
 		domain[i].TrainerImage = rec[i].Trainers.UrlImage
 	}
-
 	return domain, totalData, nil
 }
 
 func (mysqlRepo *mysqlClassRepo) UpdateClassByID(id uint, classData *class.Domain) (class.Domain, error) {
-	// println("cek id", id)
 	domain := class.Domain{}
 	rec := Class{}
 	recData := Class{}

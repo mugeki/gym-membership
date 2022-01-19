@@ -28,7 +28,7 @@ func (uc *classUsecase) Insert(classData *Domain) (string, error) {
 	return "", nil
 }
 
-func (uc *classUsecase) GetAll(name string, page int) ([]Domain, int, int, int64, error) {
+func (uc *classUsecase) GetAll(name string, classType string, page int) ([]Domain, int, int, int64, error) {
 	var offset int
 	limit := 10
 	if page == 1 {
@@ -36,7 +36,7 @@ func (uc *classUsecase) GetAll(name string, page int) ([]Domain, int, int, int64
 	} else {
 		offset = (page - 1) * 10
 	}
-	res, totalData, err := uc.classRepository.GetAll(name, offset, limit)
+	res, totalData, err := uc.classRepository.GetAll(name, classType, offset, limit)
 	if err != nil {
 		return []Domain{}, -1, -1, -1, business.ErrInternalServer
 	}

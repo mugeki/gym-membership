@@ -5,7 +5,7 @@ import (
 )
 
 type Domain struct {
-	ID uint
+	ID              uint
 	Name            string
 	UrlImage        string
 	Price           int
@@ -25,7 +25,7 @@ type Domain struct {
 type Usecase interface {
 	Insert(classData *Domain) (string, error)
 	UpdateParticipant(idClass int) (string, error)
-	GetAll(title string, page int) ([]Domain, int, int, int64, error)
+	GetAll(title string, classType string, page int) ([]Domain, int, int, int64, error)
 	// GetClassById(idClass int) (Domain, error)
 	UpdateClassByID(id uint, classData *Domain) (Domain, error)
 	// ScheduleByID(id uint) ([]Domain, error)
@@ -35,7 +35,7 @@ type Repository interface {
 	Insert(classData *Domain) (Domain, error)
 	UpdateClassByID(id uint, classData *Domain) (Domain, error)
 	UpdateParticipant(idClass uint) (Domain, error)
-	GetAll(title string, offset, limit int) ([]Domain, int64, error)
+	GetAll(title string, classType string, offset, limit int) ([]Domain, int64, error)
 	// GetClassById(idClass uint) (Domain, error)
 	UpdateStatus(idClass uint, status bool) (Domain, error)
 	IsExist(idClass uint) (Domain, error)

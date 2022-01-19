@@ -45,12 +45,13 @@ func (ctrl *ClassController) Insert(c echo.Context) error {
 
 func (ctrl *ClassController) GetAll(c echo.Context) error {
 	title := c.QueryParam("name")
+	classType := c.QueryParam("class-type")
 	page, _ := strconv.Atoi(c.QueryParam("page"))
 	res := []response.Class{}
 	if page <= 0 {
 		page = 1
 	}
-	data, offset, limit, totalData, err := ctrl.classUsecase.GetAll(title, page)
+	data, offset, limit, totalData, err := ctrl.classUsecase.GetAll(title, classType, page)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
