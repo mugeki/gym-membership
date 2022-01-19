@@ -69,6 +69,17 @@ func (ctrl *ClassController) GetAll(c echo.Context) error {
 	return controller.NewSuccessResponse(c, http.StatusOK, res, resPage)
 }
 
+func (ctrl *ClassController) GetByID(c echo.Context) error {
+	classId, _ := strconv.Atoi(c.Param("idClass"))
+	res := response.Class{}
+	data, err := ctrl.classUsecase.GetClassByID(uint(classId))
+	if err != nil {
+		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+	}
+	copier.Copy(&res, &data)
+	return controller.NewSuccessResponse(c, http.StatusOK, res)
+}
+
 func (ctrl *ClassController) UpdateClassByID(c echo.Context) error {
 	// println("cek param path", c.QueryParam("id"))
 	req := request.ClassUpdate{}
@@ -84,10 +95,10 @@ func (ctrl *ClassController) UpdateClassByID(c echo.Context) error {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}
 
-	articleId, _ := strconv.Atoi(c.Param("idClass"))
+	classId, _ := strconv.Atoi(c.Param("idClass"))
 	copier.Copy(&domain, &req)
 	println("controller 1", req.Name)
-	data, err := ctrl.classUsecase.UpdateClassByID(uint(articleId), &domain)
+	data, err := ctrl.classUsecase.UpdateClassByID(uint(classId), &domain)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}

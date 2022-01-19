@@ -1,8 +1,11 @@
 package class
 
 import (
+	"errors"
 	"gym-membership/app/middleware"
 	"gym-membership/business"
+
+	"gorm.io/gorm"
 	// "gym-membership/helper/encrypt"
 	// "github.com/google/uuid"
 )
@@ -41,6 +44,19 @@ func (uc *classUsecase) GetAll(name string, classType string, page int) ([]Domai
 		return []Domain{}, -1, -1, -1, business.ErrInternalServer
 	}
 	return res, offset, limit, totalData, nil
+}
+
+func (uc *classUsecase) GetClassByID(id uint) (Domain, error) {
+	res, err := uc.classRepository.GetClassByID(id)
+	if err != nil {
+		if errors.Is(gorm.ErrRecordNotFound, err) {
+			return Domain{}, business.ErrProductNotFound
+		} else {
+			return Domain{}, business.ErrInternalServer
+		}
+
+	}
+	return res, nil
 }
 
 func (uc *classUsecase) UpdateClassByID(id uint, classData *Domain) (Domain, error) {

@@ -68,13 +68,13 @@ func TestInsert(t *testing.T) {
 
 func TestGetAll(t *testing.T) {
 	t.Run("Valid Test | Unspecified Page", func(t *testing.T) {
-		mockClassRepo.On("GetAll", mock.AnythingOfType("string"), mock.AnythingOfType("int"), mock.AnythingOfType("int")).
+		mockClassRepo.On("GetAll", mock.AnythingOfType("string"), mock.AnythingOfType("string"), mock.AnythingOfType("int"), mock.AnythingOfType("int")).
 			Return([]class.Domain{classData}, int64(1), nil).Once()
 
 		expectOffset := 0
 		expectLimit := 10
 		expectTotalData := int64(1)
-		resp, offset, limit, totalData, err := classUsecase.GetAll("Test", 1)
+		resp, offset, limit, totalData, err := classUsecase.GetAll("Test", "string", 1)
 
 		assert.Nil(t, err)
 		assert.Contains(t, resp, classData)
@@ -83,13 +83,13 @@ func TestGetAll(t *testing.T) {
 		assert.Equal(t, expectTotalData, totalData)
 	})
 	t.Run("Valid Test | Specified Page", func(t *testing.T) {
-		mockClassRepo.On("GetAll", mock.AnythingOfType("string"), mock.AnythingOfType("int"), mock.AnythingOfType("int")).
+		mockClassRepo.On("GetAll", mock.AnythingOfType("string"), mock.AnythingOfType("string"), mock.AnythingOfType("int"), mock.AnythingOfType("int")).
 			Return([]class.Domain{classData}, int64(1), nil).Once()
 
 		expectOffset := 10
 		expectLimit := 10
 		expectTotalData := int64(1)
-		resp, offset, limit, totalData, err := classUsecase.GetAll("Test", 2)
+		resp, offset, limit, totalData, err := classUsecase.GetAll("Test", "string", 2)
 
 		assert.Nil(t, err)
 		assert.Contains(t, resp, classData)
@@ -99,13 +99,13 @@ func TestGetAll(t *testing.T) {
 	})
 
 	t.Run("Invalid Test | Internal Server Error", func(t *testing.T) {
-		mockClassRepo.On("GetAll", mock.AnythingOfType("string"), mock.AnythingOfType("int"), mock.AnythingOfType("int")).
+		mockClassRepo.On("GetAll", mock.AnythingOfType("string"), mock.AnythingOfType("string"), mock.AnythingOfType("int"), mock.AnythingOfType("int")).
 			Return([]class.Domain{}, int64(0), assert.AnError).Once()
 
 		expectOffset := -1
 		expectLimit := -1
 		expectTotalData := int64(-1)
-		resp, offset, limit, totalData, err := classUsecase.GetAll("Test", 1)
+		resp, offset, limit, totalData, err := classUsecase.GetAll("Test", "string", 1)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, resp, []class.Domain{})

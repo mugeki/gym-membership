@@ -66,6 +66,19 @@ func (mysqlRepo *mysqlClassRepo) GetAll(name string, classType string, offset, l
 	return domain, totalData, nil
 }
 
+func (mysqlRepo *mysqlClassRepo) GetClassByID(id uint) (class.Domain, error) {
+	domain := class.Domain{}
+	rec := Class{}
+	err := mysqlRepo.Conn.Joins("Trainers").First(&rec, id).Error
+	if err != nil {
+		return class.Domain{}, err
+	}
+	copier.Copy(&domain, &rec)
+	domain.TrainerName = rec.Trainers.Fullname
+	domain.TrainerImage = rec.Trainers.UrlImage
+	return domain, nil
+}
+
 func (mysqlRepo *mysqlClassRepo) UpdateClassByID(id uint, classData *class.Domain) (class.Domain, error) {
 	domain := class.Domain{}
 	rec := Class{}
