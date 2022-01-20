@@ -54,7 +54,7 @@ func (mysqlRepo *mysqlClassTransactionRepo) GetAll(date time.Time, status string
 	copier.Copy(&domain, &rec)
 	for i := 0; i < len(rec); i++ {
 		domain[i].UserName = rec[i].User.FullName
-		domain[i].ClassName = rec[i].Class.Name
+		domain[i].ProductName = rec[i].Class.Name
 		domain[i].Nominal = rec[i].Class.Price
 	}
 	return domain, totalData, nil
@@ -113,7 +113,7 @@ func (mysqlRepo *mysqlClassTransactionRepo) GetByID(idTransaction uint) (class_t
 
 	copier.Copy(&domain, &rec)
 	domain.UserName = rec.User.FullName
-	domain.ClassName = rec.Class.Name
+	domain.ProductName = rec.Class.Name
 	domain.Nominal = rec.Class.Price
 
 	return domain, nil
@@ -131,7 +131,7 @@ func (mysqlRepo *mysqlClassTransactionRepo) GetAllByUser(idUser uint) ([]class_t
 	for i := 0; i < len(rec); i++ {
 		domain[i].UserName = rec[i].User.FullName
 		domain[i].Nominal = rec[i].Class.Price
-		domain[i].ClassName = rec[i].Class.Name
+		domain[i].ProductName = rec[i].Class.Name
 	}
 	return domain, nil
 }
