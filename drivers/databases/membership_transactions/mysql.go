@@ -117,20 +117,3 @@ func (mysqlRepo *mysqlMembershipTransactionRepo) UpdateReceipt(id uint, urlImage
 	copier.Copy(&domain, &rec)
 	return domain, nil
 }
-
-func (mysqlRepo *mysqlMembershipTransactionRepo) GetAllByUser(idUser uint) ([]membership_transactions.Domain, error) {
-	domain := []membership_transactions.Domain{}
-	rec := []MembershipTransactions{}
-	err := mysqlRepo.Conn.Order("updated_at desc").Joins("MembershipProduct").Joins("Payment").Joins("User").
-		Find(&rec, "user_id = ?", idUser).Error
-	if err != nil {
-		return []membership_transactions.Domain{}, err
-	}
-	copier.Copy(&domain, &rec)
-	for i := 0; i < len(rec); i++ {
-		domain[i].UserName = rec[i].User.FullName
-		domain[i].Nominal = rec[i].MembershipProduct.Price
-		domain[i].ProductName = rec[i].MembershipProduct.Name
-	}
-	return domain, nil
-}

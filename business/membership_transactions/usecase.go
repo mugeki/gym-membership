@@ -5,6 +5,7 @@ import (
 	"gym-membership/business"
 	"gym-membership/business/members"
 	"gym-membership/business/membership_products"
+	"strings"
 
 	"time"
 
@@ -104,12 +105,4 @@ func (uc *membershipTransactionUsecase) UpdateReceipt(id uint, urlImage string) 
 		return "", business.ErrInternalServer
 	}
 	return "", nil
-}
-
-func (uc *membershipTransactionUsecase) GetAllByUser(idUser uint) ([]Domain, error) {
-	res, err := uc.membershipTransactionRepository.GetAllByUser(idUser)
-	if err != nil {
-		return []Domain{}, business.ErrInternalServer
-	}
-	return res, nil
 }

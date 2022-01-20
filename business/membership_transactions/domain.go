@@ -32,6 +32,7 @@ type Usecase interface {
 	UpdateStatus(id, idAdmin uint, status string) error
 	UpdateReceipt(idTransactionClass uint, urlImage string) (string, error)
 	GetAll(date time.Time, status string, idUser uint, page int) ([]Domain, int, int, int64, error)
+	GetAllByUser(idUser uint) ([]Domain, error)
 	GetByID(idTransaction uint) (Domain, error)
 }
 

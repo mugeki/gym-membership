@@ -136,20 +136,3 @@ func (ctrl *MembershipTransactionController) UpdateReceipt(c echo.Context) error
 	}
 	return controller.NewSuccessResponse(c, http.StatusOK, nil)
 }
-
-func (ctrl *MembershipTransactionController) GetAllByUser(c echo.Context) error {
-	jwtClaims := middleware.GetUser(c)
-	idUser := jwtClaims.ID
-	data, err := ctrl.membershipTransactionsUsecase.GetAllByUser(uint(idUser))
-	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
-	}
-
-	res := []response.MembershipTransaction{}
-	copier.Copy(&res, &data)
-	if len(data) == 0 {
-		return controller.NewSuccessResponse(c, http.StatusNoContent, res)
-	}
-
-	return controller.NewSuccessResponse(c, http.StatusOK, res)
-}
