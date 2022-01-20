@@ -7,6 +7,7 @@ type Class struct {
 	Price           int    `json:"price"`
 	Kuota           int    `json:"kuota"`
 	Participant     int    `json:"participant"`
+	TrainerId       int    `json:"trainer_id"`
 	TrainerName     string `json:"trainer_name"`
 	TrainerImage    string `json:"trainer_image"`
 	Description     string `json:"description"`

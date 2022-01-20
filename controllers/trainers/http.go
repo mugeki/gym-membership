@@ -22,7 +22,7 @@ func NewTrainerController(Usecase trainers.Usecase) *TrainerController {
 
 func (ctrl *TrainerController) GetAll(c echo.Context) error {
 	data, err := ctrl.trainerUsecase.GetAll()
-	res := response.Trainers{}
+	res := []response.Trainers{}
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
