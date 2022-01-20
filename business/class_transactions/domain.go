@@ -14,7 +14,7 @@ type Domain struct {
 	Status            string
 	Nominal           int
 	ClassID           int
-	ClassName         string
+	ProductName       string
 	UpdatedAt         time.Time
 	CreatedAt         time.Time
 	PaymentID         uint
