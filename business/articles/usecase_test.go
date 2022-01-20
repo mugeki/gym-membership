@@ -150,7 +150,7 @@ func TestUpdateByID(t *testing.T) {
 		resp, err := articleUsecase.UpdateArticleByID(1, &articleInput)
 
 		assert.Nil(t, err)
-		assert.Equal(t, "", resp)
+		assert.Equal(t, articleData, resp)
 	})
 	t.Run("Invalid Test | Internal Server Error", func(t *testing.T) {
 		mockArticleRepo.On("GetClassificationID", mock.AnythingOfType("string")).Return(1, nil).Once()
@@ -159,6 +159,6 @@ func TestUpdateByID(t *testing.T) {
 		resp, err := articleUsecase.UpdateArticleByID(1, &articleInput)
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "", resp)
+		assert.Equal(t, articles.Domain{}, resp)
 	})
 }

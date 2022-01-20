@@ -88,13 +88,13 @@ func TestInsert(t *testing.T) {
 
 func TestGetAll(t *testing.T) {
 	t.Run("Valid Test | Unspecified Page", func(t *testing.T) {
-		mockClassTransactionRepo.On("GetAll", mock.AnythingOfType("string"), mock.AnythingOfType("uint"), mock.AnythingOfType("int"), mock.AnythingOfType("int")).
+		mockClassTransactionRepo.On("GetAll", mock.Anything, mock.AnythingOfType("string"), mock.AnythingOfType("uint"), mock.AnythingOfType("int"), mock.AnythingOfType("int")).
 			Return([]class_transactions.Domain{classTransactionData}, int64(1), nil).Once()
 
 		expectOffset := 0
 		expectLimit := 10
 		expectTotalData := int64(1)
-		resp, offset, limit, totalData, err := classTransactionUsecase.GetAll("Test", uint(1), 1)
+		resp, offset, limit, totalData, err := classTransactionUsecase.GetAll(time.Time{}, "Test", uint(1), 1)
 
 		assert.Nil(t, err)
 		assert.Contains(t, resp, classTransactionData)
@@ -103,13 +103,13 @@ func TestGetAll(t *testing.T) {
 		assert.Equal(t, expectTotalData, totalData)
 	})
 	t.Run("Valid Test | Specified Page", func(t *testing.T) {
-		mockClassTransactionRepo.On("GetAll", mock.AnythingOfType("string"), mock.AnythingOfType("uint"), mock.AnythingOfType("int"), mock.AnythingOfType("int")).
+		mockClassTransactionRepo.On("GetAll", mock.Anything, mock.AnythingOfType("string"), mock.AnythingOfType("uint"), mock.AnythingOfType("int"), mock.AnythingOfType("int")).
 			Return([]class_transactions.Domain{classTransactionData}, int64(1), nil).Once()
 
 		expectOffset := 10
 		expectLimit := 10
 		expectTotalData := int64(1)
-		resp, offset, limit, totalData, err := classTransactionUsecase.GetAll("Test", uint(1), 2)
+		resp, offset, limit, totalData, err := classTransactionUsecase.GetAll(time.Time{}, "Test", uint(1), 2)
 
 		assert.Nil(t, err)
 		assert.Contains(t, resp, classTransactionData)
@@ -119,13 +119,13 @@ func TestGetAll(t *testing.T) {
 	})
 
 	t.Run("Invalid Test | Internal Server Error", func(t *testing.T) {
-		mockClassTransactionRepo.On("GetAll", mock.AnythingOfType("string"), mock.AnythingOfType("uint"), mock.AnythingOfType("int"), mock.AnythingOfType("int")).
+		mockClassTransactionRepo.On("GetAll", mock.Anything, mock.AnythingOfType("string"), mock.AnythingOfType("uint"), mock.AnythingOfType("int"), mock.AnythingOfType("int")).
 			Return([]class_transactions.Domain{}, int64(0), assert.AnError).Once()
 
 		expectOffset := -1
 		expectLimit := -1
 		expectTotalData := int64(-1)
-		resp, offset, limit, totalData, err := classTransactionUsecase.GetAll("Test", uint(1), 2)
+		resp, offset, limit, totalData, err := classTransactionUsecase.GetAll(time.Time{}, "Test", uint(1), 2)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, resp, []class_transactions.Domain{})

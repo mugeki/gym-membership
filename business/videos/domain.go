@@ -18,8 +18,8 @@ type Domain struct {
 type Usecase interface {
 	GetAll(title string, page int) ([]Domain, int, int, int64, error)
 	GetByID(id uint) (Domain, error)
-	Insert(videoData *Domain) (string, error)
-	UpdateByID(id uint, videoData *Domain) (string, error)
+	Insert(videoData *Domain) (Domain, error)
+	UpdateByID(id uint, videoData *Domain) (Domain, error)
 	DeleteByID(id uint) (error)
 }
 

@@ -106,7 +106,7 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	membership_transactions.GET("/:idMembershipTransaction", ctrlList.MembershipTransactionController.GetByID)
 	membership_transactions.POST("", ctrlList.MembershipTransactionController.Insert)
 	membership_transactions.PUT("/update-status/:idMembershipTransaction", ctrlList.MembershipTransactionController.UpdateStatus, AdminValidation(), SuperAdminValidation())
-	membership_transactions.PUT("/update-receipt/:idClassTransaction", ctrlList.MembershipTransactionController.UpdateReceipt)
+	membership_transactions.PUT("/update-receipt/:idMembershipTransaction", ctrlList.MembershipTransactionController.UpdateReceipt)
 
 	members := e.Group("members", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
 	members.GET("/:userId", ctrlList.MemberController.GetByUserID)

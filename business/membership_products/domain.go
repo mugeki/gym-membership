@@ -9,17 +9,17 @@ type Domain struct {
 }
 
 type Usecase interface {
-	Insert(newData *Domain) error
+	Insert(newData *Domain) (Domain, error)
 	GetAll() ([]Domain, error)
 	GetByID(id uint) (Domain, error)
-	UpdateByID(id uint, newData *Domain) error
+	UpdateByID(id uint, newData *Domain) (Domain, error)
 	DeleteByID(id uint) error
 }
 
 type Repository interface {
-	Insert(newData *Domain) error
+	Insert(newData *Domain) (Domain, error)
 	GetAll() ([]Domain, error)
 	GetByID(id uint) (Domain, error)
-	UpdateByID(id uint, newData *Domain) error
+	UpdateByID(id uint, newData *Domain) (Domain, error)
 	DeleteByID(id uint) error
 }

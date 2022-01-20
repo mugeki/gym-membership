@@ -65,13 +65,14 @@ func (mysqlRepo *mysqlArticlesRepo) UpdateByID(id uint, videoData *articles.Doma
 	domain := articles.Domain{}
 	rec := Articles{}
 	recData := Articles{}
-	copier.Copy(recData, videoData)
-	err := mysqlRepo.Conn.First(&rec, "id = ?", id).Updates(recData).
-		Update("member_only",recData.MemberOnly).Error
+	copier.Copy(&recData, &videoData)
+	err := mysqlRepo.Conn.Joins("Classification").First(&rec, "articles.id = ?", id).
+		Updates(recData).Update("member_only",recData.MemberOnly).Error
 	if err != nil {
 		return articles.Domain{}, err
 	}
-	copier.Copy(domain, rec)
+	copier.Copy(&domain, &rec)
+	domain.ClassificationName = rec.Classification.Name
 	return domain, nil
 }
 

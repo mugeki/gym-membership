@@ -53,12 +53,13 @@ func (mysqlRepo *mysqlVideosRepo) Insert(videoData *videos.Domain) (videos.Domai
 	rec := Videos{}
 	copier.Copy(&rec, videoData)
 
-	err := mysqlRepo.Conn.Create(&rec).Error
+	err := mysqlRepo.Conn.Create(&rec).Joins("Classification").First(&rec).Error
 	if err != nil {
 		return videos.Domain{}, err
 	}
 
 	copier.Copy(&domain, &rec)
+	domain.ClassificationName = rec.Classification.Name
 	return domain, nil
 }
 
@@ -68,13 +69,14 @@ func (mysqlRepo *mysqlVideosRepo) UpdateByID(id uint, videoData *videos.Domain) 
 	recData := Videos{}
 	copier.Copy(&recData, videoData)
 
-	err := mysqlRepo.Conn.First(&rec, "id = ?", id).Updates(recData).
-							Update("member_only",recData.MemberOnly).Error
+	err := mysqlRepo.Conn.Joins("Classification").First(&rec, "videos.id = ?", id).
+		Updates(recData).Update("member_only",recData.MemberOnly).Error
 	if err != nil {
 		return videos.Domain{}, err
 	}
 
 	copier.Copy(&domain, &rec)
+	domain.ClassificationName = rec.Classification.Name
 	return domain, nil
 }
 

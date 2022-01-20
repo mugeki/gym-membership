@@ -79,14 +79,14 @@ func (_m *Usecase) GetClassByID(idClass uint) (class.Domain, error) {
 }
 
 // Insert provides a mock function with given fields: classData
-func (_m *Usecase) Insert(classData *class.Domain) (string, error) {
+func (_m *Usecase) Insert(classData *class.Domain) (class.Domain, error) {
 	ret := _m.Called(classData)
 
-	var r0 string
-	if rf, ok := ret.Get(0).(func(*class.Domain) string); ok {
+	var r0 class.Domain
+	if rf, ok := ret.Get(0).(func(*class.Domain) class.Domain); ok {
 		r0 = rf(classData)
 	} else {
-		r0 = ret.Get(0).(string)
+		r0 = ret.Get(0).(class.Domain)
 	}
 
 	var r1 error

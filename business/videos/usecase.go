@@ -43,24 +43,24 @@ func (uc *videoUsecase) GetByID(id uint) (Domain, error) {
 	return data, nil
 }
 
-func (uc *videoUsecase) Insert(videoData *Domain) (string, error) {
-	_, err := uc.videoRepository.Insert(videoData)
+func (uc *videoUsecase) Insert(videoData *Domain) (Domain, error) {
+	data, err := uc.videoRepository.Insert(videoData)
 	if err != nil {
-		return "", business.ErrInternalServer
+		return Domain{}, business.ErrInternalServer
 	}
-	return "", nil
+	return data, nil
 }
 
-func (uc *videoUsecase) UpdateByID(id uint, videoData *Domain) (string, error) {
-	_, err := uc.videoRepository.UpdateByID(id, videoData)
+func (uc *videoUsecase) UpdateByID(id uint, videoData *Domain) (Domain, error) {
+	data, err := uc.videoRepository.UpdateByID(id, videoData)
 	if err != nil {
 		if errors.Is(gorm.ErrRecordNotFound, err){
-			return "", business.ErrVideoNotFound
+			return Domain{}, business.ErrVideoNotFound
 		} else {
-			return "", business.ErrInternalServer
+			return Domain{}, business.ErrInternalServer
 		}
 	}
-	return "", nil
+	return data, nil
 }
 
 func (uc *videoUsecase) DeleteByID(id uint) (error) {

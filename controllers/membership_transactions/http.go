@@ -9,6 +9,7 @@ import (
 	"gym-membership/controllers/membership_transactions/response"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/jinzhu/copier"
@@ -50,10 +51,15 @@ func (ctrl *MembershipTransactionController) GetAll(c echo.Context) error {
 	page, _ := strconv.Atoi(c.QueryParam("page"))
 	status := c.QueryParam("status")
 	idUser, _ := strconv.Atoi(c.QueryParam("idUser"))
+	dateString := c.QueryParam("date")
+	date := time.Now()
+	if dateString != "" {
+		date, _ = time.Parse(time.RFC3339, dateString)
+	}
 	if page <= 0 {
 		page = 1
 	}
-	data, offset, limit, totalData, err := ctrl.membershipTransactionsUsecase.GetAll(status, uint(idUser), page)
+	data, offset, limit, totalData, err := ctrl.membershipTransactionsUsecase.GetAll(date, status, uint(idUser), page)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
@@ -114,7 +120,7 @@ func (ctrl *MembershipTransactionController) UpdateStatus(c echo.Context) error 
 }
 
 func (ctrl *MembershipTransactionController) UpdateReceipt(c echo.Context) error {
-	idClassTransaction, _ := strconv.Atoi(c.Param("idClassTransaction"))
+	idMembershipTransaction, _ := strconv.Atoi(c.Param("idMembershipTransaction"))
 	req := request.UpdateReceipt{}
 
 	if err := c.Bind(&req); err != nil {
@@ -124,7 +130,7 @@ func (ctrl *MembershipTransactionController) UpdateReceipt(c echo.Context) error
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}
 	urlImage := req.UrlImageOfReceipt
-	_, err := ctrl.membershipTransactionsUsecase.UpdateReceipt(uint(idClassTransaction), urlImage)
+	_, err := ctrl.membershipTransactionsUsecase.UpdateReceipt(uint(idMembershipTransaction), urlImage)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}

@@ -95,7 +95,7 @@ func TestInsert(t *testing.T){
 		resp, err := videoUsecase.Insert(&videoInput)
 
 		assert.Nil(t, err)
-		assert.Equal(t, "", resp)
+		assert.Equal(t, videoData, resp)
 	})
 	t.Run("Invalid Test | Internal Server Error", func(t *testing.T){
 		mockVideoRepo.On("Insert", mock.Anything).Return(videos.Domain{}, assert.AnError).Once()
@@ -103,7 +103,7 @@ func TestInsert(t *testing.T){
 		resp, err := videoUsecase.Insert(&videoInput)
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "", resp)
+		assert.Equal(t, videos.Domain{}, resp)
 	})
 }
 
@@ -114,7 +114,7 @@ func TestUpdateByID(t *testing.T){
 		resp, err := videoUsecase.UpdateByID(1, &videoInput)
 
 		assert.Nil(t, err)
-		assert.Equal(t, "", resp)
+		assert.Equal(t, videoData, resp)
 	})
 	t.Run("Invalid Test | Internal Server Error", func(t *testing.T){
 		mockVideoRepo.On("UpdateByID", mock.Anything, mock.Anything).Return(videos.Domain{}, assert.AnError).Once()
@@ -122,7 +122,7 @@ func TestUpdateByID(t *testing.T){
 		resp, err := videoUsecase.UpdateByID(1, &videoInput)
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "", resp)
+		assert.Equal(t, videos.Domain{}, resp)
 	})
 }
 

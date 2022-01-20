@@ -72,29 +72,43 @@ func (_m *Usecase) GetByID(id uint) (membership_products.Domain, error) {
 }
 
 // Insert provides a mock function with given fields: newData
-func (_m *Usecase) Insert(newData *membership_products.Domain) error {
+func (_m *Usecase) Insert(newData *membership_products.Domain) (membership_products.Domain, error) {
 	ret := _m.Called(newData)
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(*membership_products.Domain) error); ok {
+	var r0 membership_products.Domain
+	if rf, ok := ret.Get(0).(func(*membership_products.Domain) membership_products.Domain); ok {
 		r0 = rf(newData)
 	} else {
-		r0 = ret.Error(0)
+		r0 = ret.Get(0).(membership_products.Domain)
 	}
 
-	return r0
+	var r1 error
+	if rf, ok := ret.Get(1).(func(*membership_products.Domain) error); ok {
+		r1 = rf(newData)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // UpdateByID provides a mock function with given fields: id, newData
-func (_m *Usecase) UpdateByID(id uint, newData *membership_products.Domain) error {
+func (_m *Usecase) UpdateByID(id uint, newData *membership_products.Domain) (membership_products.Domain, error) {
 	ret := _m.Called(id, newData)
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(uint, *membership_products.Domain) error); ok {
+	var r0 membership_products.Domain
+	if rf, ok := ret.Get(0).(func(uint, *membership_products.Domain) membership_products.Domain); ok {
 		r0 = rf(id, newData)
 	} else {
-		r0 = ret.Error(0)
+		r0 = ret.Get(0).(membership_products.Domain)
 	}
 
-	return r0
+	var r1 error
+	if rf, ok := ret.Get(1).(func(uint, *membership_products.Domain) error); ok {
+		r1 = rf(id, newData)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
