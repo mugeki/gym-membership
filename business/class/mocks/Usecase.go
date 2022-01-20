@@ -13,13 +13,13 @@ type Usecase struct {
 	mock.Mock
 }
 
-// GetAll provides a mock function with given fields: title, page
-func (_m *Usecase) GetAll(title string, page int) ([]class.Domain, int, int, int64, error) {
-	ret := _m.Called(title, page)
+// GetAll provides a mock function with given fields: title, classType, page
+func (_m *Usecase) GetAll(title string, classType string, page int) ([]class.Domain, int, int, int64, error) {
+	ret := _m.Called(title, classType, page)
 
 	var r0 []class.Domain
-	if rf, ok := ret.Get(0).(func(string, int) []class.Domain); ok {
-		r0 = rf(title, page)
+	if rf, ok := ret.Get(0).(func(string, string, int) []class.Domain); ok {
+		r0 = rf(title, classType, page)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]class.Domain)
@@ -27,34 +27,55 @@ func (_m *Usecase) GetAll(title string, page int) ([]class.Domain, int, int, int
 	}
 
 	var r1 int
-	if rf, ok := ret.Get(1).(func(string, int) int); ok {
-		r1 = rf(title, page)
+	if rf, ok := ret.Get(1).(func(string, string, int) int); ok {
+		r1 = rf(title, classType, page)
 	} else {
 		r1 = ret.Get(1).(int)
 	}
 
 	var r2 int
-	if rf, ok := ret.Get(2).(func(string, int) int); ok {
-		r2 = rf(title, page)
+	if rf, ok := ret.Get(2).(func(string, string, int) int); ok {
+		r2 = rf(title, classType, page)
 	} else {
 		r2 = ret.Get(2).(int)
 	}
 
 	var r3 int64
-	if rf, ok := ret.Get(3).(func(string, int) int64); ok {
-		r3 = rf(title, page)
+	if rf, ok := ret.Get(3).(func(string, string, int) int64); ok {
+		r3 = rf(title, classType, page)
 	} else {
 		r3 = ret.Get(3).(int64)
 	}
 
 	var r4 error
-	if rf, ok := ret.Get(4).(func(string, int) error); ok {
-		r4 = rf(title, page)
+	if rf, ok := ret.Get(4).(func(string, string, int) error); ok {
+		r4 = rf(title, classType, page)
 	} else {
 		r4 = ret.Error(4)
 	}
 
 	return r0, r1, r2, r3, r4
+}
+
+// GetClassByID provides a mock function with given fields: idClass
+func (_m *Usecase) GetClassByID(idClass uint) (class.Domain, error) {
+	ret := _m.Called(idClass)
+
+	var r0 class.Domain
+	if rf, ok := ret.Get(0).(func(uint) class.Domain); ok {
+		r0 = rf(idClass)
+	} else {
+		r0 = ret.Get(0).(class.Domain)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(uint) error); ok {
+		r1 = rf(idClass)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // Insert provides a mock function with given fields: classData

@@ -8,7 +8,7 @@ import (
 type Domain struct {
 	ID                uint
 	UserID            uint
-  	UserName	        string
+	UserName          string
 	AdminID           uint
 	UrlImageOfReceipt string
 	Status            string
@@ -17,7 +17,7 @@ type Domain struct {
 	ClassName         string
 	UpdatedAt         time.Time
 	CreatedAt         time.Time
-  	PaymentID         uint
+	PaymentID         uint
 	Payment           PaymentAccount
 }
 
@@ -26,7 +26,7 @@ type PaymentAccount struct {
 	Name      string
 	NoCard    string
 	OwnerName string
-  	Desc      string
+	Desc      string
 }
 
 type Usecase interface {
@@ -36,6 +36,7 @@ type Usecase interface {
 	GetAll(date time.Time, status string, idUser uint, page int) ([]Domain, int, int, int64, error)
 	GetAllByUser(idUser uint) ([]Domain, error)
 	GetActiveClass(idUser uint) ([]class.Domain, error)
+	GetByID(idTransaction uint) (Domain, error)
 }
 
 type Repository interface {
@@ -45,4 +46,5 @@ type Repository interface {
 	GetAll(date time.Time, status string, idUser uint, offset, limit int) ([]Domain, int64, error)
 	GetAllByUser(idUser uint) ([]Domain, error)
 	GetActiveClass(idUser uint) ([]class.Domain, error)
+	GetByID(idTransaction uint) (Domain, error)
 }

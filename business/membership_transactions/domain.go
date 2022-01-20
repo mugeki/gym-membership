@@ -5,18 +5,18 @@ import (
 )
 
 type Domain struct {
-	ID uint
-	UserID  uint
-	UserName string
-	AdminID uint
-	Status  string
-	Nominal int
-	ProductName string
+	ID                  uint
+	UserID              uint
+	UserName            string
+	AdminID             uint
+	Status              string
+	Nominal             int
+	ProductName         string
 	MembershipProductID uint
 	UrlImageOfReceipt   string
 	CreatedAt           time.Time
 	UpdatedAt           time.Time
-  	PaymentID           uint
+	PaymentID           uint
 	Payment             PaymentAccount
 }
 type PaymentAccount struct {
@@ -32,7 +32,7 @@ type Usecase interface {
 	UpdateStatus(id, idAdmin uint, status string) error
 	UpdateReceipt(idTransactionClass uint, urlImage string) (string, error)
 	GetAll(date time.Time, status string, idUser uint, page int) ([]Domain, int, int, int64, error)
-	GetAllByUser(idUser uint) ([]Domain, error)
+	GetByID(idTransaction uint) (Domain, error)
 }
 
 type Repository interface {
@@ -41,4 +41,5 @@ type Repository interface {
 	UpdateReceipt(idTransactionClass uint, urlImage string) (Domain, error)
 	GetAll(date time.Time, status string, idUser uint, offset, limit int) ([]Domain, int64, error)
 	GetAllByUser(idUser uint) ([]Domain, error)
+	GetByID(idTransaction uint) (Domain, error)
 }

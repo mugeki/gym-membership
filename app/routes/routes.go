@@ -63,6 +63,7 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 
 	class := e.Group("classes", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
 	class.GET("", ctrlList.ClassController.GetAll)
+	class.GET("/:idClass", ctrlList.ClassController.GetByID)
 	class.POST("", ctrlList.ClassController.Insert, SuperAdminValidation())
 	class.PUT("/:idClass", ctrlList.ClassController.UpdateClassByID, SuperAdminValidation())
 	// class.GET("/my-schedule/:idUser", ctrlList.ClassController.ScheduleByID)
@@ -70,10 +71,11 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	class_transactions := e.Group("transaction-class", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
 	class_transactions.GET("", ctrlList.ClassTransactionController.GetAll, AdminValidation(), SuperAdminValidation())
 	class_transactions.GET("/user", ctrlList.ClassTransactionController.GetAllByUser)
+	class_transactions.GET("/active/:idUser", ctrlList.ClassTransactionController.GetActiveClass)
+	class_transactions.GET("/:idClassTransaction", ctrlList.ClassTransactionController.GetByID)
 	class_transactions.POST("", ctrlList.ClassTransactionController.Insert)
 	class_transactions.PUT("/update-status/:idClassTransaction", ctrlList.ClassTransactionController.UpdateStatus, AdminValidation(), SuperAdminValidation())
 	class_transactions.PUT("/update-receipt/:idClassTransaction", ctrlList.ClassTransactionController.UpdateReceipt)
-	class_transactions.GET("/active/:idUser", ctrlList.ClassTransactionController.GetActiveClass)
 
 	trainers := e.Group("trainers", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
 	trainers.GET("", ctrlList.TrainerController.GetAll)
@@ -99,8 +101,9 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	admins.PUT("", ctrlList.AdminController.Update, middleware.JWTWithConfig(ctrlList.JWTMiddleware), AdminValidation())
 
 	membership_transactions := e.Group("transaction-membership", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
-	membership_transactions.GET("", ctrlList.MembershipTransactionController.GetAll)
-	membership_transactions.GET("/user", ctrlList.MembershipTransactionController.GetAllByUser, AdminValidation(), SuperAdminValidation())
+	membership_transactions.GET("", ctrlList.MembershipTransactionController.GetAll, AdminValidation(), SuperAdminValidation())
+	membership_transactions.GET("/user", ctrlList.MembershipTransactionController.GetAllByUser)
+	membership_transactions.GET("/:idMembershipTransaction", ctrlList.MembershipTransactionController.GetByID)
 	membership_transactions.POST("", ctrlList.MembershipTransactionController.Insert)
 	membership_transactions.PUT("/update-status/:idMembershipTransaction", ctrlList.MembershipTransactionController.UpdateStatus, AdminValidation(), SuperAdminValidation())
 	membership_transactions.PUT("/update-receipt/:idMembershipTransaction", ctrlList.MembershipTransactionController.UpdateReceipt)
