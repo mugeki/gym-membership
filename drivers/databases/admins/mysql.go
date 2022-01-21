@@ -56,3 +56,25 @@ func (mysqlRepo *mysqlAdminsRepo) Update(id uint, adminData *admins.Domain) (adm
 	copier.Copy(&domain, &rec)
 	return domain, nil
 }
+
+func (mysqlRepo *mysqlAdminsRepo) GetAll(id uint, name string, offset, limit int) ([]admins.Domain, int64, error) {
+	var totalData int64
+	domain := []admins.Domain{}
+	rec := []Admins{}
+	if id != 0 {
+		totalData = 1
+		err := mysqlRepo.Conn.First(&rec, "id = ?", id).Error
+		if err != nil {
+			return nil, 0, err
+		}
+	} else {
+		mysqlRepo.Conn.Find(&rec, "full_name LIKE ?", "%"+name+"%").Count(&totalData)
+		err := mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").
+			Find(&rec, "full_name LIKE ?", "%"+name+"%").Error
+		if err != nil {
+			return nil, 0, err
+		}
+	}
+	copier.Copy(&domain, &rec)
+	return domain, totalData, nil
+}

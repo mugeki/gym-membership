@@ -33,6 +33,12 @@ func (ctrl *MembershipProductsController) Insert(c echo.Context) error {
 
 	if _, err := govalidator.ValidateStruct(req); err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+		
+	}
+
+	valid := govalidator.IsNonNegative(float64(req.Price)) && govalidator.IsNonNegative(float64(req.PeriodTime))
+	if !valid {
+		return controller.NewErrorResponse(c, http.StatusBadRequest, business.ErrNegativeValue)
 	}
 
 	copier.Copy(&domain, &req)
@@ -81,6 +87,11 @@ func (ctrl *MembershipProductsController) UpdateByID(c echo.Context) error {
 	_, err = govalidator.ValidateStruct(req)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+	}
+
+	valid := govalidator.IsNonNegative(float64(req.Price)) && govalidator.IsNonNegative(float64(req.PeriodTime))
+	if !valid {
+		return controller.NewErrorResponse(c, http.StatusBadRequest, business.ErrNegativeValue)
 	}
 
 	productId, _ := strconv.Atoi(c.Param("id"))

@@ -1,6 +1,7 @@
 package class
 
 import (
+	"gym-membership/business"
 	"gym-membership/business/class"
 	controller "gym-membership/controllers"
 	"gym-membership/controllers/class/request"
@@ -32,6 +33,11 @@ func (ctrl *ClassController) Insert(c echo.Context) error {
 
 	if _, err := govalidator.ValidateStruct(req); err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+	}
+
+	valid := govalidator.IsNonNegative(float64(req.Kuota)) && govalidator.IsNonNegative(float64(req.Price))
+	if !valid {
+		return controller.NewErrorResponse(c, http.StatusBadRequest, business.ErrNegativeValue)
 	}
 
 	copier.Copy(&domain, &req)
@@ -93,6 +99,11 @@ func (ctrl *ClassController) UpdateClassByID(c echo.Context) error {
 	_, err = govalidator.ValidateStruct(req)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+	}
+
+	valid := govalidator.IsNonNegative(float64(req.Kuota)) && govalidator.IsNonNegative(float64(req.Price))
+	if !valid {
+		return controller.NewErrorResponse(c, http.StatusBadRequest, business.ErrNegativeValue)
 	}
 
 	classId, _ := strconv.Atoi(c.Param("idClass"))

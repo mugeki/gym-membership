@@ -99,6 +99,7 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	admins.POST("", ctrlList.AdminController.Register)
 	admins.POST("/login", ctrlList.AdminController.Login)
 	admins.PUT("", ctrlList.AdminController.Update, middleware.JWTWithConfig(ctrlList.JWTMiddleware), AdminValidation())
+	admins.GET("", ctrlList.AdminController.GetAll, middleware.JWTWithConfig(ctrlList.JWTMiddleware), SuperAdminValidation())
 
 	membership_transactions := e.Group("transaction-membership", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
 	membership_transactions.GET("", ctrlList.MembershipTransactionController.GetAll, AdminValidation(), SuperAdminValidation())

@@ -12,4 +12,5 @@ var (
 	ErrInternalServer   = errors.New("Something went wrong")
 	ErrUnauthorized     = errors.New("User Unauthorized")
 	ErrInvalidToken 	= errors.New("Token invalid or expired")
+	ErrNegativeValue	= errors.New("Non-negative value required")
 )

@@ -7,6 +7,7 @@ import (
 	"gym-membership/controllers/admins/request"
 	"gym-membership/controllers/admins/response"
 	"net/http"
+	"strconv"
 
 	"github.com/jinzhu/copier"
 
@@ -83,4 +84,29 @@ func (ctrl *AdminController) Update(c echo.Context) error {
 	res := response.Admins{}
 	copier.Copy(&res, &data)
 	return controller.NewSuccessResponse(c, http.StatusOK, res)
+}
+
+func (ctrl *AdminController) GetAll(c echo.Context) error {
+	name := c.QueryParam("name")
+	id, _ := strconv.Atoi(c.QueryParam("id"))
+	page, _ := strconv.Atoi(c.QueryParam("page"))
+	if page <= 0 {
+		page = 1
+	}
+	data, offset, limit, totalData, err := ctrl.adminUsecase.GetAll(uint(id), name, page)
+	if err != nil {
+		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+	}
+	res := []response.Admins{}
+	resPage := response.Page{
+		Limit:     limit,
+		Offset:    offset,
+		TotalData: totalData,
+	}
+	copier.Copy(&res, &data)
+	if len(data) == 0 {
+		return controller.NewSuccessResponse(c, http.StatusNoContent, res)
+	}
+
+	return controller.NewSuccessResponse(c, http.StatusOK, res, resPage)
 }

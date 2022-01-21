@@ -49,3 +49,18 @@ func (uc *adminUsecase) Update(id uint, adminData *Domain) (Domain, error) {
 	}
 	return adminDomain, nil
 }
+
+func (uc *adminUsecase) GetAll(id uint, title string, page int) ([]Domain, int, int, int64, error) {
+	var offset int
+	limit := 10
+	if page == 1 {
+		offset = 0
+	} else {
+		offset = (page - 1) * 10
+	}
+	res, totalData, err := uc.adminRepository.GetAll(id, title, offset, limit)
+	if err != nil {
+		return []Domain{}, -1, -1, -1, business.ErrInternalServer
+	}
+	return res, offset, limit, totalData, nil
+}
