@@ -5,6 +5,7 @@ import (
 	"gym-membership/business"
 	"gym-membership/business/members"
 	"gym-membership/business/membership_products"
+	"strings"
 
 	"time"
 
@@ -34,7 +35,7 @@ func (uc *membershipTransactionUsecase) Insert(membershipTransactionData *Domain
 	return data, nil
 }
 
-func (uc *membershipTransactionUsecase) GetAll(status string, idUser uint, page int) ([]Domain, int, int, int64, error) {
+func (uc *membershipTransactionUsecase) GetAll(date time.Time, status string, idUser uint, page int) ([]Domain, int, int, int64, error) {
 	var offset int
 	limit := 10
 	if page == 1 {
@@ -43,7 +44,8 @@ func (uc *membershipTransactionUsecase) GetAll(status string, idUser uint, page 
 		offset = (page - 1) * 10
 	}
 
-	res, totalData, err := uc.membershipTransactionRepository.GetAll(status, idUser, offset, limit)
+	resStatus := strings.ReplaceAll(status, "-", " ")
+	res, totalData, err := uc.membershipTransactionRepository.GetAll(date, resStatus, idUser, offset, limit)
 	if err != nil {
 		return []Domain{}, -1, -1, -1, business.ErrInternalServer
 	}
@@ -98,7 +100,6 @@ func (uc *membershipTransactionUsecase) UpdateStatus(id, idAdmin uint, status st
 }
 
 func (uc *membershipTransactionUsecase) UpdateReceipt(id uint, urlImage string) (string, error) {
-
 	_, err := uc.membershipTransactionRepository.UpdateReceipt(id, urlImage)
 	if err != nil {
 		return "", business.ErrInternalServer

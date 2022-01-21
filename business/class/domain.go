@@ -23,7 +23,7 @@ type Domain struct {
 }
 
 type Usecase interface {
-	Insert(classData *Domain) (string, error)
+	Insert(classData *Domain) (Domain, error)
 	UpdateParticipant(idClass int) (string, error)
 	GetAll(title string, classType string, page int) ([]Domain, int, int, int64, error)
 	GetClassByID(idClass uint) (Domain, error)

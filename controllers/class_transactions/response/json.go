@@ -5,12 +5,12 @@ import "time"
 type ClassTransaction struct {
 	ID                uint           `json:"id"`
 	UserID            uint           `json:"user_id"`
-  	UserName	      string	  	 `json:"user_name"`
+	UserName          string         `json:"user_name"`
 	AdminID           uint           `json:"admin_id"`
 	Status            string         `json:"status"`
 	Nominal           int            `json:"nominal"`
 	ClassID           int            `json:"class_id"`
-	ClassName		  string		 `json:"class_name"`
+	ProductName       string         `json:"product_name"`
 	UrlImageOfReceipt string         `json:"url_image_of_receipt"`
 	UpdatedAt         time.Time      `json:"updated_at"`
 	CreatedAt         time.Time      `json:"created_at"`
@@ -18,11 +18,11 @@ type ClassTransaction struct {
 }
 
 type ClassActive struct {
-	ID              uint   `json:"id"`
-	Name            string `json:"name"`
-	Date            string `json:"date"`
-	Location        string `json:"location"`
-	UrlImage		string `json:"url_image"`
+	ID       uint   `json:"id"`
+	Name     string `json:"name"`
+	Date     string `json:"date"`
+	Location string `json:"location"`
+	UrlImage string `json:"url_image"`
 }
 
 type Page struct {

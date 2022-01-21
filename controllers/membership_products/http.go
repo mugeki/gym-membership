@@ -26,6 +26,7 @@ func NewMembershipProductsController(Usecase membership_products.Usecase) *Membe
 
 func (ctrl *MembershipProductsController) Insert(c echo.Context) error {
 	req := request.MembershipProducts{}
+	res := response.MembershipProducts{}
 	domain := membership_products.Domain{}
 	if err := c.Bind(&req); err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
@@ -42,12 +43,12 @@ func (ctrl *MembershipProductsController) Insert(c echo.Context) error {
 	}
 
 	copier.Copy(&domain, &req)
-	err := ctrl.membershipProductsUsecase.Insert(&domain)
+	data, err := ctrl.membershipProductsUsecase.Insert(&domain)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusConflict, err)
 	}
-
-	return controller.NewSuccessResponse(c, http.StatusOK, nil)
+	copier.Copy(&res, &data)
+	return controller.NewSuccessResponse(c, http.StatusOK, res)
 }
 
 func (ctrl *MembershipProductsController) GetAll(c echo.Context) error {
@@ -79,6 +80,8 @@ func (ctrl *MembershipProductsController) GetByID(c echo.Context) error {
 
 func (ctrl *MembershipProductsController) UpdateByID(c echo.Context) error {
 	req := request.MembershipProducts{}
+	res := response.MembershipProducts{}
+	domain := membership_products.Domain{}
 	err := c.Bind(&req)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
@@ -95,7 +98,8 @@ func (ctrl *MembershipProductsController) UpdateByID(c echo.Context) error {
 	}
 
 	productId, _ := strconv.Atoi(c.Param("id"))
-	err = ctrl.membershipProductsUsecase.DeleteByID(uint(productId))
+	copier.Copy(&domain, &req)
+	data, err := ctrl.membershipProductsUsecase.UpdateByID(uint(productId), &domain)
 	if err != nil {
 		if err == business.ErrProductNotFound {
 			return controller.NewErrorResponse(c, http.StatusNotFound, err)
@@ -103,7 +107,8 @@ func (ctrl *MembershipProductsController) UpdateByID(c echo.Context) error {
 			return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 		}
 	}
-	return controller.NewSuccessResponse(c, http.StatusOK, nil)
+	copier.Copy(&res, &data)
+	return controller.NewSuccessResponse(c, http.StatusOK, res)
 }
 
 func (ctrl *MembershipProductsController) DeleteByID(c echo.Context) error {

@@ -22,13 +22,13 @@ func NewClassUsecase(classRepo Repository, jwtauth *middleware.ConfigJWT) Usecas
 	}
 }
 
-func (uc *classUsecase) Insert(classData *Domain) (string, error) {
-	_, err := uc.classRepository.Insert(classData)
+func (uc *classUsecase) Insert(classData *Domain) (Domain, error) {
+	data, err := uc.classRepository.Insert(classData)
 	if err != nil {
-		return "", business.ErrInternalServer
+		return Domain{}, business.ErrInternalServer
 	}
 
-	return "", nil
+	return data, nil
 }
 
 func (uc *classUsecase) GetAll(name string, classType string, page int) ([]Domain, int, int, int64, error) {

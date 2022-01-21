@@ -20,7 +20,7 @@ type Usecase interface {
 	GetAll(title string, page int) ([]Domain, int, int, int64, error)
 	GetByID(id uint) (Domain, error)
 	Insert(articleData *Domain) (Domain, error)
-	UpdateArticleByID(id uint, articleData *Domain) (string, error)
+	UpdateArticleByID(id uint, articleData *Domain) (Domain, error)
 	DeleteByID(id uint) error
 }
 

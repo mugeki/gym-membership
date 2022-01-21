@@ -17,13 +17,13 @@ func NewMembershipProductsUsecase(membershipProductsRepository Repository) Useca
 	}
 }
 
-func (uc *membershipProductsUsecase) Insert(newData *Domain)  error {
-	err := uc.membershipProductsRepository.Insert(newData)
+func (uc *membershipProductsUsecase) Insert(newData *Domain)  (Domain, error) {
+	data, err := uc.membershipProductsRepository.Insert(newData)
 	if err != nil {
-		return business.ErrInternalServer
+		return Domain{}, business.ErrInternalServer
 	}
 
-	return nil
+	return data, nil
 }
 
 func (uc *membershipProductsUsecase) GetAll() ([]Domain, error) {
@@ -45,16 +45,16 @@ func (uc *membershipProductsUsecase) GetByID(id uint) (Domain, error) {
 	return res, nil
 }
 
-func (uc *membershipProductsUsecase) UpdateByID(id uint, newData *Domain) error{
-	err := uc.membershipProductsRepository.UpdateByID(id,newData)
+func (uc *membershipProductsUsecase) UpdateByID(id uint, newData *Domain) (Domain, error){
+	data, err := uc.membershipProductsRepository.UpdateByID(id,newData)
 	if err != nil {
 		if errors.Is(gorm.ErrRecordNotFound, err){
-			return business.ErrProductNotFound
+			return Domain{}, business.ErrProductNotFound
 		} else {
-			return business.ErrInternalServer
+			return Domain{}, business.ErrInternalServer
 		}
 	}
-	return nil
+	return data, nil
 }
 
 func (uc *membershipProductsUsecase) DeleteByID(id uint) error{

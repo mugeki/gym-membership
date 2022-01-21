@@ -3,6 +3,7 @@ package class_transactions
 import (
 	"gym-membership/business/class"
 	"gym-membership/business/class_transactions"
+	"time"
 
 	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
@@ -33,17 +34,18 @@ func (mysqlRepo *mysqlClassTransactionRepo) Insert(transactionClassData *class_t
 	return domain, nil
 }
 
-func (mysqlRepo *mysqlClassTransactionRepo) GetAll(status string, idUser uint, offset, limit int) ([]class_transactions.Domain, int64, error) {
+func (mysqlRepo *mysqlClassTransactionRepo) GetAll(date time.Time, status string, idUser uint, offset, limit int) ([]class_transactions.Domain, int64, error) {
 	var totalData int64
 	domain := []class_transactions.Domain{}
 	rec := []ClassTransaction{}
 	var err error
 	if status != "" || idUser != 0 {
 		err = mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").Joins("Class").Joins("Payment").
-			Joins("User").Find(&rec, "status = ? OR user_id = ?", status, idUser).Count(&totalData).Error
+			Joins("User").Where("class_transactions.created_at <= ?", date).Find(&rec, "status = ? OR user_id = ?", status, idUser).
+			Count(&totalData).Error
 	} else {
 		err = mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").Joins("Class").Joins("Payment").
-			Joins("User").Find(&rec).Count(&totalData).Error
+			Joins("User").Where("class_transactions.created_at <= ?", date).Find(&rec).Count(&totalData).Error
 	}
 
 	if err != nil {
@@ -52,7 +54,7 @@ func (mysqlRepo *mysqlClassTransactionRepo) GetAll(status string, idUser uint, o
 	copier.Copy(&domain, &rec)
 	for i := 0; i < len(rec); i++ {
 		domain[i].UserName = rec[i].User.FullName
-		domain[i].ClassName = rec[i].Class.Name
+		domain[i].ProductName = rec[i].Class.Name
 		domain[i].Nominal = rec[i].Class.Price
 	}
 	return domain, totalData, nil
@@ -111,7 +113,7 @@ func (mysqlRepo *mysqlClassTransactionRepo) GetByID(idTransaction uint) (class_t
 
 	copier.Copy(&domain, &rec)
 	domain.UserName = rec.User.FullName
-	domain.ClassName = rec.Class.Name
+	domain.ProductName = rec.Class.Name
 	domain.Nominal = rec.Class.Price
 
 	return domain, nil
@@ -129,7 +131,7 @@ func (mysqlRepo *mysqlClassTransactionRepo) GetAllByUser(idUser uint) ([]class_t
 	for i := 0; i < len(rec); i++ {
 		domain[i].UserName = rec[i].User.FullName
 		domain[i].Nominal = rec[i].Class.Price
-		domain[i].ClassName = rec[i].Class.Name
+		domain[i].ProductName = rec[i].Class.Name
 	}
 	return domain, nil
 }

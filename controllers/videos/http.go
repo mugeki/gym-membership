@@ -60,6 +60,7 @@ func (ctrl *VideoController) GetByID(c echo.Context) error {
 
 func (ctrl *VideoController) Insert(c echo.Context) error {
 	req := request.Videos{}
+	res := response.Videos{}
 	err := c.Bind(&req)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
@@ -76,11 +77,13 @@ func (ctrl *VideoController) Insert(c echo.Context) error {
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
-	return controller.NewSuccessResponse(c, http.StatusOK, data)
+	copier.Copy(&res, &data)
+	return controller.NewSuccessResponse(c, http.StatusOK, res)
 }
 
 func (ctrl *VideoController) UpdateByID(c echo.Context) error {
 	req := request.Videos{}
+	res := response.Videos{}
 	err := c.Bind(&req)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
@@ -101,7 +104,8 @@ func (ctrl *VideoController) UpdateByID(c echo.Context) error {
 		}
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
-	return controller.NewSuccessResponse(c, http.StatusOK, data)
+	copier.Copy(&res,&data)
+	return controller.NewSuccessResponse(c, http.StatusOK, res)
 }
 
 func (ctrl *VideoController) DeleteByID(c echo.Context) error {
