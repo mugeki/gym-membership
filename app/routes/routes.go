@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"gym-membership/controllers/auth"
 	"gym-membership/controllers/calendars"
 	"gym-membership/controllers/users"
 	"gym-membership/controllers/videos"
@@ -14,6 +15,7 @@ type ControllerList struct {
 	UserController         users.UserController
 	VideoController        videos.VideoController
 	CalendarsApiController calendars.CalendarsController
+	AuthController		   auth.AuthController
 }
 
 func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
@@ -29,4 +31,8 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 
 	calendars := e.Group("calendars")
 	calendars.GET("", ctrlList.CalendarsApiController.GetAll)
+
+	oauth := e.Group("")
+    oauth.POST("/GoogleLogin",ctrlList.AuthController.HandleGoogleLogin)
+    oauth.POST("/GoogleCallback",ctrlList.AuthController.HandleGoogleCallback)
 }

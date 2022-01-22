@@ -19,6 +19,7 @@ func NewCalendarsController(Usecase calendars.Usecase) *CalendarsController {
 }
 
 func (ctrl *CalendarsController) GetAll(c echo.Context) error {
+	
 	data, err := ctrl.calendarsUsecase.GetAll()
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)

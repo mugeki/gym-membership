@@ -42,12 +42,25 @@ func (ca *CalendarsApi) GetAll() (calendars.Event, error) {
 	// 		fmt.Println(i.Summary, " ", i.Start.DateTime)
 	// 	}
 	// }
+	
+	reqToken, _:= http.NewRequest(http.MethodPost, "http://localhost:8000/GoogleCallback",nil)
+	var token interface{}
+	respToken, err := ca.httpClient.Do(reqToken)
+	if err != nil {
+		fmt.Println(err)
+	}
+	err = json.NewDecoder(respToken.Body).Decode(&token)
+	if err != nil {
+		fmt.Println(err)
+	}
+	// calendarService, err := calendar.New(token)
+	fmt.Println(token)
 	fmt.Println("get all")
 	return calendars.Event{}, nil
 }
 
 func (ca *CalendarsApi) CreateEvent(eventData *calendars.Event) (calendars.Event, error) {
-	calendarId := "qurrotaayunamiroh@gmail.com" //tempCalendarID
+	calendarId := "elangmugeki@gmail.com" //tempCalendarID
 
 	requestLink := (fmt.Sprintf("https://www.googleapis.com/calendar/v3/calendars/%s/events", calendarId))
 	reqBody, err := json.Marshal(eventData)
@@ -70,7 +83,7 @@ func (ca *CalendarsApi) CreateEvent(eventData *calendars.Event) (calendars.Event
 }
 
 func (ca *CalendarsApi) AddGuest(eventId, emailGuest string) (calendars.Event, error) {
-	calendarId := "qurrotaayunamiroh@gmail.com" //tempCalendarID
+	calendarId := "elangmugeki@gmail.com" //tempCalendarID
 
 	requestLinkGetById := (fmt.Sprintf("https://www.googleapis.com/calendar/v3/calendars/%s/events/%s", calendarId, eventId))
 
