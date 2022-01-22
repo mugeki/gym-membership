@@ -53,11 +53,12 @@ func (mysqlRepo *mysqlArticlesRepo) Insert(videoData *articles.Domain) (articles
 	rec := Articles{}
 
 	copier.Copy(&rec, videoData)
-	err := mysqlRepo.Conn.Create(&rec).Error
+	err := mysqlRepo.Conn.Create(&rec).Joins("Classification").First(&rec).Error
 	if err != nil {
 		return articles.Domain{}, err
 	}
 	copier.Copy(&domain, &rec)
+	domain.ClassificationName = rec.Classification.Name
 	return domain, nil
 }
 

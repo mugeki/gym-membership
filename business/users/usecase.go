@@ -60,7 +60,7 @@ func (uc *userUsecase) Update(id uint, userData *Domain) (Domain, error) {
 		hashedPassword, _ := encrypt.Hash(userData.Password)
 		userData.Password = hashedPassword
 	} else {
-		data, err := uc.userRepository.GetByUsername(userData.Email)
+		data, err := uc.userRepository.GetByUsername(userData.Username)
 		if err != nil {
 			return Domain{}, business.ErrInternalServer
 		}

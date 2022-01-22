@@ -99,9 +99,9 @@ func (ctrl *ArticleController) UpdateArticleByID(c echo.Context) error {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}
 
-	articleId, _ := strconv.Atoi(c.Param("idArticle"))
+	idArticle, _ := strconv.Atoi(c.Param("idArticle"))
 	copier.Copy(&domain, &req)
-	data, err := ctrl.articleUsecase.UpdateArticleByID(uint(articleId), &domain)
+	data, err := ctrl.articleUsecase.UpdateArticleByID(uint(idArticle), &domain)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
@@ -110,8 +110,8 @@ func (ctrl *ArticleController) UpdateArticleByID(c echo.Context) error {
 }
 
 func (ctrl *ArticleController) DeleteByID(c echo.Context) error {
-	videoId, _ := strconv.Atoi(c.Param("idArticle"))
-	err := ctrl.articleUsecase.DeleteByID(uint(videoId))
+	idArticle, _ := strconv.Atoi(c.Param("idArticle"))
+	err := ctrl.articleUsecase.DeleteByID(uint(idArticle))
 	if err != nil {
 		if err == business.ErrArticleNotFound {
 			return controller.NewErrorResponse(c, http.StatusNotFound, err)

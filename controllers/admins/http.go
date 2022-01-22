@@ -1,7 +1,7 @@
 package admins
 
 import (
-	"gym-membership/app/middleware"
+	"gym-membership/business"
 	"gym-membership/business/admins"
 	controller "gym-membership/controllers"
 	"gym-membership/controllers/admins/request"
@@ -65,8 +65,9 @@ func (ctrl *AdminController) Login(c echo.Context) error {
 }
 
 func (ctrl *AdminController) Update(c echo.Context) error {
-	req := request.Admins{}
+	req := request.AdminsUpdate{}
 	domain := admins.Domain{}
+	idAdmin, _ := strconv.Atoi(c.Param("idAdmin"))
 	if err := c.Bind(&req); err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}
@@ -74,10 +75,9 @@ func (ctrl *AdminController) Update(c echo.Context) error {
 	if _, err := govalidator.ValidateStruct(req); err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}
-
+	
 	copier.Copy(&domain, &req)
-	userId := uint(middleware.GetUser(c).ID)
-	data, err := ctrl.adminUsecase.Update(userId, &domain)
+	data, err := ctrl.adminUsecase.Update(uint(idAdmin), &domain)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
@@ -88,12 +88,11 @@ func (ctrl *AdminController) Update(c echo.Context) error {
 
 func (ctrl *AdminController) GetAll(c echo.Context) error {
 	name := c.QueryParam("name")
-	id, _ := strconv.Atoi(c.QueryParam("id"))
 	page, _ := strconv.Atoi(c.QueryParam("page"))
 	if page <= 0 {
 		page = 1
 	}
-	data, offset, limit, totalData, err := ctrl.adminUsecase.GetAll(uint(id), name, page)
+	data, offset, limit, totalData, err := ctrl.adminUsecase.GetAll(name, page)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
@@ -109,4 +108,17 @@ func (ctrl *AdminController) GetAll(c echo.Context) error {
 	}
 
 	return controller.NewSuccessResponse(c, http.StatusOK, res, resPage)
+}
+
+func (ctrl *AdminController) DeleteByID(c echo.Context) error {
+	idAdmin, _ := strconv.Atoi(c.Param("idAdmin"))
+	err := ctrl.adminUsecase.DeleteByID(uint(idAdmin))
+	if err != nil {
+		if err == business.ErrArticleNotFound {
+			return controller.NewErrorResponse(c, http.StatusNotFound, err)
+		} else {
+			return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+		}
+	}
+	return controller.NewSuccessResponse(c, http.StatusOK, nil)
 }
