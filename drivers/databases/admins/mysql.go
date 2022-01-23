@@ -1,7 +1,6 @@
 package admins
 
 import (
-	"fmt"
 	"gym-membership/business/admins"
 
 	"github.com/jinzhu/copier"
@@ -36,7 +35,6 @@ func (mysqlRepo *mysqlAdminsRepo) GetByUsername(username string) (admins.Domain,
 
 	err := mysqlRepo.Conn.Where("username = ?", username).First(&rec).Error
 	if err != nil {
-		fmt.Println(rec.Username, "=====")
 		return admins.Domain{}, err
 	}
 	copier.Copy(&domain, &rec)
