@@ -42,8 +42,9 @@ func (ca *CalendarsApi) GetAll() (calendars.Event, error) {
 	// 		fmt.Println(i.Summary, " ", i.Start.DateTime)
 	// 	}
 	// }
-	
-	reqToken, _:= http.NewRequest(http.MethodPost, "http://localhost:8000/GoogleCallback",nil)
+
+	// reqToken, _:= http.NewRequest(http.MethodPost, "http://localhost:8000/GoogleCallback",nil)
+	reqToken, _ := http.NewRequest(http.MethodGet, "http://localhost:8000/google-callback", nil)
 	var token interface{}
 	respToken, err := ca.httpClient.Do(reqToken)
 	if err != nil {

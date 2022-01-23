@@ -14,6 +14,10 @@ import (
 	_videoController "gym-membership/controllers/videos"
 	_videoRepo "gym-membership/drivers/databases/videos"
 
+	_calendarApiService "gym-membership/business/calendars"
+	_calendarApiController "gym-membership/controllers/calendars"
+	_calendarApiRepo "gym-membership/drivers/calendarsApi"
+
 	_adminRepo "gym-membership/drivers/databases/admins"
 	_classificationRepo "gym-membership/drivers/databases/classifications"
 
@@ -25,6 +29,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
+	"google.golang.org/api/calendar/v3"
 	"gorm.io/gorm"
 )
 
@@ -46,9 +51,10 @@ func main() {
 		DB_Port:     os.Getenv("DB_PORT"),
 		DB_Database: os.Getenv("DB_NAME"),
 	}
+
 	db := configDB.InitDB()
 	dbMigrate(db)
-
+	calendar := calendar.Service{}
 	EXPIRE, _ := strconv.Atoi(os.Getenv("JWT_EXPIRE"))
 	configJWT := _middleware.ConfigJWT{
 		SecretJWT:       os.Getenv("JWT_SECRET"),
@@ -57,9 +63,9 @@ func main() {
 	e := echo.New()
 	oauthCtrl := _oauthController.NewAuthController()
 
-	// calendarsApiRepo := _calendarsApiRepo.NewCalendarsApi(calendarService)
-	// calendarsApiUsecase := _calendarsApiService.NewCalendarUsecase(calendarsApiRepo)
-	// calendarsApiCtrl := _calendarsApiController.NewCalendarsController(calendarsApiUsecase)
+	calendarsApiRepo := _calendarApiRepo.NewCalendarsApi(&calendar)
+	calendarsApiUsecase := _calendarApiService.NewCalendarUsecase(calendarsApiRepo)
+	calendarsApiCtrl := _calendarApiController.NewCalendarsController(calendarsApiUsecase)
 
 	userRepo := _driverFactory.NewUserRepository(db)
 	userUsecase := _userUsecase.NewUserUsecase(userRepo, &configJWT)
@@ -73,8 +79,8 @@ func main() {
 		JWTMiddleware:          configJWT.Init(),
 		UserController:         *userCtrl,
 		VideoController:        *videoCtrl,
-		// CalendarsApiController: *calendarsApiCtrl,
-		AuthController:			*oauthCtrl,
+		CalendarsApiController: *calendarsApiCtrl,
+		AuthController:         *oauthCtrl,
 	}
 	routesInit.RegisterRoute(e)
 

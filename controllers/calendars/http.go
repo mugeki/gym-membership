@@ -1,6 +1,7 @@
 package calendars
 
 import (
+	"fmt"
 	"gym-membership/business/calendars"
 	controller "gym-membership/controllers"
 	"net/http"
@@ -19,9 +20,10 @@ func NewCalendarsController(Usecase calendars.Usecase) *CalendarsController {
 }
 
 func (ctrl *CalendarsController) GetAll(c echo.Context) error {
-	
+	fmt.Println("=================== controllerlayer")
 	data, err := ctrl.calendarsUsecase.GetAll()
 	if err != nil {
+		fmt.Println("=================== error")
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
 	return controller.NewSuccessResponse(c, http.StatusOK, data, nil)

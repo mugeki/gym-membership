@@ -15,7 +15,7 @@ type ControllerList struct {
 	UserController         users.UserController
 	VideoController        videos.VideoController
 	CalendarsApiController calendars.CalendarsController
-	AuthController		   auth.AuthController
+	AuthController         auth.AuthController
 }
 
 func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
@@ -33,6 +33,6 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	calendars.GET("", ctrlList.CalendarsApiController.GetAll)
 
 	oauth := e.Group("")
-    oauth.POST("/GoogleLogin",ctrlList.AuthController.HandleGoogleLogin)
-    oauth.POST("/GoogleCallback",ctrlList.AuthController.HandleGoogleCallback)
+	oauth.POST("/google-login", ctrlList.AuthController.HandleGoogleLogin)
+	oauth.GET("/google-callback", ctrlList.AuthController.HandleGoogleCallback)
 }
