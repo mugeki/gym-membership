@@ -67,6 +67,7 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	class.POST("", ctrlList.ClassController.Insert, SuperAdminValidation())
 	class.PUT("/:idClass", ctrlList.ClassController.UpdateClassByID, SuperAdminValidation())
 	// class.GET("/my-schedule/:idUser", ctrlList.ClassController.ScheduleByID)
+	class.DELETE("/:idClass", ctrlList.ClassController.DeleteClassByID, SuperAdminValidation())
 
 	class_transactions := e.Group("transaction-class", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
 	class_transactions.GET("", ctrlList.ClassTransactionController.GetAll, AdminValidation(), SuperAdminValidation())

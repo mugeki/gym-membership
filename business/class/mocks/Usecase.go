@@ -13,6 +13,20 @@ type Usecase struct {
 	mock.Mock
 }
 
+// DeleteClassByID provides a mock function with given fields: id
+func (_m *Usecase) DeleteClassByID(id uint) error {
+	ret := _m.Called(id)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(uint) error); ok {
+		r0 = rf(id)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // GetAll provides a mock function with given fields: title, classType, page
 func (_m *Usecase) GetAll(title string, classType string, page int) ([]class.Domain, int, int, int64, error) {
 	ret := _m.Called(title, classType, page)

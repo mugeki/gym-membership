@@ -160,3 +160,15 @@ func (mysqlRepo *mysqlClassRepo) UpdateParticipant(idClass uint) (class.Domain, 
 
 // 	return domain, nil
 // }
+
+func (mysqlRepo *mysqlClassRepo) DeleteClassByID(id uint) (error){
+	rec := Class{}
+	err := mysqlRepo.Conn.First(&rec, id).Delete(&rec).Error
+	if rec.ID == 0 {
+		return gorm.ErrRecordNotFound
+	}
+	if err != nil {
+		return err
+	}
+	return nil
+}

@@ -117,3 +117,16 @@ func (ctrl *ClassController) UpdateClassByID(c echo.Context) error {
 	copier.Copy(&res, &data)
 	return controller.NewSuccessResponse(c, http.StatusOK, res)
 }
+
+func (ctrl *ClassController) DeleteClassByID(c echo.Context) error {
+	idClass, _ := strconv.Atoi(c.Param("idClass"))
+	err := ctrl.classUsecase.DeleteClassByID(uint(idClass))
+	if err != nil {
+		if err == business.ErrArticleNotFound {
+			return controller.NewErrorResponse(c, http.StatusNotFound, err)
+		} else {
+			return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+		}
+	}
+	return controller.NewSuccessResponse(c, http.StatusOK, nil)
+}
