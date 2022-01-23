@@ -51,22 +51,34 @@ func TestInsert(t *testing.T){
 
 func TestGetAll(t *testing.T){
 	t.Run("Valid Test", func(t *testing.T){
-		mockMembershipProductRepo.On("GetAll").
-			Return([]membership_products.Domain{productData},nil).Once()
+		mockMembershipProductRepo.On("GetAll", mock.AnythingOfType("int"), mock.AnythingOfType("int")).
+			Return([]membership_products.Domain{productData}, int64(1), nil).Once()
 
-		resp, err := productUsecase.GetAll()
+		expectOffset := 0
+		expectLimit := 10
+		expectTotalData := int64(1)
+		resp, offset, limit, totalData, err := productUsecase.GetAll(1)
 
 		assert.Nil(t, err)
 		assert.Contains(t, resp, productData)
+		assert.Equal(t, expectLimit, limit)
+		assert.Equal(t, expectOffset, offset)
+		assert.Equal(t, expectTotalData, totalData)
 	})
 	t.Run("Valid Test | No Content", func(t *testing.T){
-		mockMembershipProductRepo.On("GetAll").
-			Return(nil,assert.AnError).Once()
+		mockMembershipProductRepo.On("GetAll", mock.AnythingOfType("int"), mock.AnythingOfType("int")).
+			Return([]membership_products.Domain{productData}, int64(1), nil).Once()
 
-		resp, err := productUsecase.GetAll()
+		expectOffset := 10
+		expectLimit := 10
+		expectTotalData := int64(1)
+		resp, offset, limit, totalData, err := productUsecase.GetAll(2)
 
-		assert.NotNil(t, err)
-		assert.Equal(t, []membership_products.Domain{}, resp)
+		assert.Nil(t, err)
+		assert.Contains(t, resp, productData)
+		assert.Equal(t, expectLimit, limit)
+		assert.Equal(t, expectOffset, offset)
+		assert.Equal(t, expectTotalData, totalData)
 	})
 }
 
