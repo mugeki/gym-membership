@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	controller "gym-membership/controllers"
+	"gym-membership/controllers/auth/request"
 	"gym-membership/controllers/auth/response"
 	"log"
 	"net/http"
@@ -17,6 +18,7 @@ import (
 	"google.golang.org/api/calendar/v3"
 	"google.golang.org/api/option"
 
+	"github.com/asaskevich/govalidator"
 	// "gopkg.in/oauth2.v3/store"
 	"golang.org/x/oauth2/google"
 )
@@ -110,9 +112,22 @@ func (ctrl *AuthController) CreateCalendar(title string) (string, error) {
 }
 
 func (ctrl *AuthController) CreatenewClassSchedule(c echo.Context) error {
-	titleClass := "calisthenic 1 week program"
-	listSchedule := "2022-01-25T07:00:00.000Z,2022-01-25T09:08:00.000Z;2022-01-26T07:00:00.000Z,2622-01-16T09:08:00.000Z;2022-01-27T07:00:00.000Z,2022-01-27T09:08:00.000Z"
-	idCalendar, err := ctrl.CreateCalendar(titleClass)
+	// titleClass := "calisthenic 1 week program"
+	// listSchedule := "2022-01-25T07:00:00.000Z,2022-01-25T09:08:00.000Z;2022-01-26T07:00:00.000Z,2622-01-16T09:08:00.000Z;2022-01-27T07:00:00.000Z,2022-01-27T09:08:00.000Z"
+
+	req := request.NewCalendar{}
+	err := c.Bind(&req)
+	if err != nil {
+		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+	}
+	_, err = govalidator.ValidateStruct(req)
+	if err != nil {
+		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+	}
+	titleClass := req.Title
+	listSchedule := req.ListSchedule
+
+	idCalendar, err := ctrl.CreateCalendar(req.Title)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}

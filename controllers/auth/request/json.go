@@ -45,3 +45,8 @@ type Calendar struct {
 	Description string `json:"description"`
 	Location    string `json:"location"`
 }
+
+type NewCalendar struct {
+	Title        string `json:"title"`
+	ListSchedule string `json:"list_schedule"`
+}

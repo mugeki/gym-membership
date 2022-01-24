@@ -36,6 +36,6 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	oauth.POST("/google-login", ctrlList.AuthController.HandleGoogleLogin)
 	oauth.GET("/google-callback", ctrlList.AuthController.HandleGoogleCallback)
 	// oauth.GET("/getAllCalendar", ctrlList.AuthController.GetAll)
-	oauth.POST("/create-schedule", ctrlList.AuthController.CreatenewClassSchedule)
+	oauth.POST("/create-calendar-schedule", ctrlList.AuthController.CreatenewClassSchedule)
 	oauth.PUT("/add-attendance", ctrlList.AuthController.UpdateAttendance)
 }
