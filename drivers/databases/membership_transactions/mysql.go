@@ -62,8 +62,8 @@ func (mysqlRepo *mysqlMembershipTransactionRepo) GetAll(date time.Time, status s
 func (mysqlRepo *mysqlMembershipTransactionRepo) GetAllByUser(idUser uint) ([]membership_transactions.Domain, error) {
 	domain := []membership_transactions.Domain{}
 	rec := []MembershipTransactions{}
-	var err error
-	err = mysqlRepo.Conn.Order("updated_at desc").Joins("MembershipProduct").Joins("Payment").
+	// var err error
+	err := mysqlRepo.Conn.Order("updated_at desc").Joins("MembershipProduct").Joins("Payment").
 		Joins("User").Find(&rec, "user_id = ?", idUser).Error
 
 	if err != nil {
