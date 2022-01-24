@@ -37,3 +37,10 @@ type Event struct {
 	} `json:"reminders"`
 	EventType string `json:"eventType"`
 }
+
+type Calendar struct {
+	Id          string `json:"id"`
+	Summary     string `json:"summary"`
+	Description string `json:"description"`
+	Location    string `json:"location"`
+}

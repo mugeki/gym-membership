@@ -9,7 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
+	"strings"
 
 	"github.com/jinzhu/copier"
 	"github.com/labstack/echo/v4"
@@ -77,59 +77,91 @@ func (ctrl *AuthController) HandleGoogleLogin(c echo.Context) error {
 	return controller.NewSuccessResponse(c, http.StatusOK, authURL)
 }
 
-func (ctrl *AuthController) GetAll(c echo.Context) error {
+func (ctrl *AuthController) UpdateAttendance(c echo.Context) error {
+	calendarId := "ea053rm9emqclt6sb33t2irj4k@group.calendar.google.com" //temp calendar id
 	calendarService := ctrl.calendarsService
-	t := time.Now().Format(time.RFC3339)
-	events, err := calendarService.Events.List("primary").ShowDeleted(false).
-		SingleEvents(true).TimeMin(t).MaxResults(10).OrderBy("startTime").Do()
+	// t := time.Now().Format(time.RFC3339)
+	events, err := calendarService.Events.List(calendarId).Do()
+	for _, eventItem := range events.Items {
+		idEvent := eventItem.Id
+		attendees := eventItem.Attendees
+		addAttendees := calendar.EventAttendee{
+			Email: "amirohqurrota98@gmail.com",
+		}
+		reqAttend := []calendar.EventAttendee{}
+		copier.Copy(&reqAttend, &attendees)
+		fmt.Println(reqAttend, "reqAttend")
+		reqAttend = append(reqAttend, addAttendees)
+		fmt.Println(reqAttend, "new list")
+		// updateAttendance, err := calendarService.Events.Update(calendarId,idEvent)
+		// if err != nil {
+		// 	return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+		// }
+		// copier.Copy(&eventRes, &event)
+		// listEventCreated = append(listEventCreated, eventRes)
+	}
 	if err != nil {
 		log.Fatalf("Unable to retrieve next ten of the user's events: %v", err)
 	}
 
-	res := []response.Event{}
-	copier.Copy(&res, events.Items)
-	return controller.NewSuccessResponse(c, http.StatusOK, res)
+	// res := []response.Event{}
+	// copier.Copy(&res, events.Items)
+	return controller.NewSuccessResponse(c, http.StatusOK, events)
 }
 
-func (ctrl *AuthController) CreateEvent(c echo.Context) error {
+func (ctrl *AuthController) CreateEvent(calendarId, titleEvent, dateStart, dateEnd string) (response.Event, error) {
 	calendarService := ctrl.calendarsService
-	// start := time.Date(2022, 1, 24, 20, 24, 0, 0, time.Local).Format(time.RFC3339)
-	// fmt.Println(start, "start time")
 	newEvent := calendar.Event{
-		Summary: "Testevent",
-		Start:   &calendar.EventDateTime{DateTime: time.Date(2022, 1, 24, 20, 24, 0, 0, time.Local).Format(time.RFC3339)},
-		End:     &calendar.EventDateTime{DateTime: time.Date(2022, 1, 24, 23, 21, 0, 0, time.Local).Format(time.RFC3339)},
+		Summary: titleEvent,
+		Start:   &calendar.EventDateTime{DateTime: dateStart, TimeZone: "Asia/Jakarta"},
+		End:     &calendar.EventDateTime{DateTime: dateEnd, TimeZone: "Asia/Jakarta"},
 	}
-	createdEvent, err := calendarService.Events.Insert("primary", &newEvent).Do()
+	createdEvent, err := calendarService.Events.Insert(calendarId, &newEvent).Do()
 	if err != nil {
 		fmt.Println("error create event", err)
-		controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+		return response.Event{}, err
 	}
 	res := response.Event{}
 	copier.Copy(&res, createdEvent)
-	return controller.NewSuccessResponse(c, http.StatusOK, res)
+	return res, nil
 }
 
-func (ctrl *AuthController) CreateCalendar(c echo.Context) error {
-	idClass := 1 //temp id class
+func (ctrl *AuthController) CreateCalendar(title string) (string, error) {
 	calendarService := ctrl.calendarsService
-	// start := time.Date(2022, 1, 24, 20, 24, 0, 0, time.Local).Format(time.RFC3339)
-	// fmt.Println(start, "start time")
 	newCalendar := calendar.Calendar{
-		Id: string(idClass),
+		Summary: title,
 	}
-	// newEvent := calendar.Event{
-	// 	Summary: "Testevent",
-	// 	Start:   &calendar.EventDateTime{DateTime: time.Date(2022, 1, 24, 20, 24, 0, 0, time.Local).Format(time.RFC3339)},
-	// 	End:     &calendar.EventDateTime{DateTime: time.Date(2022, 1, 24, 23, 21, 0, 0, time.Local).Format(time.RFC3339)},
-	// }
-	// createdEvent, err := calendarService.Events.Insert("primary", &newEvent).Do()
-	createdEvent, err := calendarService.Calendars.Insert(&newCalendar).Do()
+	fmt.Println(newCalendar)
+	createdCalendar, err := calendarService.Calendars.Insert(&newCalendar).Do()
 	if err != nil {
-		fmt.Println("error create event", err)
-		controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+		fmt.Println("error create calendar", err)
+		return "", err
 	}
-	res := response.Event{}
-	copier.Copy(&res, createdEvent)
-	return controller.NewSuccessResponse(c, http.StatusOK, res)
+	idCalendar := createdCalendar.Id
+	return idCalendar, nil
 }
+
+func (ctrl *AuthController) CreatenewClassSchedule(c echo.Context) error {
+	titleClass := "calisthenic 1 week program"
+	listSchedule := "2022-01-25T07:00:00.000Z,2022-01-25T09:08:00.000Z;2022-01-26T07:00:00.000Z,2622-01-16T09:08:00.000Z;2022-01-27T07:00:00.000Z,2022-01-27T09:08:00.000Z"
+	idCalendar, err := ctrl.CreateCalendar(titleClass)
+	if err != nil {
+		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+	}
+	listEventCreated := []response.Event{}
+	eventRes := response.Event{}
+	listDate := strings.Split(listSchedule, ";")
+	for _, item := range listDate {
+		rangeDate := strings.Split(item, ",")
+		event, err := ctrl.CreateEvent(idCalendar, titleClass, rangeDate[0], rangeDate[1])
+		if err != nil {
+			return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+		}
+		copier.Copy(&eventRes, &event)
+		listEventCreated = append(listEventCreated, eventRes)
+	}
+
+	return controller.NewSuccessResponse(c, http.StatusOK, listEventCreated)
+}
+
+//gcl8to3slg64a0nob0p2ionuc8
