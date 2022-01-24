@@ -146,9 +146,9 @@ func (ctrl *ClassTransactionController) GetByID(c echo.Context) error {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
 
-	res := []response.ClassTransaction{}
+	res := response.ClassTransaction{}
 	copier.Copy(&res, &data)
-	if len(res) == 0 {
+	if res == (response.ClassTransaction{}) {
 		return controller.NewSuccessResponse(c, http.StatusNoContent, res)
 	}
 

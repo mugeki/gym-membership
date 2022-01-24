@@ -88,7 +88,6 @@ func (ctrl *ClassController) GetByID(c echo.Context) error {
 }
 
 func (ctrl *ClassController) UpdateClassByID(c echo.Context) error {
-	// println("cek param path", c.QueryParam("id"))
 	req := request.ClassUpdate{}
 	res := response.Class{}
 	domain := class.Domain{}
@@ -109,7 +108,6 @@ func (ctrl *ClassController) UpdateClassByID(c echo.Context) error {
 
 	classId, _ := strconv.Atoi(c.Param("idClass"))
 	copier.Copy(&domain, &req)
-	println("controller 1", req.Name)
 	data, err := ctrl.classUsecase.UpdateClassByID(uint(classId), &domain)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)

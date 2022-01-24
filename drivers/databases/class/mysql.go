@@ -1,7 +1,6 @@
 package class
 
 import (
-	"fmt"
 	"gym-membership/business/class"
 
 	"github.com/jinzhu/copier"
@@ -47,9 +46,8 @@ func (mysqlRepo *mysqlClassRepo) GetAll(name string, classType string, offset, l
 		} else if classType == "online" {
 			isOnline = true
 		}
-		fmt.Println(isOnline, "type repo")
 		err = mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").
-			Joins("Trainers").Find(&rec, "is_online LIKE ?", isOnline).Count(&totalData).Error
+			Joins("Trainers").Find(&rec, "is_online = ?", isOnline).Count(&totalData).Error
 	} else {
 		err = mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").
 			Joins("Trainers").Find(&rec).Count(&totalData).Error
