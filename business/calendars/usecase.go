@@ -1,7 +1,6 @@
 package calendars
 
 import (
-	"fmt"
 	"gym-membership/business"
 )
 
@@ -32,9 +31,8 @@ func (uc *calendarUsecase) AddGuest(eventId, emailGuest string) (Event, error) {
 	return data, nil
 }
 
-func (uc *calendarUsecase) GetAll() (Event, error) {
-	fmt.Println("=================== bussineslayer")
-	data, err := uc.calendarRepository.GetAll()
+func (uc *calendarUsecase) GetAll(code, state string) (Event, error) {
+	data, err := uc.calendarRepository.GetAll(code, state)
 	if err != nil {
 		return Event{}, business.ErrInternalServer
 	}

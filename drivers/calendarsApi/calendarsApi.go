@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+
+	// "log"
 	"net/http"
 
 	// "os"
@@ -31,7 +33,21 @@ func NewCalendarsApi(calendarService *calendar.Service) calendars.Repository {
 	}
 }
 
-func (ca *CalendarsApi) GetAll() (calendars.Event, error) {
+// func getTokenAsync() <-chan *http.Request {
+// 	token := make(chan *http.Request)
+// 	go func() {
+// 		defer close(token)
+// 		time.Sleep(time.Second * 5)
+// 		reqToken, _ := http.NewRequest(http.MethodPost, "http://localhost:8000/google-login", nil)
+// 		fmt.Println("++++++++", reqToken)
+// 		// tokResult := calendars.Token{}
+// 		// tokResult := "calendars.Token{}"
+// 		token <- reqToken
+// 	}()
+// 	return token
+// }
+
+func (ca *CalendarsApi) GetAll(code, state string) (calendars.Event, error) {
 	// calendarEvents, err := ca.calendarsService.Events.List("primary").TimeMin(time.Now().Format(time.RFC3339)).MaxResults(5).Do()
 	// if err != nil {
 	// 	// fmt.Fprintln(w, err)
@@ -42,21 +58,39 @@ func (ca *CalendarsApi) GetAll() (calendars.Event, error) {
 	// 		fmt.Println(i.Summary, " ", i.Start.DateTime)
 	// 	}
 	// }
+	// reqToken, _ := http.NewRequest(http.MethodPost, "http://localhost:8000/google-login", nil)
+	// fmt.Printf("===", reqToken)
+	// var token interface{}
+	// respToken, err := ca.httpClient.Do(reqToken)
+	// fmt.Printf("===", respToken)
+	// b := respToken.Body
+	// fmt.Println("token string 1", b)
+	// if err != nil {
+	// 	fmt.Println("error get response token", err)
+	// }
+	// err = json.NewDecoder(respToken.Body).Decode(&token)
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
+	// if state != oauthStateString {
+	// 	err := errors.New("invalid oauth state")
+	// 	return calendars.Event{}, err
+	// }
+	// token, err := googleOauthConfig.Exchange(oauth2.NoContext, code)
+	// if err != nil {
+	// 	fmt.Printf("oauthConf.Exchange() failed with '%s'\n", err)
+	// 	return calendars.Event{}, err
+	// }
 
-	// reqToken, _:= http.NewRequest(http.MethodPost, "http://localhost:8000/GoogleCallback",nil)
-	reqToken, _ := http.NewRequest(http.MethodGet, "http://localhost:8000/google-callback", nil)
-	var token interface{}
-	respToken, err := ca.httpClient.Do(reqToken)
-	if err != nil {
-		fmt.Println(err)
-	}
-	err = json.NewDecoder(respToken.Body).Decode(&token)
-	if err != nil {
-		fmt.Println(err)
-	}
-	// calendarService, err := calendar.New(token)
-	fmt.Println(token)
-	fmt.Println("get all")
+	// client := oauth2.NewClient(context.Background(), oauth2.StaticTokenSource(token))
+	// calendarService, err := calendar.New(client)
+
+	// calendarEvents, err := calendarService.Events.List("primary").TimeMin(time.Now().Format(time.RFC3339)).MaxResults(5).Do()
+
+	// // calendarService, err := calendar.New(token)
+	// a := calendarEvents.Items
+	// token := <-getTokenAsync()
+	// fmt.Println("=====", tok)
 	return calendars.Event{}, nil
 }
 

@@ -26,7 +26,6 @@ func NewSuccessResponse(c echo.Context, status int, data interface{}, args ...in
 	if len(args) > 0 {
 		res.Page = args[0]
 	}
-	// fmt.Println("internal server error in func succes", res)
 	err := c.JSON(status, res)
 	if err != nil {
 		fmt.Println("error parsing to json response")

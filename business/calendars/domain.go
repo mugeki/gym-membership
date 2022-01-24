@@ -38,14 +38,20 @@ type Event struct {
 	}
 	EventType string
 }
+
+type Token struct {
+	AccessToken string
+	TokenType   string
+	Expiry      time.Time
+}
 type Usecase interface {
 	CreateEvent(EventData *Event) (Event, error)
 	AddGuest(eventId, emailGuest string) (Event, error)
-	GetAll() (Event, error)
+	GetAll(code, state string) (Event, error)
 }
 
 type Repository interface {
 	CreateEvent(EventData *Event) (Event, error)
 	AddGuest(eventId, emailGuest string) (Event, error)
-	GetAll() (Event, error)
+	GetAll(code, state string) (Event, error)
 }

@@ -5,12 +5,17 @@ import (
 	"errors"
 	"fmt"
 	controller "gym-membership/controllers"
+	"gym-membership/controllers/auth/response"
 	"log"
 	"net/http"
 	"os"
+	"time"
 
+	"github.com/jinzhu/copier"
 	"github.com/labstack/echo/v4"
 	"golang.org/x/oauth2"
+	"google.golang.org/api/calendar/v3"
+	"google.golang.org/api/option"
 
 	// "gopkg.in/oauth2.v3/store"
 	"golang.org/x/oauth2/google"
@@ -20,6 +25,8 @@ type AuthController struct {
 	oauthConfig      *oauth2.Config
 	oauthStateString string
 	tokenString      *oauth2.Token
+	calendarsService *calendar.Service
+	client           *http.Client
 }
 
 func NewAuthController() *AuthController {
@@ -33,75 +40,96 @@ func NewAuthController() *AuthController {
 		},
 		oauthStateString: "random",
 		tokenString:      &oauth2.Token{},
+		client:           &http.Client{},
+		calendarsService: &calendar.Service{},
 	}
-}
-
-// func (ctrl *CalendarsController) GetAll(c echo.Context) error {
-// 	data, err := ctrl.calendarsUsecase.GetAll()
-// 	if err != nil {
-// 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
-// 	}
-// 	return controller.NewSuccessResponse(c, http.StatusOK, data, nil)
-// }
-
-func (ctrl *AuthController) HandleGoogleLogin(c echo.Context) error {
-	// url := ctrl.oauthConfig.AuthCodeURL(ctrl.oauthStateString)
-	// fmt.Println(url, "url login")
-	// http.Redirect(c.Response(), c.Request(), url, http.StatusTemporaryRedirect)
-	// return controller.NewSuccessResponse(c, http.StatusOK, url)
-	authURL := ctrl.oauthConfig.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
-	fmt.Printf("Go to the following link in your browser then type the "+
-		"authorization code: \n%v\n", authURL)
-
-	var authCode string
-	if _, err := fmt.Scan(&authCode); err != nil {
-		log.Fatalf("Unable to read authorization code: %v", err)
-	}
-
-	tok, _ := ctrl.oauthConfig.Exchange(context.TODO(), authCode)
-	fmt.Println("token stirng", tok)
-	// if err != nil {
-	// 	log.Fatalf("Unable to retrieve token from web: %v", err)
-	// }
-	return controller.NewSuccessResponse(c, http.StatusOK, tok)
 }
 
 func (ctrl *AuthController) HandleGoogleCallback(c echo.Context) error {
 	state := c.FormValue("state")
+	fmt.Println("state in callback function", state)
 	if state != ctrl.oauthStateString {
 		err := errors.New("invalid oauth state")
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
 
 	code := c.FormValue("code")
+	fmt.Println("code in callback func", code)
 	token, err := ctrl.oauthConfig.Exchange(context.Background(), code)
 	if err != nil {
-		// fmt.Println("error get token")
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
-	// client := oauth2.NewClient(context.Background(), oauth2.StaticTokenSource(token))
-	// calendarService, err := calendar.NewService(c.Request().Context(), option.WithHTTPClient(client))
-	// if err != nil {
-	// 	fmt.Println("error get service")
-	// 	return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
-	// }
-
-	// t := time.Now().Format(time.RFC3339)
-	// events, err := calendarService.Events.List("primary").ShowDeleted(false).
-	// 	SingleEvents(true).TimeMin(t).MaxResults(10).OrderBy("startTime").Do()
-	// if err != nil {
-	// 	log.Fatalf("Unable to retrieve next ten of the user's events: %v", err)
-	// }
-	// if len(events.Items) == 0 {
-	// } else {
-	// 	for _, item := range events.Items {
-	// 		fmt.Println(item, "itemm")
-	// 		date := item.Start.DateTime
-	// 		if date == "" {
-	// 			date = item.Start.Date
-	// 		}
-	// 	}
-	// }
+	client := oauth2.NewClient(context.Background(), oauth2.StaticTokenSource(token))
+	calendarService, err := calendar.NewService(c.Request().Context(), option.WithHTTPClient(client))
+	if err != nil {
+		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+	}
+	ctrl.client = client
+	ctrl.tokenString = token
+	ctrl.calendarsService = calendarService
 	return controller.NewSuccessResponse(c, http.StatusOK, token)
-	// return calendarService, err
+}
+
+func (ctrl *AuthController) HandleGoogleLogin(c echo.Context) error {
+	authURL := ctrl.oauthConfig.AuthCodeURL(ctrl.oauthStateString)
+	http.Redirect(c.Response(), c.Request(), authURL, http.StatusTemporaryRedirect)
+	fmt.Println(authURL)
+	return controller.NewSuccessResponse(c, http.StatusOK, authURL)
+}
+
+func (ctrl *AuthController) GetAll(c echo.Context) error {
+	calendarService := ctrl.calendarsService
+	t := time.Now().Format(time.RFC3339)
+	events, err := calendarService.Events.List("primary").ShowDeleted(false).
+		SingleEvents(true).TimeMin(t).MaxResults(10).OrderBy("startTime").Do()
+	if err != nil {
+		log.Fatalf("Unable to retrieve next ten of the user's events: %v", err)
+	}
+
+	res := []response.Event{}
+	copier.Copy(&res, events.Items)
+	return controller.NewSuccessResponse(c, http.StatusOK, res)
+}
+
+func (ctrl *AuthController) CreateEvent(c echo.Context) error {
+	calendarService := ctrl.calendarsService
+	// start := time.Date(2022, 1, 24, 20, 24, 0, 0, time.Local).Format(time.RFC3339)
+	// fmt.Println(start, "start time")
+	newEvent := calendar.Event{
+		Summary: "Testevent",
+		Start:   &calendar.EventDateTime{DateTime: time.Date(2022, 1, 24, 20, 24, 0, 0, time.Local).Format(time.RFC3339)},
+		End:     &calendar.EventDateTime{DateTime: time.Date(2022, 1, 24, 23, 21, 0, 0, time.Local).Format(time.RFC3339)},
+	}
+	createdEvent, err := calendarService.Events.Insert("primary", &newEvent).Do()
+	if err != nil {
+		fmt.Println("error create event", err)
+		controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+	}
+	res := response.Event{}
+	copier.Copy(&res, createdEvent)
+	return controller.NewSuccessResponse(c, http.StatusOK, res)
+}
+
+func (ctrl *AuthController) CreateCalendar(c echo.Context) error {
+	idClass := 1 //temp id class
+	calendarService := ctrl.calendarsService
+	// start := time.Date(2022, 1, 24, 20, 24, 0, 0, time.Local).Format(time.RFC3339)
+	// fmt.Println(start, "start time")
+	newCalendar := calendar.Calendar{
+		Id: string(idClass),
+	}
+	// newEvent := calendar.Event{
+	// 	Summary: "Testevent",
+	// 	Start:   &calendar.EventDateTime{DateTime: time.Date(2022, 1, 24, 20, 24, 0, 0, time.Local).Format(time.RFC3339)},
+	// 	End:     &calendar.EventDateTime{DateTime: time.Date(2022, 1, 24, 23, 21, 0, 0, time.Local).Format(time.RFC3339)},
+	// }
+	// createdEvent, err := calendarService.Events.Insert("primary", &newEvent).Do()
+	createdEvent, err := calendarService.Calendars.Insert(&newCalendar).Do()
+	if err != nil {
+		fmt.Println("error create event", err)
+		controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+	}
+	res := response.Event{}
+	copier.Copy(&res, createdEvent)
+	return controller.NewSuccessResponse(c, http.StatusOK, res)
 }
