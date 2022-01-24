@@ -34,6 +34,12 @@ func (ctrl *MembershipProductsController) Insert(c echo.Context) error {
 
 	if _, err := govalidator.ValidateStruct(req); err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+		
+	}
+
+	valid := govalidator.IsNonNegative(float64(req.Price)) && govalidator.IsNonNegative(float64(req.PeriodTime))
+	if !valid {
+		return controller.NewErrorResponse(c, http.StatusBadRequest, business.ErrNegativeValue)
 	}
 
 	copier.Copy(&domain, &req)
@@ -46,16 +52,26 @@ func (ctrl *MembershipProductsController) Insert(c echo.Context) error {
 }
 
 func (ctrl *MembershipProductsController) GetAll(c echo.Context) error {
-	data, err := ctrl.membershipProductsUsecase.GetAll()
+	page, _ := strconv.Atoi(c.QueryParam("page"))
+	if page <= 0 {
+		page = 1
+	}
+	data, offset, limit, totalData, err := ctrl.membershipProductsUsecase.GetAll(page)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
 	res := []response.MembershipProducts{}
-	copier.Copy(&res, &data)
-	if len(res) == 0 {
-		return controller.NewSuccessResponse(c, http.StatusNoContent, nil)
+	resPage := response.Page{
+		Limit:     limit,
+		Offset:    offset,
+		TotalData: totalData,
 	}
-	return controller.NewSuccessResponse(c, http.StatusOK, res)
+	copier.Copy(&res, &data)
+	if len(data) == 0 {
+		return controller.NewSuccessResponse(c, http.StatusNoContent, res)
+	}
+
+	return controller.NewSuccessResponse(c, http.StatusOK, res, resPage)
 }
 
 func (ctrl *MembershipProductsController) GetByID(c echo.Context) error {
@@ -84,6 +100,11 @@ func (ctrl *MembershipProductsController) UpdateByID(c echo.Context) error {
 	_, err = govalidator.ValidateStruct(req)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+	}
+
+	valid := govalidator.IsNonNegative(float64(req.Price)) && govalidator.IsNonNegative(float64(req.PeriodTime))
+	if !valid {
+		return controller.NewErrorResponse(c, http.StatusBadRequest, business.ErrNegativeValue)
 	}
 
 	productId, _ := strconv.Atoi(c.Param("id"))

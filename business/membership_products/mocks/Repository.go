@@ -27,27 +27,34 @@ func (_m *Repository) DeleteByID(id uint) error {
 	return r0
 }
 
-// GetAll provides a mock function with given fields:
-func (_m *Repository) GetAll() ([]membership_products.Domain, error) {
-	ret := _m.Called()
+// GetAll provides a mock function with given fields: offset, limit
+func (_m *Repository) GetAll(offset int, limit int) ([]membership_products.Domain, int64, error) {
+	ret := _m.Called(offset, limit)
 
 	var r0 []membership_products.Domain
-	if rf, ok := ret.Get(0).(func() []membership_products.Domain); ok {
-		r0 = rf()
+	if rf, ok := ret.Get(0).(func(int, int) []membership_products.Domain); ok {
+		r0 = rf(offset, limit)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]membership_products.Domain)
 		}
 	}
 
-	var r1 error
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
+	var r1 int64
+	if rf, ok := ret.Get(1).(func(int, int) int64); ok {
+		r1 = rf(offset, limit)
 	} else {
-		r1 = ret.Error(1)
+		r1 = ret.Get(1).(int64)
 	}
 
-	return r0, r1
+	var r2 error
+	if rf, ok := ret.Get(2).(func(int, int) error); ok {
+		r2 = rf(offset, limit)
+	} else {
+		r2 = ret.Error(2)
+	}
+
+	return r0, r1, r2
 }
 
 // GetByID provides a mock function with given fields: id

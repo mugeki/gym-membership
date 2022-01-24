@@ -29,6 +29,7 @@ type Usecase interface {
 	GetClassByID(idClass uint) (Domain, error)
 	UpdateClassByID(id uint, classData *Domain) (Domain, error)
 	// ScheduleByID(id uint) ([]Domain, error)
+	DeleteClassByID(id uint) (error)
 }
 
 type Repository interface {
@@ -40,4 +41,5 @@ type Repository interface {
 	UpdateStatus(idClass uint, status bool) (Domain, error)
 	IsExist(idClass uint) (Domain, error)
 	// ScheduleByID(id uint) ([]Domain, error)
+	DeleteClassByID(id uint) (error)
 }

@@ -1,6 +1,7 @@
 package class
 
 import (
+	"gym-membership/business"
 	"gym-membership/business/class"
 	controller "gym-membership/controllers"
 	"gym-membership/controllers/class/request"
@@ -33,6 +34,11 @@ func (ctrl *ClassController) Insert(c echo.Context) error {
 
 	if _, err := govalidator.ValidateStruct(req); err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+	}
+
+	valid := govalidator.IsNonNegative(float64(req.Kuota)) && govalidator.IsNonNegative(float64(req.Price))
+	if !valid {
+		return controller.NewErrorResponse(c, http.StatusBadRequest, business.ErrNegativeValue)
 	}
 
 	copier.Copy(&domain, &req)
@@ -95,6 +101,11 @@ func (ctrl *ClassController) UpdateClassByID(c echo.Context) error {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}
 
+	valid := govalidator.IsNonNegative(float64(req.Kuota)) && govalidator.IsNonNegative(float64(req.Price))
+	if !valid {
+		return controller.NewErrorResponse(c, http.StatusBadRequest, business.ErrNegativeValue)
+	}
+
 	classId, _ := strconv.Atoi(c.Param("idClass"))
 	copier.Copy(&domain, &req)
 	data, err := ctrl.classUsecase.UpdateClassByID(uint(classId), &domain)
@@ -103,4 +114,17 @@ func (ctrl *ClassController) UpdateClassByID(c echo.Context) error {
 	}
 	copier.Copy(&res, &data)
 	return controller.NewSuccessResponse(c, http.StatusOK, res)
+}
+
+func (ctrl *ClassController) DeleteClassByID(c echo.Context) error {
+	idClass, _ := strconv.Atoi(c.Param("idClass"))
+	err := ctrl.classUsecase.DeleteClassByID(uint(idClass))
+	if err != nil {
+		if err == business.ErrArticleNotFound {
+			return controller.NewErrorResponse(c, http.StatusNotFound, err)
+		} else {
+			return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+		}
+	}
+	return controller.NewSuccessResponse(c, http.StatusOK, nil)
 }

@@ -30,18 +30,22 @@ func (mysqlRepo *mysqlMembershipProductsRepo) Insert(newData *membership_product
 	return domain, nil
 }
 
-func (mysqlRepo *mysqlMembershipProductsRepo) GetAll() ([]membership_products.Domain, error) {
+func (mysqlRepo *mysqlMembershipProductsRepo) GetAll(offset, limit int) ([]membership_products.Domain, int64, error) {
+	var totalData int64
 	domain := []membership_products.Domain{}
 	rec := []MembershipProducts{}
-	
-	err := mysqlRepo.Conn.Find(&rec).Error
+
+	mysqlRepo.Conn.Find(&rec).Count(&totalData)
+	err := mysqlRepo.Conn.Limit(limit).Offset(offset).
+		Order("updated_at desc").Find(&rec).Error
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
 	copier.Copy(&domain, &rec)
-	return domain, nil
+	return domain, totalData, nil
 }
+
 
 func (mysqlRepo *mysqlMembershipProductsRepo) GetByID(id uint) (membership_products.Domain, error) {
 	rec := MembershipProducts{}

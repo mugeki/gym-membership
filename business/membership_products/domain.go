@@ -10,7 +10,7 @@ type Domain struct {
 
 type Usecase interface {
 	Insert(newData *Domain) (Domain, error)
-	GetAll() ([]Domain, error)
+	GetAll(page int) ([]Domain, int, int, int64, error)
 	GetByID(id uint) (Domain, error)
 	UpdateByID(id uint, newData *Domain) (Domain, error)
 	DeleteByID(id uint) error
@@ -18,7 +18,7 @@ type Usecase interface {
 
 type Repository interface {
 	Insert(newData *Domain) (Domain, error)
-	GetAll() ([]Domain, error)
+	GetAll(offset, limit int) ([]Domain, int64, error)
 	GetByID(id uint) (Domain, error)
 	UpdateByID(id uint, newData *Domain) (Domain, error)
 	DeleteByID(id uint) error

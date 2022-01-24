@@ -26,12 +26,19 @@ func (uc *membershipProductsUsecase) Insert(newData *Domain)  (Domain, error) {
 	return data, nil
 }
 
-func (uc *membershipProductsUsecase) GetAll() ([]Domain, error) {
-	res, err := uc.membershipProductsRepository.GetAll()
-	if err != nil {
-		return []Domain{}, business.ErrInternalServer
+func (uc *membershipProductsUsecase) GetAll(page int) ([]Domain, int, int, int64, error) {
+	var offset int
+	limit := 10
+	if page == 1 {
+		offset = 0
+	} else {
+		offset = (page - 1) * 10
 	}
-	return res, nil
+	res, totalData, err := uc.membershipProductsRepository.GetAll(offset, limit)
+	if err != nil {
+		return []Domain{}, -1, -1, -1, business.ErrInternalServer
+	}
+	return res, offset, limit, totalData, nil
 }
 
 func (uc *membershipProductsUsecase) GetByID(id uint) (Domain, error) { 

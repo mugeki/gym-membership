@@ -82,3 +82,15 @@ func (uc *classUsecase) UpdateParticipant(idClass int) (string, error) {
 // 	}
 // 	return []Domain{}, nil
 // }
+
+func (uc *classUsecase) DeleteClassByID(id uint) (error) {
+	err := uc.classRepository.DeleteClassByID(id)
+	if err != nil {
+		if errors.Is(gorm.ErrRecordNotFound, err) {
+			return business.ErrArticleNotFound
+		} else {
+			return business.ErrInternalServer
+		}
+	}
+	return nil
+}
