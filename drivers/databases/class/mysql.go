@@ -82,7 +82,8 @@ func (mysqlRepo *mysqlClassRepo) UpdateClassByID(id uint, classData *class.Domai
 	rec := Class{}
 	recData := Class{}
 	copier.Copy(&recData, &classData)
-	err := mysqlRepo.Conn.First(&rec, "id = ?", id).Updates(recData).Error
+	err := mysqlRepo.Conn.First(&rec, "id = ?", id).Updates(recData).
+		Update("is_online",classData.IsOnline).Error
 	if err != nil {
 		return class.Domain{}, err
 	}
