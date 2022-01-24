@@ -39,7 +39,7 @@ type Usecase interface {
 type Repository interface {
 	Insert(membershipTransactionData *Domain) (Domain, error)
 	UpdateStatus(id, idAdmin uint, status string) (Domain, error)
-	UpdateReceipt(idTransactionClass uint, urlImage string) (Domain, error)
+	UpdateReceipt(idTransactionClass uint, urlImage, status string) (Domain, error)
 	GetAll(date time.Time, status string, idUser uint, offset, limit int) ([]Domain, int64, error)
 	GetAllByUser(idUser uint) ([]Domain, error)
 	GetByID(idTransaction uint) (Domain, error)

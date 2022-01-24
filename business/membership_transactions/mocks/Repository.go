@@ -110,20 +110,20 @@ func (_m *Repository) Insert(membershipTransactionData *membership_transactions.
 	return r0, r1
 }
 
-// UpdateReceipt provides a mock function with given fields: idTransactionClass, urlImage
-func (_m *Repository) UpdateReceipt(idTransactionClass uint, urlImage string) (membership_transactions.Domain, error) {
-	ret := _m.Called(idTransactionClass, urlImage)
+// UpdateReceipt provides a mock function with given fields: idTransactionClass, urlImage, status
+func (_m *Repository) UpdateReceipt(idTransactionClass uint, urlImage string, status string) (membership_transactions.Domain, error) {
+	ret := _m.Called(idTransactionClass, urlImage, status)
 
 	var r0 membership_transactions.Domain
-	if rf, ok := ret.Get(0).(func(uint, string) membership_transactions.Domain); ok {
-		r0 = rf(idTransactionClass, urlImage)
+	if rf, ok := ret.Get(0).(func(uint, string, string) membership_transactions.Domain); ok {
+		r0 = rf(idTransactionClass, urlImage, status)
 	} else {
 		r0 = ret.Get(0).(membership_transactions.Domain)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(uint, string) error); ok {
-		r1 = rf(idTransactionClass, urlImage)
+	if rf, ok := ret.Get(1).(func(uint, string, string) error); ok {
+		r1 = rf(idTransactionClass, urlImage, status)
 	} else {
 		r1 = ret.Error(1)
 	}

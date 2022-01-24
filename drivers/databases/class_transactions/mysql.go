@@ -72,7 +72,7 @@ func (mysqlRepo *mysqlClassTransactionRepo) UpdateStatus(idClassTransaction, idA
 	return domain, nil
 }
 
-func (mysqlRepo *mysqlClassTransactionRepo) UpdateReceipt(idClassTransaction uint, urlImage string) (class_transactions.Domain, error) {
+func (mysqlRepo *mysqlClassTransactionRepo) UpdateReceipt(idClassTransaction uint, urlImage, status string) (class_transactions.Domain, error) {
 	rec := ClassTransaction{}
 	domain := class_transactions.Domain{}
 	errUpdate := mysqlRepo.Conn.First(&rec, "id = ?", idClassTransaction).
