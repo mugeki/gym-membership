@@ -77,38 +77,6 @@ func (ctrl *AuthController) HandleGoogleLogin(c echo.Context) error {
 	return controller.NewSuccessResponse(c, http.StatusOK, authURL)
 }
 
-func (ctrl *AuthController) UpdateAttendance(c echo.Context) error {
-	calendarId := "ea053rm9emqclt6sb33t2irj4k@group.calendar.google.com" //temp calendar id
-	calendarService := ctrl.calendarsService
-	// t := time.Now().Format(time.RFC3339)
-	events, err := calendarService.Events.List(calendarId).Do()
-	for _, eventItem := range events.Items {
-		idEvent := eventItem.Id
-		attendees := eventItem.Attendees
-		addAttendees := calendar.EventAttendee{
-			Email: "amirohqurrota98@gmail.com",
-		}
-		reqAttend := []calendar.EventAttendee{}
-		copier.Copy(&reqAttend, &attendees)
-		fmt.Println(reqAttend, "reqAttend")
-		reqAttend = append(reqAttend, addAttendees)
-		fmt.Println(reqAttend, "new list")
-		// updateAttendance, err := calendarService.Events.Update(calendarId,idEvent)
-		// if err != nil {
-		// 	return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
-		// }
-		// copier.Copy(&eventRes, &event)
-		// listEventCreated = append(listEventCreated, eventRes)
-	}
-	if err != nil {
-		log.Fatalf("Unable to retrieve next ten of the user's events: %v", err)
-	}
-
-	// res := []response.Event{}
-	// copier.Copy(&res, events.Items)
-	return controller.NewSuccessResponse(c, http.StatusOK, events)
-}
-
 func (ctrl *AuthController) CreateEvent(calendarId, titleEvent, dateStart, dateEnd string) (response.Event, error) {
 	calendarService := ctrl.calendarsService
 	newEvent := calendar.Event{
@@ -164,4 +132,31 @@ func (ctrl *AuthController) CreatenewClassSchedule(c echo.Context) error {
 	return controller.NewSuccessResponse(c, http.StatusOK, listEventCreated)
 }
 
-//gcl8to3slg64a0nob0p2ionuc8
+func (ctrl *AuthController) UpdateAttendance(c echo.Context) error {
+	calendarId := "ea053rm9emqclt6sb33t2irj4k@group.calendar.google.com" //temp calendar id
+	email := "amirohqurrota98@gmail.com"                                 //temp email user
+	calendarService := ctrl.calendarsService
+	listEventUpdated := []response.Event{}
+	events, err := calendarService.Events.List(calendarId).Do()
+	for _, eventItem := range events.Items {
+		idEvent := eventItem.Id
+		attendees := eventItem.Attendees
+		addAttendees := calendar.EventAttendee{
+			Email: email,
+		}
+		reqAttend := append(attendees, &addAttendees)
+		eventItem.Attendees = reqAttend
+		updateEvent, err := calendarService.Events.Update(calendarId, idEvent, eventItem).Do()
+		if err != nil {
+			fmt.Println("error update event attendees", err)
+			return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+		}
+		resEvent := response.Event{}
+		copier.Copy(&resEvent, &updateEvent)
+		listEventUpdated = append(listEventUpdated, resEvent)
+	}
+	if err != nil {
+		log.Fatalf("Unable to retrieve next ten of the user's events: %v", err)
+	}
+	return controller.NewSuccessResponse(c, http.StatusOK, events)
+}

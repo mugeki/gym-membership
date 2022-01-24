@@ -26,18 +26,19 @@ type Event struct {
 		DateTime time.Time `json:"dateTime"`
 		TimeZone string    `json:"timeZone"`
 	} `json:"end"`
-	ICalUID   string `json:"iCalUID"`
-	Sequence  int    `json:"sequence"`
-	Attendees []struct {
-		Email          string `json:"email"`
-		ResponseStatus string `json:"responseStatus"`
-	} `json:"attendees"`
+	ICalUID   string      `json:"iCalUID"`
+	Sequence  int         `json:"sequence"`
+	Attendees []Attendees `json:"attendees"`
 	Reminders struct {
 		UseDefault bool `json:"useDefault"`
 	} `json:"reminders"`
 	EventType string `json:"eventType"`
 }
 
+type Attendees struct {
+	Email          string `json:"email"`
+	ResponseStatus string `json:"responseStatus"`
+}
 type Calendar struct {
 	Id          string `json:"id"`
 	Summary     string `json:"summary"`
