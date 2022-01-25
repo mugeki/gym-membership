@@ -151,3 +151,24 @@ func (_m *Repository) UpdateStatus(id uint, idAdmin uint, status string) (member
 
 	return r0, r1
 }
+
+// UpdateStatusToFailed provides a mock function with given fields: idTransaction, status
+func (_m *Repository) UpdateStatusToFailed(idTransaction uint, status string) (membership_transactions.Domain, error) {
+	ret := _m.Called(idTransaction, status)
+
+	var r0 membership_transactions.Domain
+	if rf, ok := ret.Get(0).(func(uint, string) membership_transactions.Domain); ok {
+		r0 = rf(idTransaction, status)
+	} else {
+		r0 = ret.Get(0).(membership_transactions.Domain)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(uint, string) error); ok {
+		r1 = rf(idTransaction, status)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}

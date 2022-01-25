@@ -189,3 +189,24 @@ func (_m *Usecase) UpdateStatus(idTransactionClass uint, idAdmin uint, status st
 
 	return r0, r1
 }
+
+// UpdateStatusToFailed provides a mock function with given fields: idTransaction
+func (_m *Usecase) UpdateStatusToFailed(idTransaction uint) (class_transactions.Domain, error) {
+	ret := _m.Called(idTransaction)
+
+	var r0 class_transactions.Domain
+	if rf, ok := ret.Get(0).(func(uint) class_transactions.Domain); ok {
+		r0 = rf(idTransaction)
+	} else {
+		r0 = ret.Get(0).(class_transactions.Domain)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(uint) error); ok {
+		r1 = rf(idTransaction)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
