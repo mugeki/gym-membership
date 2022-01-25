@@ -5,7 +5,6 @@ import (
 	"gym-membership/business"
 	"gym-membership/business/members"
 	"gym-membership/business/membership_products"
-	"strings"
 
 	"time"
 
@@ -44,8 +43,8 @@ func (uc *membershipTransactionUsecase) GetAll(date time.Time, status string, id
 		offset = (page - 1) * 10
 	}
 
-	resStatus := strings.ReplaceAll(status, "-", " ")
-	res, totalData, err := uc.membershipTransactionRepository.GetAll(date, resStatus, idUser, offset, limit)
+	// resStatus := strings.ReplaceAll(status, "-", " ")
+	res, totalData, err := uc.membershipTransactionRepository.GetAll(date, status, idUser, offset, limit)
 	if err != nil {
 		return []Domain{}, -1, -1, -1, business.ErrInternalServer
 	}
@@ -100,9 +99,19 @@ func (uc *membershipTransactionUsecase) UpdateStatus(id, idAdmin uint, status st
 }
 
 func (uc *membershipTransactionUsecase) UpdateReceipt(id uint, urlImage string) (string, error) {
-	_, err := uc.membershipTransactionRepository.UpdateReceipt(id, urlImage)
+	status := "waiting-for-confirmation"
+	_, err := uc.membershipTransactionRepository.UpdateReceipt(id, urlImage, status)
 	if err != nil {
 		return "", business.ErrInternalServer
 	}
 	return "", nil
+}
+
+func (uc *membershipTransactionUsecase) UpdateStatusToFailed(transactionID uint) (Domain, error) {
+	status := "failed"
+	data, err := uc.membershipTransactionRepository.UpdateStatusToFailed(transactionID, status)
+	if err != nil {
+		return Domain{}, business.ErrInternalServer
+	}
+	return data, nil
 }

@@ -39,7 +39,7 @@ func (mysqlRepo *mysqlMembershipTransactionRepo) GetAll(date time.Time, status s
 	var err error
 	if status != "" || idUser != 0 {
 		err = mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").Joins("MembershipProduct").Joins("Payment").
-			Joins("User").Where("membership_transactions.created_at <= ?",date).Find(&rec, "status = ? OR user_id = ?", status, idUser).
+			Joins("User").Where("membership_transactions.created_at <= ?", date).Find(&rec, "status = ? OR user_id = ?", status, idUser).
 			Count(&totalData).Error
 	} else {
 		err = mysqlRepo.Conn.Limit(limit).Offset(offset).Order("updated_at desc").Joins("User").
@@ -106,11 +106,22 @@ func (mysqlRepo *mysqlMembershipTransactionRepo) UpdateStatus(id, idAdmin uint, 
 	return domain, nil
 }
 
-func (mysqlRepo *mysqlMembershipTransactionRepo) UpdateReceipt(id uint, urlImage string) (membership_transactions.Domain, error) {
+func (mysqlRepo *mysqlMembershipTransactionRepo) UpdateReceipt(id uint, urlImage, status string) (membership_transactions.Domain, error) {
 	rec := MembershipTransactions{}
 	domain := membership_transactions.Domain{}
 	errUpdate := mysqlRepo.Conn.First(&rec, "id = ?", id).
-		Updates(map[string]interface{}{"status": urlImage}).Error
+		Updates(map[string]interface{}{"status": status, "url_image_of_receipt": urlImage}).Error
+	if errUpdate != nil {
+		return membership_transactions.Domain{}, errUpdate
+	}
+	copier.Copy(&domain, &rec)
+	return domain, nil
+}
+
+func (mysqlRepo *mysqlMembershipTransactionRepo) UpdateStatusToFailed(idClassTransaction uint, status string) (membership_transactions.Domain, error) {
+	rec := MembershipTransactions{}
+	domain := membership_transactions.Domain{}
+	errUpdate := mysqlRepo.Conn.First(&rec, "id = ?", idClassTransaction).Update("status", status).Error
 	if errUpdate != nil {
 		return membership_transactions.Domain{}, errUpdate
 	}

@@ -121,6 +121,15 @@ func (ctrl *ClassTransactionController) UpdateReceipt(c echo.Context) error {
 	return controller.NewSuccessResponse(c, http.StatusOK, nil)
 }
 
+func (ctrl *ClassTransactionController) UpdateStatusToFailed(c echo.Context) error {
+	idClassTransaction, _ := strconv.Atoi(c.Param("idClassTransaction"))
+	_, err := ctrl.class_transactionsUsecase.UpdateStatusToFailed(uint(idClassTransaction))
+	if err != nil {
+		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+	}
+	return controller.NewSuccessResponse(c, http.StatusOK, nil)
+}
+
 func (ctrl *ClassTransactionController) GetAllByUser(c echo.Context) error {
 	jwtClaims := middleware.GetUser(c)
 	idUser := jwtClaims.ID

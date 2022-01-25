@@ -3,7 +3,6 @@ package class_transactions
 import (
 	"gym-membership/business"
 	"gym-membership/business/class"
-	"strings"
 	"time"
 )
 
@@ -42,9 +41,9 @@ func (uc *classTransactionUsecase) GetAll(date time.Time, status string, idUser 
 	} else {
 		offset = (page - 1) * 10
 	}
-	
-	formattedStatus := strings.ReplaceAll(status, "-", " ")
-	res, totalData, err := uc.classTransactionRepository.GetAll(date, formattedStatus, idUser, offset, limit)
+
+	// formattedStatus := strings.ReplaceAll(status, "-", " ")
+	res, totalData, err := uc.classTransactionRepository.GetAll(date, status, idUser, offset, limit)
 	if err != nil {
 		return []Domain{}, -1, -1, -1, business.ErrInternalServer
 	}
@@ -78,7 +77,8 @@ func (uc *classTransactionUsecase) UpdateStatus(id, idAdmin uint, status string)
 }
 
 func (uc *classTransactionUsecase) UpdateReceipt(id uint, urlImage string) (string, error) {
-	_, err := uc.classTransactionRepository.UpdateReceipt(id, urlImage)
+	status := "waiting-for-confirmation"
+	_, err := uc.classTransactionRepository.UpdateReceipt(id, urlImage, status)
 	if err != nil {
 		return "", business.ErrInternalServer
 	}
@@ -91,4 +91,13 @@ func (uc *classTransactionUsecase) GetByID(transactionID uint) (Domain, error) {
 		return Domain{}, business.ErrInternalServer
 	}
 	return res, nil
+}
+
+func (uc *classTransactionUsecase) UpdateStatusToFailed(transactionID uint) (Domain, error) {
+	status := "failed"
+	data, err := uc.classTransactionRepository.UpdateStatusToFailed(transactionID, status)
+	if err != nil {
+		return Domain{}, business.ErrInternalServer
+	}
+	return data, nil
 }

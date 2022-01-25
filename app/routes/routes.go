@@ -77,6 +77,7 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	class_transactions.GET("/user/:idClassTransaction", ctrlList.ClassTransactionController.GetByID)
 	class_transactions.POST("", ctrlList.ClassTransactionController.Insert)
 	class_transactions.PUT("/update-status/:idClassTransaction", ctrlList.ClassTransactionController.UpdateStatus, AdminValidation())
+	class_transactions.PUT("/status-to-failed/:idClassTransaction", ctrlList.ClassTransactionController.UpdateStatusToFailed)
 	class_transactions.PUT("/update-receipt/:idClassTransaction", ctrlList.ClassTransactionController.UpdateReceipt)
 
 	trainers := e.Group("trainers", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
@@ -110,6 +111,7 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	membership_transactions.GET("/user/:idMembershipTransaction", ctrlList.MembershipTransactionController.GetByID)
 	membership_transactions.POST("", ctrlList.MembershipTransactionController.Insert)
 	membership_transactions.PUT("/update-status/:idMembershipTransaction", ctrlList.MembershipTransactionController.UpdateStatus, AdminValidation())
+	membership_transactions.PUT("/status-to-failed/:idMembershipTransaction", ctrlList.MembershipTransactionController.UpdateStatusToFailed)
 	membership_transactions.PUT("/update-receipt/:idMembershipTransaction", ctrlList.MembershipTransactionController.UpdateReceipt)
 
 	members := e.Group("members", middleware.JWTWithConfig(ctrlList.JWTMiddleware))

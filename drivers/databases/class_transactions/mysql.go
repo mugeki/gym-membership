@@ -72,11 +72,11 @@ func (mysqlRepo *mysqlClassTransactionRepo) UpdateStatus(idClassTransaction, idA
 	return domain, nil
 }
 
-func (mysqlRepo *mysqlClassTransactionRepo) UpdateReceipt(idClassTransaction uint, urlImage string) (class_transactions.Domain, error) {
+func (mysqlRepo *mysqlClassTransactionRepo) UpdateReceipt(idClassTransaction uint, urlImage, status string) (class_transactions.Domain, error) {
 	rec := ClassTransaction{}
 	domain := class_transactions.Domain{}
 	errUpdate := mysqlRepo.Conn.First(&rec, "id = ?", idClassTransaction).
-		Updates(map[string]interface{}{"url_image_of_receipt": urlImage}).Error
+		Updates(map[string]interface{}{"status": status, "url_image_of_receipt": urlImage}).Error
 	if errUpdate != nil {
 		return class_transactions.Domain{}, errUpdate
 	}
@@ -133,5 +133,16 @@ func (mysqlRepo *mysqlClassTransactionRepo) GetAllByUser(idUser uint) ([]class_t
 		domain[i].Nominal = rec[i].Class.Price
 		domain[i].ProductName = rec[i].Class.Name
 	}
+	return domain, nil
+}
+
+func (mysqlRepo *mysqlClassTransactionRepo) UpdateStatusToFailed(idClassTransaction uint, status string) (class_transactions.Domain, error) {
+	rec := ClassTransaction{}
+	domain := class_transactions.Domain{}
+	errUpdate := mysqlRepo.Conn.First(&rec, "id = ?", idClassTransaction).Update("status", status).Error
+	if errUpdate != nil {
+		return class_transactions.Domain{}, errUpdate
+	}
+	copier.Copy(&domain, &rec)
 	return domain, nil
 }
