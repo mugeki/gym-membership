@@ -79,7 +79,18 @@ func dbMigrate(db *gorm.DB) {
 		&_memberRepo.Members{},
 		&_paymentAccountRepo.PaymentAccount{},
 	)
-	
+	admin := _adminRepo.Admins{
+		Model: gorm.Model{ID:100},
+		Username: "admin123",
+		Password: "admin123",
+		Email: "admin123@gmail.com",
+		FullName: "Super Admin",
+		Gender: "male",
+		Telephone: "0881122334455",
+		Address: "Jl. H. Sadiah, Joglo",
+		UrlImage: "https://images.unsplash.com/photo-1584952811565-c4c4031805a8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80",
+		IsSuperAdmin: true,
+	}
 	classification := []_classificationRepo.Classification{
 		{
 			ID: 1, 
@@ -133,6 +144,7 @@ func dbMigrate(db *gorm.DB) {
 		},
 	}
 
+	db.Create(&admin)
 	db.Create(&classification)
 	db.Create(&trainer)
 	db.Create(&payment)
