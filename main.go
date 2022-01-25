@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	_driverFactory "gym-membership/drivers"
+	"gym-membership/helper/encrypt"
 
 	_userUsecase "gym-membership/business/users"
 	_userController "gym-membership/controllers/users"
@@ -79,10 +80,11 @@ func dbMigrate(db *gorm.DB) {
 		&_memberRepo.Members{},
 		&_paymentAccountRepo.PaymentAccount{},
 	)
+	hashed, _ := encrypt.Hash("admin123")
 	admin := _adminRepo.Admins{
-		Model: gorm.Model{ID:999},
+		Model: gorm.Model{ID:1000},
 		Username: "admin123",
-		Password: "admin123",
+		Password: hashed,
 		Email: "admin123@gmail.com",
 		FullName: "Super Admin",
 		Gender: "male",
