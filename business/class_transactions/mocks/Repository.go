@@ -134,20 +134,20 @@ func (_m *Repository) Insert(classTransactioData *class_transactions.Domain) (cl
 	return r0, r1
 }
 
-// UpdateReceipt provides a mock function with given fields: idTransactionClass, urlImage
-func (_m *Repository) UpdateReceipt(idTransactionClass uint, urlImage string) (class_transactions.Domain, error) {
-	ret := _m.Called(idTransactionClass, urlImage)
+// UpdateReceipt provides a mock function with given fields: idTransactionClass, urlImage, status
+func (_m *Repository) UpdateReceipt(idTransactionClass uint, urlImage string, status string) (class_transactions.Domain, error) {
+	ret := _m.Called(idTransactionClass, urlImage, status)
 
 	var r0 class_transactions.Domain
-	if rf, ok := ret.Get(0).(func(uint, string) class_transactions.Domain); ok {
-		r0 = rf(idTransactionClass, urlImage)
+	if rf, ok := ret.Get(0).(func(uint, string, string) class_transactions.Domain); ok {
+		r0 = rf(idTransactionClass, urlImage, status)
 	} else {
 		r0 = ret.Get(0).(class_transactions.Domain)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(uint, string) error); ok {
-		r1 = rf(idTransactionClass, urlImage)
+	if rf, ok := ret.Get(1).(func(uint, string, string) error); ok {
+		r1 = rf(idTransactionClass, urlImage, status)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -169,6 +169,27 @@ func (_m *Repository) UpdateStatus(idTransactionClass uint, idAdmin uint, status
 	var r1 error
 	if rf, ok := ret.Get(1).(func(uint, uint, string) error); ok {
 		r1 = rf(idTransactionClass, idAdmin, status)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// UpdateStatusToFailed provides a mock function with given fields: idTransaction, status
+func (_m *Repository) UpdateStatusToFailed(idTransaction uint, status string) (class_transactions.Domain, error) {
+	ret := _m.Called(idTransaction, status)
+
+	var r0 class_transactions.Domain
+	if rf, ok := ret.Get(0).(func(uint, string) class_transactions.Domain); ok {
+		r0 = rf(idTransaction, status)
+	} else {
+		r0 = ret.Get(0).(class_transactions.Domain)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(uint, string) error); ok {
+		r1 = rf(idTransaction, status)
 	} else {
 		r1 = ret.Error(1)
 	}

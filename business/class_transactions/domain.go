@@ -37,14 +37,16 @@ type Usecase interface {
 	GetAllByUser(idUser uint) ([]Domain, error)
 	GetActiveClass(idUser uint) ([]class.Domain, error)
 	GetByID(idTransaction uint) (Domain, error)
+	UpdateStatusToFailed(idTransaction uint) (Domain, error)
 }
 
 type Repository interface {
 	Insert(classTransactioData *Domain) (Domain, error)
 	UpdateStatus(idTransactionClass, idAdmin uint, status string) (Domain, error)
-	UpdateReceipt(idTransactionClass uint, urlImage string) (Domain, error)
+	UpdateReceipt(idTransactionClass uint, urlImage, status string) (Domain, error)
 	GetAll(date time.Time, status string, idUser uint, offset, limit int) ([]Domain, int64, error)
 	GetAllByUser(idUser uint) ([]Domain, error)
 	GetActiveClass(idUser uint) ([]class.Domain, error)
 	GetByID(idTransaction uint) (Domain, error)
+	UpdateStatusToFailed(idTransaction uint, status string) (Domain, error)
 }

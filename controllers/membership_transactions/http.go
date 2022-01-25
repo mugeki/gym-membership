@@ -136,3 +136,12 @@ func (ctrl *MembershipTransactionController) UpdateReceipt(c echo.Context) error
 	}
 	return controller.NewSuccessResponse(c, http.StatusOK, nil)
 }
+
+func (ctrl *MembershipTransactionController) UpdateStatusToFailed(c echo.Context) error {
+	idClassTransaction, _ := strconv.Atoi(c.Param("idMembershipTransaction"))
+	_, err := ctrl.membershipTransactionsUsecase.UpdateStatusToFailed(uint(idClassTransaction))
+	if err != nil {
+		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+	}
+	return controller.NewSuccessResponse(c, http.StatusOK, nil)
+}
