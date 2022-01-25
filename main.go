@@ -80,7 +80,7 @@ func dbMigrate(db *gorm.DB) {
 		&_paymentAccountRepo.PaymentAccount{},
 	)
 	admin := _adminRepo.Admins{
-		Model: gorm.Model{ID:100},
+		Model: gorm.Model{ID:999},
 		Username: "admin123",
 		Password: "admin123",
 		Email: "admin123@gmail.com",
