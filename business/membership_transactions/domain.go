@@ -34,6 +34,7 @@ type Usecase interface {
 	GetAll(date time.Time, status string, idUser uint, page int) ([]Domain, int, int, int64, error)
 	GetAllByUser(idUser uint) ([]Domain, error)
 	GetByID(idTransaction uint) (Domain, error)
+	UpdateStatusToFailed(idTransaction uint) (Domain, error)
 }
 
 type Repository interface {
@@ -43,4 +44,5 @@ type Repository interface {
 	GetAll(date time.Time, status string, idUser uint, offset, limit int) ([]Domain, int64, error)
 	GetAllByUser(idUser uint) ([]Domain, error)
 	GetByID(idTransaction uint) (Domain, error)
+	UpdateStatusToFailed(idTransaction uint, status string) (Domain, error)
 }

@@ -77,7 +77,7 @@ func (uc *classTransactionUsecase) UpdateStatus(id, idAdmin uint, status string)
 }
 
 func (uc *classTransactionUsecase) UpdateReceipt(id uint, urlImage string) (string, error) {
-	status := "=waiting-for-confirmation"
+	status := "waiting-for-confirmation"
 	_, err := uc.classTransactionRepository.UpdateReceipt(id, urlImage, status)
 	if err != nil {
 		return "", business.ErrInternalServer
@@ -91,4 +91,13 @@ func (uc *classTransactionUsecase) GetByID(transactionID uint) (Domain, error) {
 		return Domain{}, business.ErrInternalServer
 	}
 	return res, nil
+}
+
+func (uc *classTransactionUsecase) UpdateStatusToFailed(transactionID uint) (Domain, error) {
+	status := "failed"
+	data, err := uc.classTransactionRepository.UpdateStatusToFailed(transactionID, status)
+	if err != nil {
+		return Domain{}, business.ErrInternalServer
+	}
+	return data, nil
 }

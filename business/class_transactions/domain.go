@@ -37,6 +37,7 @@ type Usecase interface {
 	GetAllByUser(idUser uint) ([]Domain, error)
 	GetActiveClass(idUser uint) ([]class.Domain, error)
 	GetByID(idTransaction uint) (Domain, error)
+	UpdateStatusToFailed(idTransaction uint) (Domain, error)
 }
 
 type Repository interface {
@@ -47,4 +48,5 @@ type Repository interface {
 	GetAllByUser(idUser uint) ([]Domain, error)
 	GetActiveClass(idUser uint) ([]class.Domain, error)
 	GetByID(idTransaction uint) (Domain, error)
+	UpdateStatusToFailed(idTransaction uint, status string) (Domain, error)
 }

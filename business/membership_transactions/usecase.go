@@ -106,3 +106,12 @@ func (uc *membershipTransactionUsecase) UpdateReceipt(id uint, urlImage string) 
 	}
 	return "", nil
 }
+
+func (uc *membershipTransactionUsecase) UpdateStatusToFailed(transactionID uint) (Domain, error) {
+	status := "failed"
+	data, err := uc.membershipTransactionRepository.UpdateStatusToFailed(transactionID, status)
+	if err != nil {
+		return Domain{}, business.ErrInternalServer
+	}
+	return data, nil
+}

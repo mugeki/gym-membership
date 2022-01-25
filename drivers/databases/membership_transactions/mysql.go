@@ -117,3 +117,14 @@ func (mysqlRepo *mysqlMembershipTransactionRepo) UpdateReceipt(id uint, urlImage
 	copier.Copy(&domain, &rec)
 	return domain, nil
 }
+
+func (mysqlRepo *mysqlMembershipTransactionRepo) UpdateStatusToFailed(idClassTransaction uint, status string) (membership_transactions.Domain, error) {
+	rec := MembershipTransactions{}
+	domain := membership_transactions.Domain{}
+	errUpdate := mysqlRepo.Conn.First(&rec, "id = ?", idClassTransaction).Update("status", status).Error
+	if errUpdate != nil {
+		return membership_transactions.Domain{}, errUpdate
+	}
+	copier.Copy(&domain, &rec)
+	return domain, nil
+}
