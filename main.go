@@ -171,6 +171,7 @@ func main() {
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{
 			"http://localhost",
+			"http://ec2-13-58-52-197.us-east-2.compute.amazonaws.com",
 			"http://ec2-18-222-186-208.us-east-2.compute.amazonaws.com",
 		},
 		AllowHeaders: []string{
