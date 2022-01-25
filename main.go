@@ -166,6 +166,7 @@ func main() {
 				echo.HeaderContentType, 
 				echo.HeaderAccept,
 				echo.HeaderAccessControlAllowCredentials,
+				echo.HeaderAccessControlAllowOrigin,
 				echo.HeaderAuthorization,
 			},
 	}))
