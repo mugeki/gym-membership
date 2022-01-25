@@ -91,7 +91,32 @@ func dbMigrate(db *gorm.DB) {
 			UrlImage: "https://images.unsplash.com/photo-1550345332-09e3ac987658?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80",
 		},
 	}
-	payment := []_paymentAccountRepo.PaymentAccount{{}}
+	payment := []_paymentAccountRepo.PaymentAccount{
+		{
+			Name: "BRI",
+			NoCard: "75757182839481727",
+			OwnerName: "PT Subur Jaya",
+			Desc: "This payment need a manual confirmation by uploading image of receipt",
+		},
+		{
+			Name: "BCA",
+			NoCard: "75757182839481727",
+			OwnerName: "PT Subur Jaya",
+			Desc: "This payment need a manual confirmation by uploading image of receipt",
+		},
+		{
+			Name: "LINKAJA",
+			NoCard: "75757182839481727",
+			OwnerName: "PT Subur Jaya",
+			Desc: "This payment need a manual confirmation by uploading image of receipt",
+		},
+		{
+			Name: "GOPAY",
+			NoCard: "75757182839481727",
+			OwnerName: "PT Subur Jaya",
+			Desc: "This payment need a manual confirmation by uploading image of receipt",
+		},
+	}
 
 	db.Create(&classification)
 	db.Create(&trainer)
