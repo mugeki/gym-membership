@@ -175,6 +175,8 @@ func main() {
 			"http://localhost",
 			"http://ec2-13-58-52-197.us-east-2.compute.amazonaws.com",
 			"http://ec2-18-222-186-208.us-east-2.compute.amazonaws.com",
+			"http://gymbro.my.id",
+			"http://gymbro-admin.my.id",
 		},
 		AllowHeaders: []string{
 				echo.HeaderOrigin,
