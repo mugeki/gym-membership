@@ -67,23 +67,15 @@ func (uc *classUsecase) UpdateClassByID(id uint, classData *Domain) (Domain, err
 	return dataUpdated, nil
 }
 
-func (uc *classUsecase) UpdateParticipant(idClass int) (string, error) {
-	_, err := uc.classRepository.UpdateParticipant(uint(idClass))
+func (uc *classUsecase) IncreaseParticipant(idClass int) (string, error) {
+	_, err := uc.classRepository.IncreaseParticipant(uint(idClass))
 	if err != nil {
 		return "", business.ErrInternalServer
 	}
 	return "", nil
 }
 
-// func (uc *classUsecase) ScheduleByID(idUser uint) ([]Domain, error) {
-// 	_, err := uc.classRepository.ScheduleByID(idUser)
-// 	if err != nil {
-// 		return []Domain{}, business.ErrInternalServer
-// 	}
-// 	return []Domain{}, nil
-// }
-
-func (uc *classUsecase) DeleteClassByID(id uint) (error) {
+func (uc *classUsecase) DeleteClassByID(id uint) error {
 	err := uc.classRepository.DeleteClassByID(id)
 	if err != nil {
 		if errors.Is(gorm.ErrRecordNotFound, err) {

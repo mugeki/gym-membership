@@ -25,7 +25,7 @@ func (uc *classTransactionUsecase) Insert(classTransactionData *Domain) (Domain,
 		return Domain{}, business.ErrInternalServer
 	}
 	idClass := classTransactionData.ClassID
-	_, errUpdateKuota := uc.classRepository.UpdateParticipant(uint(idClass))
+	_, errUpdateKuota := uc.classRepository.IncreaseParticipant(uint(idClass))
 
 	if errUpdateKuota != nil {
 		return Domain{}, business.ErrInternalServer
@@ -42,7 +42,6 @@ func (uc *classTransactionUsecase) GetAll(date time.Time, status string, idUser 
 		offset = (page - 1) * 10
 	}
 
-	// formattedStatus := strings.ReplaceAll(status, "-", " ")
 	res, totalData, err := uc.classTransactionRepository.GetAll(date, status, idUser, offset, limit)
 	if err != nil {
 		return []Domain{}, -1, -1, -1, business.ErrInternalServer
@@ -68,7 +67,6 @@ func (uc *classTransactionUsecase) GetActiveClass(idUser uint) ([]class.Domain, 
 }
 
 func (uc *classTransactionUsecase) UpdateStatus(id, idAdmin uint, status string) (string, error) {
-
 	_, err := uc.classTransactionRepository.UpdateStatus(id, idAdmin, status)
 	if err != nil {
 		return "", business.ErrInternalServer
@@ -97,6 +95,11 @@ func (uc *classTransactionUsecase) UpdateStatusToFailed(transactionID uint) (Dom
 	status := "failed"
 	data, err := uc.classTransactionRepository.UpdateStatusToFailed(transactionID, status)
 	if err != nil {
+		return Domain{}, business.ErrInternalServer
+	}
+	idClass := data.ClassID
+	_, error := uc.classRepository.DecreaseParticipant(uint(idClass))
+	if error != nil {
 		return Domain{}, business.ErrInternalServer
 	}
 	return data, nil

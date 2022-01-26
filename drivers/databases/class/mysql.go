@@ -100,7 +100,6 @@ func (mysqlRepo *mysqlClassRepo) UpdateClassByID(id uint, classData *class.Domai
 func (mysqlRepo *mysqlClassRepo) UpdateStatus(idClass uint, status bool) (class.Domain, error) {
 	rec := Class{}
 	domain := class.Domain{}
-	// println("update to false")
 	errUpdate := mysqlRepo.Conn.First(&rec, "id = ?", idClass).Update("available_status", status).Error
 	if errUpdate != nil {
 		return class.Domain{}, errUpdate
@@ -120,7 +119,7 @@ func (mysqlRepo *mysqlClassRepo) IsExist(idClass uint) (class.Domain, error) {
 	return domain, nil
 }
 
-func (mysqlRepo *mysqlClassRepo) UpdateParticipant(idClass uint) (class.Domain, error) {
+func (mysqlRepo *mysqlClassRepo) IncreaseParticipant(idClass uint) (class.Domain, error) {
 	// println("repo classes")
 	rec := Class{}
 	domain := class.Domain{}
@@ -141,26 +140,27 @@ func (mysqlRepo *mysqlClassRepo) UpdateParticipant(idClass uint) (class.Domain, 
 	return domain, nil
 }
 
-// func (mysqlRepo *mysqlClassRepo) ScheduleByID(idUser uint) ([]class.Domain, error) {
-// 	domain := []class.Domain{}
-// 	rec := []Class{}
+func (mysqlRepo *mysqlClassRepo) DecreaseParticipant(idClass uint) (class.Domain, error) {
+	rec := Class{}
+	domain := class.Domain{}
+	data, err := mysqlRepo.IsExist(idClass)
+	if err != nil {
+		return class.Domain{}, err
+	}
+	kuotaUpdated := data.Participant - 1
+	errUpdate := mysqlRepo.Conn.First(&rec, "id = ?", idClass).Update("participant", kuotaUpdated).Error
+	if errUpdate != nil {
+		return class.Domain{}, err
+	}
 
-// 	// mysqlRepo.Conn.Joins("TransactionClass", DB.Where(&Company{Alive: true}))
-// 	err := mysqlRepo.Conn.Order("updated_at desc").Joins("Trainers").Find(&rec).Error
-// 	if err != nil {
-// 		return []class.Domain{}, err
-// 	}
+	if rec.Kuota == rec.Participant {
+		mysqlRepo.UpdateStatus(idClass, false)
+	}
+	copier.Copy(&domain, &rec)
+	return domain, nil
+}
 
-// 	copier.Copy(&domain, &rec)
-// 	for i := 0; i < len(rec); i++ {
-// 		domain[i].TrainerName = rec[i].Trainers.Fullname
-// 		domain[i].TrainerImage = rec[i].Trainers.UrlImage
-// 	}
-
-// 	return domain, nil
-// }
-
-func (mysqlRepo *mysqlClassRepo) DeleteClassByID(id uint) (error){
+func (mysqlRepo *mysqlClassRepo) DeleteClassByID(id uint) error {
 	rec := Class{}
 	err := mysqlRepo.Conn.First(&rec, id).Delete(&rec).Error
 	if rec.ID == 0 {
