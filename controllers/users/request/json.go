@@ -13,6 +13,7 @@ type Users struct {
 
 type UsersUpdate struct {
 	Password  string `json:"password,omitempty" valid:"-"`
+	Username  string `json:"username" valid:"-"`
 	Email     string `json:"email" valid:"email"`
 	FullName  string `json:"fullname" valid:"-"`
 	Gender    string `json:"gender" valid:"-"`
