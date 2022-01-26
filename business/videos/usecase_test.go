@@ -9,6 +9,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"gorm.io/gorm"
 )
 
 var (
@@ -141,5 +142,36 @@ func TestDeleteByID(t *testing.T){
 
 		assert.NotNil(t, err)
 		assert.Equal(t, business.ErrInternalServer, err)
+	})
+}
+
+func TestGetByID(t *testing.T){
+	t.Run("Valid Test", func(t *testing.T){
+		mockVideoRepo.On("GetByID", mock.AnythingOfType("uint")).Return(videoData, nil).Once()
+
+		resp, err := videoUsecase.GetByID(uint(1))
+
+		assert.Nil(t, err)
+		assert.Equal(t, videoData, resp)
+	})
+	t.Run("Invalid Test | Not Found", func(t *testing.T){
+		mockVideoRepo.On("GetByID", mock.AnythingOfType("uint")).
+			Return(videos.Domain{}, gorm.ErrRecordNotFound).Once()
+
+		resp, err := videoUsecase.GetByID(uint(1))
+
+		assert.NotNil(t, err)
+		assert.Equal(t, business.ErrArticleNotFound, err)
+		assert.Equal(t, videos.Domain{}, resp)
+	})
+	t.Run("Invalid Test | Internal Server Error", func(t *testing.T){
+		mockVideoRepo.On("GetByID", mock.AnythingOfType("uint")).
+			Return(videos.Domain{}, assert.AnError).Once()
+
+		resp, err := videoUsecase.GetByID(uint(1))
+
+		assert.NotNil(t, err)
+		assert.Equal(t, business.ErrInternalServer, err)
+		assert.Equal(t, videos.Domain{}, resp)
 	})
 }

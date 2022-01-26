@@ -82,7 +82,7 @@ func dbMigrate(db *gorm.DB) {
 	)
 	hashed, _ := encrypt.Hash("admin321")
 	admin := _adminRepo.Admins{
-		Model: gorm.Model{ID:1000},
+		Model: gorm.Model{ID:1},
 		Username: "admin321",
 		Password: hashed,
 		Email: "admin321@gmail.com",

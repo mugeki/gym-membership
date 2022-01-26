@@ -1,0 +1,875 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>admins: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">gym-membership/business/admins/usecase.go (85.0%)</option>
+				
+				<option value="file1">gym-membership/business/articles/usecase.go (80.0%)</option>
+				
+				<option value="file2">gym-membership/business/class/usecase.go (100.0%)</option>
+				
+				<option value="file3">gym-membership/business/class_transactions/usecase.go (100.0%)</option>
+				
+				<option value="file4">gym-membership/business/membership_products/usecase.go (96.9%)</option>
+				
+				<option value="file5">gym-membership/business/membership_transactions/usecase.go (89.8%)</option>
+				
+				<option value="file6">gym-membership/business/trainers/usecase.go (100.0%)</option>
+				
+				<option value="file7">gym-membership/business/users/usecase.go (83.3%)</option>
+				
+				<option value="file8">gym-membership/business/videos/usecase.go (93.8%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package admins
+
+import (
+        "errors"
+        "gym-membership/app/middleware"
+        "gym-membership/business"
+        "gym-membership/helper/encrypt"
+
+        "gorm.io/gorm"
+)
+
+type adminUsecase struct {
+        adminRepository Repository
+        jwtAuth         *middleware.ConfigJWT
+}
+
+func NewAdminUsecase(adminRepo Repository, jwtauth *middleware.ConfigJWT) Usecase <span class="cov8" title="1">{
+        return &amp;adminUsecase{
+                adminRepository: adminRepo,
+                jwtAuth:         jwtauth,
+        }
+}</span>
+
+func (uc *adminUsecase) Register(adminData *Domain) (Domain, error) <span class="cov8" title="1">{
+        hashedPassword, _ := encrypt.Hash(adminData.Password)
+        adminData.Password = hashedPassword
+        adminDomain, err := uc.adminRepository.Register(adminData)
+        if err != nil </span><span class="cov8" title="1">{
+                return Domain{}, business.ErrDuplicateData
+        }</span>
+        <span class="cov8" title="1">return adminDomain, nil</span>
+}
+
+func (uc *adminUsecase) Login(username, password string) (Domain, error) <span class="cov8" title="1">{
+        adminDomain, err := uc.adminRepository.GetByUsername(username)
+        if err != nil </span><span class="cov8" title="1">{
+                return Domain{}, business.ErrInvalidLoginInfo
+        }</span>
+
+        <span class="cov8" title="1">if !encrypt.ValidateHash(password, adminDomain.Password) </span><span class="cov8" title="1">{
+                return Domain{}, business.ErrInvalidLoginInfo
+        }</span>
+
+        <span class="cov8" title="1">adminDomain.Token = uc.jwtAuth.GenerateToken(int(adminDomain.ID), false, true, adminDomain.IsSuperAdmin)
+        return adminDomain, nil</span>
+}
+
+func (uc *adminUsecase) Update(id uint, adminData *Domain) (Domain, error) <span class="cov8" title="1">{
+        if adminData.Password != "" </span><span class="cov8" title="1">{
+                hashedPassword, _ := encrypt.Hash(adminData.Password)
+                adminData.Password = hashedPassword
+        }</span> else<span class="cov8" title="1"> {
+                data, err := uc.adminRepository.GetByID(id)
+                if err != nil </span><span class="cov8" title="1">{
+                        return Domain{}, business.ErrInternalServer
+                }</span>
+                <span class="cov8" title="1">adminData.Password = data.Password</span>
+        }
+        
+        <span class="cov8" title="1">adminDomain, err := uc.adminRepository.Update(id, adminData)
+        if err != nil </span><span class="cov8" title="1">{
+                return Domain{}, business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">return adminDomain, nil</span>
+}
+
+func (uc *adminUsecase) GetAll(title string, page int) ([]Domain, int, int, int64, error) <span class="cov8" title="1">{
+        var offset int
+        limit := 10
+        if page == 1 </span><span class="cov8" title="1">{
+                offset = 0
+        }</span> else<span class="cov8" title="1"> {
+                offset = (page - 1) * 10
+        }</span>
+        <span class="cov8" title="1">res, totalData, err := uc.adminRepository.GetAll(title, offset, limit)
+        if err != nil </span><span class="cov8" title="1">{
+                return []Domain{}, -1, -1, -1, business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">return res, offset, limit, totalData, nil</span>
+}
+
+func (uc *adminUsecase) DeleteByID(id uint) (error) <span class="cov0" title="0">{
+        err := uc.adminRepository.DeleteByID(id)
+        if err != nil </span><span class="cov0" title="0">{
+                if errors.Is(gorm.ErrRecordNotFound, err) </span><span class="cov0" title="0">{
+                        return business.ErrArticleNotFound
+                }</span> else<span class="cov0" title="0"> {
+                        return business.ErrInternalServer
+                }</span>
+        }
+        <span class="cov0" title="0">return nil</span>
+}</pre>
+		
+		<pre class="file" id="file1" style="display: none">package articles
+
+import (
+        "errors"
+        "gym-membership/business"
+        classification "gym-membership/business/classification"
+
+        "gorm.io/gorm"
+)
+
+type articleUsecase struct {
+        articleRepository        Repository
+        classificationRepository classification.Repository
+}
+
+func NewArticleUsecase(articleRepo Repository, classificationRepo classification.Repository) Usecase <span class="cov8" title="1">{
+        return &amp;articleUsecase{
+                articleRepository:        articleRepo,
+                classificationRepository: classificationRepo,
+        }
+}</span>
+
+func (uc *articleUsecase) GetAll(title string, page int) ([]Domain, int, int, int64, error) <span class="cov8" title="1">{
+        var offset int
+        limit := 10
+        if page == 1 </span><span class="cov8" title="1">{
+                offset = 0
+        }</span> else<span class="cov8" title="1"> {
+                offset = (page - 1) * 10
+        }</span>
+        <span class="cov8" title="1">res, totalData, err := uc.articleRepository.GetAll(title, offset, limit)
+        if err != nil </span><span class="cov8" title="1">{
+                return []Domain{}, -1, -1, -1, business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">return res, offset, limit, totalData, nil</span>
+}
+
+func (uc *articleUsecase) GetByID(id uint) (Domain, error) <span class="cov8" title="1">{
+        data, err := uc.articleRepository.GetByID(id)
+        if err != nil </span><span class="cov8" title="1">{
+                if errors.Is(gorm.ErrRecordNotFound, err)</span><span class="cov8" title="1">{
+                        return Domain{}, business.ErrArticleNotFound
+                }</span>
+                <span class="cov8" title="1">return Domain{}, business.ErrInternalServer</span>
+        }
+        <span class="cov8" title="1">return data, nil</span>
+}
+
+func (uc *articleUsecase) Insert(articleData *Domain) (Domain, error) <span class="cov8" title="1">{
+        // classificationID, _ := uc.classificationRepository.GetClassificationID(articleData.ClassificationName)
+        // println("cek data text", articleData.Text)
+        data, err := uc.articleRepository.Insert(articleData)
+        if err != nil </span><span class="cov8" title="1">{
+                return Domain{}, business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">return data, nil</span>
+}
+
+func (uc *articleUsecase) UpdateArticleByID(id uint, videoData *Domain) (Domain, error) <span class="cov8" title="1">{
+        data, err := uc.articleRepository.UpdateByID(id, videoData)
+        if err != nil </span><span class="cov8" title="1">{
+                return Domain{}, business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">return data, nil</span>
+}
+
+func (uc *articleUsecase) DeleteByID(id uint) error <span class="cov0" title="0">{
+        err := uc.articleRepository.DeleteByID(id)
+        if err != nil </span><span class="cov0" title="0">{
+                if errors.Is(gorm.ErrRecordNotFound, err) </span><span class="cov0" title="0">{
+                        return business.ErrArticleNotFound
+                }</span> else<span class="cov0" title="0"> {
+                        return business.ErrInternalServer
+                }</span>
+        }
+        <span class="cov0" title="0">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package class
+
+import (
+        "errors"
+        "gym-membership/app/middleware"
+        "gym-membership/business"
+
+        "gorm.io/gorm"
+)
+
+type classUsecase struct {
+        classRepository Repository
+        jwtAuth         *middleware.ConfigJWT
+}
+
+func NewClassUsecase(classRepo Repository, jwtauth *middleware.ConfigJWT) Usecase <span class="cov8" title="1">{
+        return &amp;classUsecase{
+                classRepository: classRepo,
+                jwtAuth:         jwtauth,
+        }
+}</span>
+
+func (uc *classUsecase) Insert(classData *Domain) (Domain, error) <span class="cov8" title="1">{
+        data, err := uc.classRepository.Insert(classData)
+        if err != nil </span><span class="cov8" title="1">{
+                return Domain{}, business.ErrInternalServer
+        }</span>
+
+        <span class="cov8" title="1">return data, nil</span>
+}
+
+func (uc *classUsecase) GetAll(name string, classType string, page int) ([]Domain, int, int, int64, error) <span class="cov8" title="1">{
+        var offset int
+        limit := 10
+        if page == 1 </span><span class="cov8" title="1">{
+                offset = 0
+        }</span> else<span class="cov8" title="1"> {
+                offset = (page - 1) * 10
+        }</span>
+        <span class="cov8" title="1">res, totalData, err := uc.classRepository.GetAll(name, classType, offset, limit)
+        if err != nil </span><span class="cov8" title="1">{
+                return []Domain{}, -1, -1, -1, business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">return res, offset, limit, totalData, nil</span>
+}
+
+func (uc *classUsecase) GetClassByID(id uint) (Domain, error) <span class="cov8" title="1">{
+        res, err := uc.classRepository.GetClassByID(id)
+        if err != nil </span><span class="cov8" title="1">{
+                if errors.Is(gorm.ErrRecordNotFound, err) </span><span class="cov8" title="1">{
+                        return Domain{}, business.ErrProductNotFound
+                }</span> else<span class="cov8" title="1"> {
+                        return Domain{}, business.ErrInternalServer
+                }</span>
+
+        }
+        <span class="cov8" title="1">return res, nil</span>
+}
+
+func (uc *classUsecase) UpdateClassByID(id uint, classData *Domain) (Domain, error) <span class="cov8" title="1">{
+        dataUpdated, err := uc.classRepository.UpdateClassByID(id, classData)
+        if err != nil </span><span class="cov8" title="1">{
+                return Domain{}, business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">return dataUpdated, nil</span>
+}
+
+func (uc *classUsecase) IncreaseParticipant(idClass int) (string, error) <span class="cov8" title="1">{
+        _, err := uc.classRepository.IncreaseParticipant(uint(idClass))
+        if err != nil </span><span class="cov8" title="1">{
+                return "", business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">return "", nil</span>
+}
+
+func (uc *classUsecase) DeleteClassByID(id uint) error <span class="cov8" title="1">{
+        err := uc.classRepository.DeleteClassByID(id)
+        if err != nil </span><span class="cov8" title="1">{
+                if errors.Is(gorm.ErrRecordNotFound, err) </span><span class="cov8" title="1">{
+                        return business.ErrArticleNotFound
+                }</span> else<span class="cov8" title="1"> {
+                        return business.ErrInternalServer
+                }</span>
+        }
+        <span class="cov8" title="1">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package class_transactions
+
+import (
+        "gym-membership/business"
+        "gym-membership/business/class"
+        "time"
+)
+
+type classTransactionUsecase struct {
+        classTransactionRepository Repository
+        classRepository            class.Repository
+}
+
+func NewClassTransactionUsecase(classTransactionRepo Repository, classRepository class.Repository) Usecase <span class="cov8" title="1">{
+        return &amp;classTransactionUsecase{
+                classTransactionRepository: classTransactionRepo,
+                classRepository:            classRepository,
+        }
+}</span>
+
+func (uc *classTransactionUsecase) Insert(classTransactionData *Domain) (Domain, error) <span class="cov8" title="1">{
+        classTransactionData.Status = "waiting-for-payment"
+        data, err := uc.classTransactionRepository.Insert(classTransactionData)
+        if err != nil </span><span class="cov8" title="1">{
+                return Domain{}, business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">idClass := classTransactionData.ClassID
+        _, errUpdateKuota := uc.classRepository.IncreaseParticipant(uint(idClass))
+
+        if errUpdateKuota != nil </span><span class="cov8" title="1">{
+                return Domain{}, business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">return data, nil</span>
+}
+
+func (uc *classTransactionUsecase) GetAll(date time.Time, status string, idUser uint, page int) ([]Domain, int, int, int64, error) <span class="cov8" title="1">{
+        var offset int
+        limit := 10
+        if page == 1 </span><span class="cov8" title="1">{
+                offset = 0
+        }</span> else<span class="cov8" title="1"> {
+                offset = (page - 1) * 10
+        }</span>
+
+        <span class="cov8" title="1">res, totalData, err := uc.classTransactionRepository.GetAll(date, status, idUser, offset, limit)
+        if err != nil </span><span class="cov8" title="1">{
+                return []Domain{}, -1, -1, -1, business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">return res, offset, limit, totalData, nil</span>
+}
+
+func (uc *classTransactionUsecase) GetAllByUser(idUser uint) ([]Domain, error) <span class="cov8" title="1">{
+
+        res, err := uc.classTransactionRepository.GetAllByUser(idUser)
+        if err != nil </span><span class="cov8" title="1">{
+                return []Domain{}, business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">return res, nil</span>
+}
+
+func (uc *classTransactionUsecase) GetActiveClass(idUser uint) ([]class.Domain, error) <span class="cov8" title="1">{
+        res, err := uc.classTransactionRepository.GetActiveClass(idUser)
+        if err != nil </span><span class="cov8" title="1">{
+                return []class.Domain{}, business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">return res, nil</span>
+}
+
+func (uc *classTransactionUsecase) UpdateStatus(id, idAdmin uint, status string) (string, error) <span class="cov8" title="1">{
+        _, err := uc.classTransactionRepository.UpdateStatus(id, idAdmin, status)
+        if err != nil </span><span class="cov8" title="1">{
+                return "", business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">return "", nil</span>
+}
+
+func (uc *classTransactionUsecase) UpdateReceipt(id uint, urlImage string) (string, error) <span class="cov8" title="1">{
+        status := "waiting-for-confirmation"
+        _, err := uc.classTransactionRepository.UpdateReceipt(id, urlImage, status)
+        if err != nil </span><span class="cov8" title="1">{
+                return "", business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">return "", nil</span>
+}
+
+func (uc *classTransactionUsecase) GetByID(transactionID uint) (Domain, error) <span class="cov8" title="1">{
+        res, err := uc.classTransactionRepository.GetByID(transactionID)
+        if err != nil </span><span class="cov8" title="1">{
+                return Domain{}, business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">return res, nil</span>
+}
+
+func (uc *classTransactionUsecase) UpdateStatusToFailed(transactionID uint) (Domain, error) <span class="cov8" title="1">{
+        status := "failed"
+        data, err := uc.classTransactionRepository.UpdateStatusToFailed(transactionID, status)
+        if err != nil </span><span class="cov8" title="1">{
+                return Domain{}, business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">idClass := data.ClassID
+        _, error := uc.classRepository.DecreaseParticipant(uint(idClass))
+        if error != nil </span><span class="cov8" title="1">{
+                return Domain{}, business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">return data, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package membership_products
+
+import (
+        "errors"
+        "gym-membership/business"
+
+        "gorm.io/gorm"
+)
+
+type membershipProductsUsecase struct {
+        membershipProductsRepository Repository
+}
+
+func NewMembershipProductsUsecase(membershipProductsRepository Repository) Usecase <span class="cov8" title="1">{
+        return &amp;membershipProductsUsecase{
+                membershipProductsRepository: membershipProductsRepository,
+        }
+}</span>
+
+func (uc *membershipProductsUsecase) Insert(newData *Domain)  (Domain, error) <span class="cov8" title="1">{
+        data, err := uc.membershipProductsRepository.Insert(newData)
+        if err != nil </span><span class="cov8" title="1">{
+                return Domain{}, business.ErrInternalServer
+        }</span>
+
+        <span class="cov8" title="1">return data, nil</span>
+}
+
+func (uc *membershipProductsUsecase) GetAll(page int) ([]Domain, int, int, int64, error) <span class="cov8" title="1">{
+        var offset int
+        limit := 10
+        if page == 1 </span><span class="cov8" title="1">{
+                offset = 0
+        }</span> else<span class="cov8" title="1"> {
+                offset = (page - 1) * 10
+        }</span>
+        <span class="cov8" title="1">res, totalData, err := uc.membershipProductsRepository.GetAll(offset, limit)
+        if err != nil </span><span class="cov0" title="0">{
+                return []Domain{}, -1, -1, -1, business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">return res, offset, limit, totalData, nil</span>
+}
+
+func (uc *membershipProductsUsecase) GetByID(id uint) (Domain, error) <span class="cov8" title="1">{ 
+        res, err := uc.membershipProductsRepository.GetByID(id)
+        if err != nil </span><span class="cov8" title="1">{
+                if errors.Is(gorm.ErrRecordNotFound, err) </span><span class="cov8" title="1">{
+                        return Domain{}, business.ErrProductNotFound
+                }</span>
+                <span class="cov8" title="1">return Domain{}, business.ErrInternalServer</span>
+        }
+        <span class="cov8" title="1">return res, nil</span>
+}
+
+func (uc *membershipProductsUsecase) UpdateByID(id uint, newData *Domain) (Domain, error)<span class="cov8" title="1">{
+        data, err := uc.membershipProductsRepository.UpdateByID(id,newData)
+        if err != nil </span><span class="cov8" title="1">{
+                if errors.Is(gorm.ErrRecordNotFound, err)</span><span class="cov8" title="1">{
+                        return Domain{}, business.ErrProductNotFound
+                }</span> else<span class="cov8" title="1"> {
+                        return Domain{}, business.ErrInternalServer
+                }</span>
+        }
+        <span class="cov8" title="1">return data, nil</span>
+}
+
+func (uc *membershipProductsUsecase) DeleteByID(id uint) error<span class="cov8" title="1">{
+        err := uc.membershipProductsRepository.DeleteByID(id)
+        if err != nil </span><span class="cov8" title="1">{
+                if errors.Is(gorm.ErrRecordNotFound, err)</span><span class="cov8" title="1">{
+                        return business.ErrProductNotFound
+                }</span> else<span class="cov8" title="1"> {
+                        return business.ErrInternalServer
+                }</span>
+        }
+        <span class="cov8" title="1">return nil</span>
+}
+
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package membership_transactions
+
+import (
+        "errors"
+        "gym-membership/business"
+        "gym-membership/business/members"
+        "gym-membership/business/membership_products"
+
+        "time"
+
+        "gorm.io/gorm"
+)
+
+type membershipTransactionUsecase struct {
+        membershipTransactionRepository Repository
+        membershipProductRepository     membership_products.Repository
+        memberRepository                members.Repository
+}
+
+func NewMembershipTransactionUsecase(membershipTransactionRepo Repository, membershipProductRepo membership_products.Repository, memberRepo members.Repository) Usecase <span class="cov8" title="1">{
+        return &amp;membershipTransactionUsecase{
+                membershipTransactionRepository: membershipTransactionRepo,
+                membershipProductRepository:     membershipProductRepo,
+                memberRepository:                memberRepo,
+        }
+}</span>
+
+func (uc *membershipTransactionUsecase) Insert(membershipTransactionData *Domain) (Domain, error) <span class="cov8" title="1">{
+        membershipTransactionData.Status = "waiting-for-payment"
+        data, err := uc.membershipTransactionRepository.Insert(membershipTransactionData)
+        if err != nil </span><span class="cov8" title="1">{
+                return Domain{}, business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">return data, nil</span>
+}
+
+func (uc *membershipTransactionUsecase) GetAll(date time.Time, status string, idUser uint, page int) ([]Domain, int, int, int64, error) <span class="cov8" title="1">{
+        var offset int
+        limit := 10
+        if page == 1 </span><span class="cov8" title="1">{
+                offset = 0
+        }</span> else<span class="cov8" title="1"> {
+                offset = (page - 1) * 10
+        }</span>
+
+        // resStatus := strings.ReplaceAll(status, "-", " ")
+        <span class="cov8" title="1">res, totalData, err := uc.membershipTransactionRepository.GetAll(date, status, idUser, offset, limit)
+        if err != nil </span><span class="cov8" title="1">{
+                return []Domain{}, -1, -1, -1, business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">return res, offset, limit, totalData, nil</span>
+}
+
+func (uc *membershipTransactionUsecase) GetAllByUser(idUser uint) ([]Domain, error) <span class="cov8" title="1">{
+
+        res, err := uc.membershipTransactionRepository.GetAllByUser(idUser)
+        if err != nil </span><span class="cov8" title="1">{
+                return []Domain{}, business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">return res, nil</span>
+}
+
+func (uc *membershipTransactionUsecase) GetByID(idTransaction uint) (Domain, error) <span class="cov8" title="1">{
+        res, err := uc.membershipTransactionRepository.GetByID(idTransaction)
+        if err != nil </span><span class="cov8" title="1">{
+                return Domain{}, business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">return res, nil</span>
+}
+
+func (uc *membershipTransactionUsecase) UpdateStatus(id, idAdmin uint, status string) error <span class="cov8" title="1">{
+        data, err := uc.membershipTransactionRepository.UpdateStatus(id, idAdmin, status)
+        if err != nil </span><span class="cov8" title="1">{
+                return business.ErrInternalServer
+        }</span>
+
+        <span class="cov8" title="1">dataProduct, err := uc.membershipProductRepository.GetByID(data.MembershipProductID)
+        if err != nil </span><span class="cov8" title="1">{
+                if errors.Is(gorm.ErrRecordNotFound, err) </span><span class="cov8" title="1">{
+                        return business.ErrProductNotFound
+                }</span>
+                <span class="cov8" title="1">return business.ErrInternalServer</span>
+        }
+
+        <span class="cov8" title="1">if status == "accepted" </span><span class="cov8" title="1">{
+                timePeriod := dataProduct.PeriodTime
+                expireDate := time.Now().Add(time.Hour * 24 * time.Duration(timePeriod))
+                dataMember := members.Domain{
+                        UserID:     data.UserID,
+                        ExpireDate: expireDate,
+                }
+                err = uc.memberRepository.Insert(&amp;dataMember)
+                if err != nil </span><span class="cov8" title="1">{
+                        return business.ErrInternalServer
+                }</span>
+        }
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+func (uc *membershipTransactionUsecase) UpdateReceipt(id uint, urlImage string) (string, error) <span class="cov0" title="0">{
+        status := "waiting-for-confirmation"
+        _, err := uc.membershipTransactionRepository.UpdateReceipt(id, urlImage, status)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", business.ErrInternalServer
+        }</span>
+        <span class="cov0" title="0">return "", nil</span>
+}
+
+func (uc *membershipTransactionUsecase) UpdateStatusToFailed(transactionID uint) (Domain, error) <span class="cov8" title="1">{
+        status := "failed"
+        data, err := uc.membershipTransactionRepository.UpdateStatusToFailed(transactionID, status)
+        if err != nil </span><span class="cov8" title="1">{
+                return Domain{}, business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">return data, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package trainers
+
+import (
+        "gym-membership/business"
+)
+
+// "gym-membership/helper/encrypt"
+// "github.com/google/uuid"
+
+type trainerUsecase struct {
+        trainerRepository Repository
+}
+
+func NewTrainerUsecase(trainerRepo Repository) Usecase <span class="cov8" title="1">{
+        return &amp;trainerUsecase{
+                trainerRepository: trainerRepo,
+        }
+}</span>
+
+func (uc *trainerUsecase) GetAll() ([]Domain, error) <span class="cov8" title="1">{
+        data, err := uc.trainerRepository.GetAll()
+        if err != nil </span><span class="cov8" title="1">{
+                return []Domain{}, business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">return data, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package users
+
+import (
+        "gym-membership/app/middleware"
+        "gym-membership/business"
+        "gym-membership/business/members"
+        "gym-membership/helper/encrypt"
+        "time"
+
+        "github.com/golang-jwt/jwt"
+        "github.com/google/uuid"
+)
+
+type userUsecase struct {
+        userRepository         Repository
+        memberRepository members.Repository
+        jwtAuth                        *middleware.ConfigJWT
+}
+
+func NewUserUsecase(userRepo Repository, memberRepo members.Repository, jwtauth *middleware.ConfigJWT) Usecase <span class="cov8" title="1">{
+        return &amp;userUsecase{
+                userRepository: userRepo,
+                memberRepository: memberRepo,
+                jwtAuth: jwtauth,
+        }
+}</span>
+
+func (uc *userUsecase) Register(userData *Domain) (error)  <span class="cov8" title="1">{
+        hashedPassword, _ := encrypt.Hash(userData.Password)
+        userData.Password = hashedPassword
+        userData.UUID = uuid.New()
+        _, err := uc.userRepository.Register(userData)
+        if err != nil </span><span class="cov8" title="1">{
+                return business.ErrDuplicateData
+        }</span>
+        <span class="cov8" title="1">return nil</span>
+}
+
+func (uc *userUsecase) Login(username, password string) (Domain, error) <span class="cov8" title="1">{
+        userDomain, err := uc.userRepository.GetByUsername(username)
+        if err != nil </span><span class="cov8" title="1">{
+                return Domain{}, business.ErrInvalidLoginInfo
+        }</span>
+
+        <span class="cov8" title="1">if !encrypt.ValidateHash(password, userDomain.Password)</span><span class="cov8" title="1">{
+                return Domain{}, business.ErrInvalidLoginInfo
+        }</span>
+
+        <span class="cov8" title="1">isMember := false
+        memberDomain, err := uc.memberRepository.GetByUserID(userDomain.ID)
+        if err == nil &amp;&amp; memberDomain.ExpireDate.Unix() &gt;= time.Now().Unix() </span><span class="cov8" title="1">{
+                isMember = true
+        }</span>
+        <span class="cov8" title="1">userDomain.Token = uc.jwtAuth.GenerateToken(int(userDomain.ID), isMember, false, false)
+        return userDomain, nil</span>
+}
+
+func (uc *userUsecase) Update(id uint, userData *Domain) (Domain, error) <span class="cov8" title="1">{
+        if userData.Password != "" </span><span class="cov8" title="1">{
+                hashedPassword, _ := encrypt.Hash(userData.Password)
+                userData.Password = hashedPassword
+        }</span> else<span class="cov8" title="1"> {
+                data, err := uc.userRepository.GetByUsername(userData.Username)
+                if err != nil </span><span class="cov8" title="1">{
+                        return Domain{}, business.ErrInternalServer
+                }</span>
+                <span class="cov8" title="1">userData.Password = data.Password</span>
+        }
+        
+        <span class="cov8" title="1">userDomain, err := uc.userRepository.Update(id, userData)
+        if err != nil </span><span class="cov8" title="1">{
+                return Domain{}, business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">return userDomain, nil</span>
+}
+
+func (uc *userUsecase) VerifyJWT(token string) (error) <span class="cov0" title="0">{
+        claims := jwt.MapClaims{}
+        parsedToken, _ := jwt.ParseWithClaims(token, &amp;claims, func(token *jwt.Token) (interface{}, error) </span><span class="cov0" title="0">{
+                return []byte(uc.jwtAuth.SecretJWT), nil}</span>)
+        <span class="cov0" title="0">if !parsedToken.Valid</span><span class="cov0" title="0">{
+                return business.ErrInvalidToken
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}</pre>
+		
+		<pre class="file" id="file8" style="display: none">package videos
+
+import (
+        "errors"
+        "gym-membership/business"
+
+        "gorm.io/gorm"
+)
+
+type videoUsecase struct {
+        videoRepository Repository
+}
+
+func NewVideoUsecase(videoRepo Repository) Usecase <span class="cov8" title="1">{
+        return &amp;videoUsecase{
+                videoRepository: videoRepo,
+        }
+}</span>
+
+func (uc *videoUsecase) GetAll(title string, page int) ([]Domain, int, int, int64, error) <span class="cov8" title="1">{
+        var offset int
+        limit := 10
+        if page == 1 </span><span class="cov8" title="1">{
+                offset = 0
+        }</span> else<span class="cov8" title="1"> {
+                offset = (page-1)*10
+        }</span>
+        <span class="cov8" title="1">res, totalData, err := uc.videoRepository.GetAll(title, offset, limit)
+        if err != nil </span><span class="cov8" title="1">{
+                return []Domain{}, -1, -1, -1, business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">return res, offset, limit, totalData, nil</span>
+}
+
+func (uc *videoUsecase) GetByID(id uint) (Domain, error) <span class="cov8" title="1">{
+        data, err := uc.videoRepository.GetByID(id)
+        if err != nil </span><span class="cov8" title="1">{
+                if errors.Is(gorm.ErrRecordNotFound, err)</span><span class="cov8" title="1">{
+                        return Domain{}, business.ErrArticleNotFound
+                }</span>
+                <span class="cov8" title="1">return Domain{}, business.ErrInternalServer</span>
+        }
+        <span class="cov8" title="1">return data, nil</span>
+}
+
+func (uc *videoUsecase) Insert(videoData *Domain) (Domain, error) <span class="cov8" title="1">{
+        data, err := uc.videoRepository.Insert(videoData)
+        if err != nil </span><span class="cov8" title="1">{
+                return Domain{}, business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">return data, nil</span>
+}
+
+func (uc *videoUsecase) UpdateByID(id uint, videoData *Domain) (Domain, error) <span class="cov8" title="1">{
+        data, err := uc.videoRepository.UpdateByID(id, videoData)
+        if err != nil </span><span class="cov8" title="1">{
+                if errors.Is(gorm.ErrRecordNotFound, err)</span><span class="cov0" title="0">{
+                        return Domain{}, business.ErrVideoNotFound
+                }</span> else<span class="cov8" title="1"> {
+                        return Domain{}, business.ErrInternalServer
+                }</span>
+        }
+        <span class="cov8" title="1">return data, nil</span>
+}
+
+func (uc *videoUsecase) DeleteByID(id uint) (error) <span class="cov8" title="1">{
+        err := uc.videoRepository.DeleteByID(id)
+        if err != nil </span><span class="cov8" title="1">{
+                if errors.Is(gorm.ErrRecordNotFound, err)</span><span class="cov0" title="0">{
+                        return business.ErrVideoNotFound
+                }</span> else<span class="cov8" title="1"> {
+                        return business.ErrInternalServer
+                }</span>
+        }
+        <span class="cov8" title="1">return nil</span>
+}</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
