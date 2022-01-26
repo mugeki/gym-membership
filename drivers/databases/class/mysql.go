@@ -99,7 +99,6 @@ func (mysqlRepo *mysqlClassRepo) UpdateClassByID(id uint, classData *class.Domai
 func (mysqlRepo *mysqlClassRepo) UpdateStatus(idClass uint, status bool) (class.Domain, error) {
 	rec := Class{}
 	domain := class.Domain{}
-	// println("update to false")
 	errUpdate := mysqlRepo.Conn.First(&rec, "id = ?", idClass).Update("available_status", status).Error
 	if errUpdate != nil {
 		return class.Domain{}, errUpdate
@@ -152,6 +151,7 @@ func (mysqlRepo *mysqlClassRepo) DecreaseParticipant(idClass uint) (class.Domain
 	if errUpdate != nil {
 		return class.Domain{}, err
 	}
+
 	if rec.Kuota == rec.Participant {
 		mysqlRepo.UpdateStatus(idClass, false)
 	}
