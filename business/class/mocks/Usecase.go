@@ -92,6 +92,27 @@ func (_m *Usecase) GetClassByID(idClass uint) (class.Domain, error) {
 	return r0, r1
 }
 
+// IncreaseParticipant provides a mock function with given fields: idClass
+func (_m *Usecase) IncreaseParticipant(idClass int) (string, error) {
+	ret := _m.Called(idClass)
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func(int) string); ok {
+		r0 = rf(idClass)
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(int) error); ok {
+		r1 = rf(idClass)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Insert provides a mock function with given fields: classData
 func (_m *Usecase) Insert(classData *class.Domain) (class.Domain, error) {
 	ret := _m.Called(classData)
@@ -127,27 +148,6 @@ func (_m *Usecase) UpdateClassByID(id uint, classData *class.Domain) (class.Doma
 	var r1 error
 	if rf, ok := ret.Get(1).(func(uint, *class.Domain) error); ok {
 		r1 = rf(id, classData)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// UpdateParticipant provides a mock function with given fields: idClass
-func (_m *Usecase) UpdateParticipant(idClass int) (string, error) {
-	ret := _m.Called(idClass)
-
-	var r0 string
-	if rf, ok := ret.Get(0).(func(int) string); ok {
-		r0 = rf(idClass)
-	} else {
-		r0 = ret.Get(0).(string)
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func(int) error); ok {
-		r1 = rf(idClass)
 	} else {
 		r1 = ret.Error(1)
 	}
