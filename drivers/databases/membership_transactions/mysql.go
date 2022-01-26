@@ -56,6 +56,7 @@ func (mysqlRepo *mysqlMembershipTransactionRepo) GetAll(date time.Time, status s
 
 	copier.Copy(&domain, &rec)
 	for i := 0; i < len(rec); i++ {
+		copier.Copy(&domain[i].Payment, &rec[i].Payment)
 		domain[i].UserName = rec[i].User.FullName
 		domain[i].ProductName = rec[i].MembershipProduct.Name
 		domain[i].Nominal = rec[i].MembershipProduct.Price
@@ -66,7 +67,6 @@ func (mysqlRepo *mysqlMembershipTransactionRepo) GetAll(date time.Time, status s
 func (mysqlRepo *mysqlMembershipTransactionRepo) GetAllByUser(idUser uint) ([]membership_transactions.Domain, error) {
 	domain := []membership_transactions.Domain{}
 	rec := []MembershipTransactions{}
-	// var err error
 	err := mysqlRepo.Conn.Order("updated_at desc").Joins("MembershipProduct").Joins("Payment").
 		Joins("User").Find(&rec, "user_id = ?", idUser).Error
 
@@ -76,6 +76,7 @@ func (mysqlRepo *mysqlMembershipTransactionRepo) GetAllByUser(idUser uint) ([]me
 
 	copier.Copy(&domain, &rec)
 	for i := 0; i < len(rec); i++ {
+		copier.Copy(&domain[i].Payment, &rec[i].Payment)
 		domain[i].UserName = rec[i].User.FullName
 		domain[i].ProductName = rec[i].MembershipProduct.Name
 		domain[i].Nominal = rec[i].MembershipProduct.Price
@@ -92,6 +93,7 @@ func (mysqlRepo *mysqlMembershipTransactionRepo) GetByID(idTransaction uint) (me
 		return membership_transactions.Domain{}, err
 	}
 	copier.Copy(&domain, &rec)
+	copier.Copy(&domain.Payment, &rec.Payment)
 	domain.UserName = rec.User.FullName
 	domain.ProductName = rec.MembershipProduct.Name
 	domain.Nominal = rec.MembershipProduct.Price
