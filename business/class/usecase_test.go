@@ -116,18 +116,18 @@ func TestGetAll(t *testing.T) {
 
 }
 
-func TestUpdateParticipant(t *testing.T) {
+func TestIncreaseParticipant(t *testing.T) {
 	t.Run("Valid Test", func(t *testing.T) {
-		mockClassRepo.On("UpdateParticipant", mock.Anything).Return(classData, nil).Once()
+		mockClassRepo.On("IncreaseParticipant", mock.Anything).Return(classData, nil).Once()
 
-		resp, err := classUsecase.UpdateParticipant(1)
+		resp, err := classUsecase.IncreaseParticipant(1)
 
 		assert.Nil(t, err)
 		assert.Equal(t, "", resp)
 	})
 	t.Run("Invalid Test | Internal Server Error", func(t *testing.T) {
-		mockClassRepo.On("UpdateParticipant", mock.Anything).Return(class.Domain{}, assert.AnError).Once()
-		resp, err := classUsecase.UpdateParticipant(1)
+		mockClassRepo.On("IncreaseParticipant", mock.Anything).Return(class.Domain{}, assert.AnError).Once()
+		resp, err := classUsecase.IncreaseParticipant(1)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "", resp)

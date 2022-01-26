@@ -13,6 +13,27 @@ type Repository struct {
 	mock.Mock
 }
 
+// DecreaseParticipant provides a mock function with given fields: idClass
+func (_m *Repository) DecreaseParticipant(idClass uint) (class.Domain, error) {
+	ret := _m.Called(idClass)
+
+	var r0 class.Domain
+	if rf, ok := ret.Get(0).(func(uint) class.Domain); ok {
+		r0 = rf(idClass)
+	} else {
+		r0 = ret.Get(0).(class.Domain)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(uint) error); ok {
+		r1 = rf(idClass)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // DeleteClassByID provides a mock function with given fields: id
 func (_m *Repository) DeleteClassByID(id uint) error {
 	ret := _m.Called(id)
@@ -59,6 +80,27 @@ func (_m *Repository) GetAll(title string, classType string, offset int, limit i
 
 // GetClassByID provides a mock function with given fields: idClass
 func (_m *Repository) GetClassByID(idClass uint) (class.Domain, error) {
+	ret := _m.Called(idClass)
+
+	var r0 class.Domain
+	if rf, ok := ret.Get(0).(func(uint) class.Domain); ok {
+		r0 = rf(idClass)
+	} else {
+		r0 = ret.Get(0).(class.Domain)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(uint) error); ok {
+		r1 = rf(idClass)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// IncreaseParticipant provides a mock function with given fields: idClass
+func (_m *Repository) IncreaseParticipant(idClass uint) (class.Domain, error) {
 	ret := _m.Called(idClass)
 
 	var r0 class.Domain
@@ -134,27 +176,6 @@ func (_m *Repository) UpdateClassByID(id uint, classData *class.Domain) (class.D
 	var r1 error
 	if rf, ok := ret.Get(1).(func(uint, *class.Domain) error); ok {
 		r1 = rf(id, classData)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// UpdateParticipant provides a mock function with given fields: idClass
-func (_m *Repository) UpdateParticipant(idClass uint) (class.Domain, error) {
-	ret := _m.Called(idClass)
-
-	var r0 class.Domain
-	if rf, ok := ret.Get(0).(func(uint) class.Domain); ok {
-		r0 = rf(idClass)
-	} else {
-		r0 = ret.Get(0).(class.Domain)
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func(uint) error); ok {
-		r1 = rf(idClass)
 	} else {
 		r1 = ret.Error(1)
 	}

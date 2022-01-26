@@ -62,7 +62,7 @@ func TestMain(m *testing.M) {
 func TestInsert(t *testing.T) {
 	t.Run("Valid Test", func(t *testing.T) {
 		mockClassTransactionRepo.On("Insert", mock.Anything).Return(classTransactionData, nil).Once()
-		mockClassRepo.On("UpdateParticipant", mock.AnythingOfType("uint")).Return(classData, nil).Once()
+		mockClassRepo.On("IncreaseParticipant", mock.AnythingOfType("uint")).Return(classData, nil).Once()
 
 		resp, err := classTransactionUsecase.Insert(&classTransactionInput)
 
@@ -78,7 +78,7 @@ func TestInsert(t *testing.T) {
 	})
 	t.Run("Invalid Test | Internal Server Error", func(t *testing.T) {
 		mockClassTransactionRepo.On("Insert", mock.Anything).Return(classTransactionData, nil).Once()
-		mockClassRepo.On("UpdateParticipant", mock.AnythingOfType("uint")).Return(class.Domain{}, assert.AnError).Once()
+		mockClassRepo.On("IncreaseParticipant", mock.AnythingOfType("uint")).Return(class.Domain{}, assert.AnError).Once()
 		resp, err := classTransactionUsecase.Insert(&classTransactionInput)
 
 		assert.NotNil(t, err)
