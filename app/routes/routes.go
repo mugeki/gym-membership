@@ -70,13 +70,13 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	class.DELETE("/:idClass", ctrlList.ClassController.DeleteClassByID, SuperAdminValidation())
 
 	class_transactions := e.Group("transaction-class", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
-	class_transactions.GET("", ctrlList.ClassTransactionController.GetAll, AdminValidation(), SuperAdminValidation())
+	class_transactions.GET("", ctrlList.ClassTransactionController.GetAll, AdminValidation())
 	class_transactions.GET("/user", ctrlList.ClassTransactionController.GetAllByUser)
 	// class_transactions.GET("/user/:idClassTransaction", ctrlList.ClassTransactionController.GetByID)
 	class_transactions.GET("/active/:idUser", ctrlList.ClassTransactionController.GetActiveClass)
 	class_transactions.GET("/user/:idClassTransaction", ctrlList.ClassTransactionController.GetByID)
 	class_transactions.POST("", ctrlList.ClassTransactionController.Insert)
-	class_transactions.PUT("/update-status/:idClassTransaction", ctrlList.ClassTransactionController.UpdateStatus, AdminValidation(), SuperAdminValidation())
+	class_transactions.PUT("/update-status/:idClassTransaction", ctrlList.ClassTransactionController.UpdateStatus, AdminValidation())
 	class_transactions.PUT("/status-to-failed/:idClassTransaction", ctrlList.ClassTransactionController.UpdateStatusToFailed)
 	class_transactions.PUT("/update-receipt/:idClassTransaction", ctrlList.ClassTransactionController.UpdateReceipt)
 
@@ -101,16 +101,16 @@ func (ctrlList *ControllerList) RegisterRoute(e *echo.Echo) {
 	admins := e.Group("admins")
 	admins.POST("", ctrlList.AdminController.Register, middleware.JWTWithConfig(ctrlList.JWTMiddleware), SuperAdminValidation())
 	admins.POST("/login", ctrlList.AdminController.Login)
-	admins.PUT("/:idAdmin", ctrlList.AdminController.Update, middleware.JWTWithConfig(ctrlList.JWTMiddleware), AdminValidation(), SuperAdminValidation())
+	admins.PUT("/:idAdmin", ctrlList.AdminController.Update, middleware.JWTWithConfig(ctrlList.JWTMiddleware), AdminValidation())
 	admins.GET("", ctrlList.AdminController.GetAll, middleware.JWTWithConfig(ctrlList.JWTMiddleware), SuperAdminValidation())
 	admins.DELETE("/:idAdmin", ctrlList.AdminController.DeleteByID, middleware.JWTWithConfig(ctrlList.JWTMiddleware), SuperAdminValidation())
 
 	membership_transactions := e.Group("transaction-membership", middleware.JWTWithConfig(ctrlList.JWTMiddleware))
-	membership_transactions.GET("", ctrlList.MembershipTransactionController.GetAll, AdminValidation(), SuperAdminValidation())
+	membership_transactions.GET("", ctrlList.MembershipTransactionController.GetAll, AdminValidation())
 	membership_transactions.GET("/user", ctrlList.MembershipTransactionController.GetAllByUser)
 	membership_transactions.GET("/user/:idMembershipTransaction", ctrlList.MembershipTransactionController.GetByID)
 	membership_transactions.POST("", ctrlList.MembershipTransactionController.Insert)
-	membership_transactions.PUT("/update-status/:idMembershipTransaction", ctrlList.MembershipTransactionController.UpdateStatus, AdminValidation(), SuperAdminValidation())
+	membership_transactions.PUT("/update-status/:idMembershipTransaction", ctrlList.MembershipTransactionController.UpdateStatus, AdminValidation())
 	membership_transactions.PUT("/status-to-failed/:idMembershipTransaction", ctrlList.MembershipTransactionController.UpdateStatusToFailed)
 	membership_transactions.PUT("/update-receipt/:idMembershipTransaction", ctrlList.MembershipTransactionController.UpdateReceipt)
 
@@ -122,7 +122,7 @@ func AdminValidation() echo.MiddlewareFunc {
 	return func(hf echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			claims := _middleware.GetUser(c)
-			if claims.IsAdmin {
+			if claims.IsAdmin || claims.IsSuperAdmin{
 				return hf(c)
 			} else {
 				return controllers.NewErrorResponse(c, http.StatusForbidden, business.ErrUnauthorized)

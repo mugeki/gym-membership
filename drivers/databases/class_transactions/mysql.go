@@ -24,12 +24,15 @@ func (mysqlRepo *mysqlClassTransactionRepo) Insert(transactionClassData *class_t
 	recTransaction := ClassTransaction{}
 	copier.Copy(&recTransaction, &transactionClassData)
 	err := mysqlRepo.Conn.Create(&recTransaction).Error
-	mysqlRepo.Conn.Joins("Class").Find(&recTransaction)
+	mysqlRepo.Conn.Joins("Class").Joins("Payment").Joins("User").Find(&recTransaction)
 	if err != nil {
 		return class_transactions.Domain{}, err
 	}
 	copier.Copy(&domain, &recTransaction)
+	copier.Copy(&domain.Payment, &recTransaction.Payment)
 	domain.Nominal = recTransaction.Class.Price
+	domain.ProductName = recTransaction.Class.Name
+	domain.UserName = recTransaction.User.FullName
 
 	return domain, nil
 }

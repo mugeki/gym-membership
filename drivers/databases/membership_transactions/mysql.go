@@ -23,12 +23,16 @@ func (mysqlRepo *mysqlMembershipTransactionRepo) Insert(data *membership_transac
 	recTransaction := MembershipTransactions{}
 	copier.Copy(&recTransaction, &data)
 	err := mysqlRepo.Conn.Create(&recTransaction).Error
-	mysqlRepo.Conn.Joins("MembershipProduct").Find(&recTransaction)
+	mysqlRepo.Conn.Joins("MembershipProduct").Joins("Payment").
+		Joins("User").Find(&recTransaction)
 	if err != nil {
 		return membership_transactions.Domain{}, err
 	}
 	copier.Copy(&domain, &recTransaction)
+	copier.Copy(&domain.Payment, &recTransaction.Payment)
 	domain.Nominal = recTransaction.MembershipProduct.Price
+	domain.ProductName = recTransaction.MembershipProduct.Name
+	domain.UserName = recTransaction.User.FullName
 	return domain, nil
 }
 

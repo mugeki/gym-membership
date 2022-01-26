@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	_driverFactory "gym-membership/drivers"
+	"gym-membership/helper/encrypt"
 
 	_userUsecase "gym-membership/business/users"
 	_userController "gym-membership/controllers/users"
@@ -79,6 +80,76 @@ func dbMigrate(db *gorm.DB) {
 		&_memberRepo.Members{},
 		&_paymentAccountRepo.PaymentAccount{},
 	)
+	hashed, _ := encrypt.Hash("admin321")
+	admin := _adminRepo.Admins{
+		Model: gorm.Model{ID:1000},
+		Username: "admin321",
+		Password: hashed,
+		Email: "admin321@gmail.com",
+		FullName: "Super Admin",
+		Gender: "male",
+		Telephone: "0881122334455",
+		Address: "Jl. H. Sadiah, Joglo",
+		UrlImage: "https://images.unsplash.com/photo-1584952811565-c4c4031805a8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80",
+		IsSuperAdmin: true,
+	}
+	classification := []_classificationRepo.Classification{
+		{
+			ID: 1, 
+			Name:"Workout Tips",
+		},
+		{
+			ID: 2, 
+			Name:"Health Tips",
+		},
+	}
+	trainer := []_trainerRepo.Trainers{
+		{
+			ID: 1,
+			Fullname: "John Doe", 
+			UrlImage: "https://images.unsplash.com/photo-1584952811565-c4c4031805a8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80",
+		},
+		{
+			ID: 2,
+			Fullname:"Jane Doe", 
+			UrlImage: "https://images.unsplash.com/photo-1550345332-09e3ac987658?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80",
+		},
+	}
+	payment := []_paymentAccountRepo.PaymentAccount{
+		{
+			Model: gorm.Model{ID:1},
+			Name: "BRI",
+			NoCard: "75757182839481727",
+			OwnerName: "PT Subur Jaya",
+			Desc: "This payment need a manual confirmation by uploading image of receipt",
+		},
+		{
+			Model: gorm.Model{ID:2},
+			Name: "BCA",
+			NoCard: "75757182839481727",
+			OwnerName: "PT Subur Jaya",
+			Desc: "This payment need a manual confirmation by uploading image of receipt",
+		},
+		{
+			Model: gorm.Model{ID:3},
+			Name: "LINKAJA",
+			NoCard: "75757182839481727",
+			OwnerName: "PT Subur Jaya",
+			Desc: "This payment need a manual confirmation by uploading image of receipt",
+		},
+		{
+			Model: gorm.Model{ID:4},
+			Name: "GOPAY",
+			NoCard: "75757182839481727",
+			OwnerName: "PT Subur Jaya",
+			Desc: "This payment need a manual confirmation by uploading image of receipt",
+		},
+	}
+
+	db.Create(&admin)
+	db.Create(&classification)
+	db.Create(&trainer)
+	db.Create(&payment)
 }
 
 func main() {
@@ -100,12 +171,19 @@ func main() {
 	}
 	e := echo.New()
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost:3000"},
+		AllowOrigins: []string{
+			"http://localhost",
+			"http://ec2-13-58-52-197.us-east-2.compute.amazonaws.com",
+			"http://ec2-18-222-186-208.us-east-2.compute.amazonaws.com",
+			"http://gymbro.my.id",
+			"http://gymbro-admin.my.id",
+		},
 		AllowHeaders: []string{
 				echo.HeaderOrigin,
 				echo.HeaderContentType, 
 				echo.HeaderAccept,
 				echo.HeaderAccessControlAllowCredentials,
+				echo.HeaderAccessControlAllowOrigin,
 				echo.HeaderAuthorization,
 			},
 	}))

@@ -75,7 +75,7 @@ jobs:
           export DB_NAME='"'$DB_NAME'"' && \
           export JWT_SECRET='"'$JWT_SECRET'"' && \
           export JWT_EXPIRE='"'$JWT_EXPIRE'"' && \
-          docker rm -vf $(docker ps -a -q) || true && \
+          docker rm -vf gym-membership && \
           docker pull mugeki/gym-membership:1.0.0 && \
           docker run -d -p 8000:8000 --name gym-membership \
           -e PORT=$PORT \
