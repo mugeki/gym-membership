@@ -63,15 +63,21 @@
 				
 				<option value="file3">gym-membership/business/class_transactions/usecase.go (100.0%)</option>
 				
-				<option value="file4">gym-membership/business/membership_products/usecase.go (96.9%)</option>
+				<option value="file4">gym-membership/business/classification/usecase.go (100.0%)</option>
 				
-				<option value="file5">gym-membership/business/membership_transactions/usecase.go (90.7%)</option>
+				<option value="file5">gym-membership/business/members/usecase.go (100.0%)</option>
 				
-				<option value="file6">gym-membership/business/trainers/usecase.go (100.0%)</option>
+				<option value="file6">gym-membership/business/membership_products/usecase.go (96.9%)</option>
 				
-				<option value="file7">gym-membership/business/users/usecase.go (83.3%)</option>
+				<option value="file7">gym-membership/business/membership_transactions/usecase.go (90.7%)</option>
 				
-				<option value="file8">gym-membership/business/videos/usecase.go (93.8%)</option>
+				<option value="file8">gym-membership/business/payment_accounts/usecase.go (100.0%)</option>
+				
+				<option value="file9">gym-membership/business/trainers/usecase.go (100.0%)</option>
+				
+				<option value="file10">gym-membership/business/users/usecase.go (83.3%)</option>
+				
+				<option value="file11">gym-membership/business/videos/usecase.go (93.8%)</option>
 				
 				</select>
 			</div>
@@ -461,7 +467,77 @@ func (uc *classTransactionUsecase) UpdateStatusToFailed(transactionID uint) (Dom
 }
 </pre>
 		
-		<pre class="file" id="file4" style="display: none">package membership_products
+		<pre class="file" id="file4" style="display: none">package classification
+
+import (
+        "gym-membership/business"
+
+        "github.com/jinzhu/copier"
+)
+
+type classificationUsecase struct {
+        classificationRepository Repository
+}
+
+func NewClassificationUsecase(classificationRepo Repository) Usecase <span class="cov8" title="1">{
+        return &amp;classificationUsecase{
+                classificationRepository: classificationRepo,
+        }
+}</span>
+
+func (uc *classificationUsecase) GetAll() ([]Domain, error) <span class="cov8" title="1">{
+        res, err := uc.classificationRepository.GetAll()
+        if err != nil </span><span class="cov8" title="1">{
+                return res, business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">domain := []Domain{}
+        copier.Copy(&amp;domain, &amp;res)
+        return domain, nil</span>
+}
+
+func (uc *classificationUsecase) Insert(classification *Domain) (Domain, error) <span class="cov8" title="1">{
+        res, err := uc.classificationRepository.Insert(classification)
+        if err != nil </span><span class="cov8" title="1">{
+                return res, business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">domain := Domain{}
+        copier.Copy(&amp;domain, &amp;res)
+        return domain, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package members
+
+import (
+        "errors"
+        "gym-membership/business"
+
+        "gorm.io/gorm"
+)
+
+type memberUsecase struct {
+        memberRepository Repository
+}
+
+func NewMemberUsecase(memberRepo Repository) Usecase <span class="cov8" title="1">{
+        return &amp;memberUsecase{
+                memberRepository: memberRepo,
+        }
+}</span>
+
+func (uc *memberUsecase) GetByUserID(userID uint) (Domain, error) <span class="cov8" title="1">{
+        data, err := uc.memberRepository.GetByUserID(userID)
+        if err != nil </span><span class="cov8" title="1">{
+                if errors.Is(gorm.ErrRecordNotFound, err)</span><span class="cov8" title="1">{
+                        return Domain{}, business.ErrUserNotFound
+                }</span>
+                <span class="cov8" title="1">return Domain{}, business.ErrInternalServer</span>
+        }
+        <span class="cov8" title="1">return data, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package membership_products
 
 import (
         "errors"
@@ -541,7 +617,7 @@ func (uc *membershipProductsUsecase) DeleteByID(id uint) error<span class="cov8"
 
 </pre>
 		
-		<pre class="file" id="file5" style="display: none">package membership_transactions
+		<pre class="file" id="file7" style="display: none">package membership_transactions
 
 import (
         "errors"
@@ -667,7 +743,46 @@ func (uc *membershipTransactionUsecase) UpdateStatusToFailed(transactionID uint)
 }
 </pre>
 		
-		<pre class="file" id="file6" style="display: none">package trainers
+		<pre class="file" id="file8" style="display: none">package payment_accounts
+
+import (
+        "gym-membership/business"
+
+        "github.com/jinzhu/copier"
+)
+
+type paymentAccountUsecase struct {
+        paymentAccountRepository Repository
+}
+
+func NewPaymentAccountUsecase(paymentAccountRepo Repository) Usecase <span class="cov8" title="1">{
+        return &amp;paymentAccountUsecase{
+                paymentAccountRepository: paymentAccountRepo,
+        }
+}</span>
+
+func (uc *paymentAccountUsecase) GetAll() ([]Domain, error) <span class="cov8" title="1">{
+        res, err := uc.paymentAccountRepository.GetAll()
+        if err != nil </span><span class="cov8" title="1">{
+                return res, business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">domain := []Domain{}
+        copier.Copy(&amp;domain, &amp;res)
+        return domain, nil</span>
+}
+
+func (uc *paymentAccountUsecase) Insert(paymentAccount *Domain) (Domain, error) <span class="cov8" title="1">{
+        res, err := uc.paymentAccountRepository.Insert(paymentAccount)
+        if err != nil </span><span class="cov8" title="1">{
+                return res, business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">domain := Domain{}
+        copier.Copy(&amp;domain, &amp;res)
+        return domain, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package trainers
 
 import (
         "gym-membership/business"
@@ -695,7 +810,7 @@ func (uc *trainerUsecase) GetAll() ([]Domain, error) <span class="cov8" title="1
 }
 </pre>
 		
-		<pre class="file" id="file7" style="display: none">package users
+		<pre class="file" id="file10" style="display: none">package users
 
 import (
         "gym-membership/app/middleware"
@@ -781,7 +896,7 @@ func (uc *userUsecase) VerifyJWT(token string) (error) <span class="cov0" title=
         <span class="cov0" title="0">return nil</span>
 }</pre>
 		
-		<pre class="file" id="file8" style="display: none">package videos
+		<pre class="file" id="file11" style="display: none">package videos
 
 import (
         "errors"
