@@ -65,7 +65,7 @@
 				
 				<option value="file4">gym-membership/business/membership_products/usecase.go (96.9%)</option>
 				
-				<option value="file5">gym-membership/business/membership_transactions/usecase.go (89.8%)</option>
+				<option value="file5">gym-membership/business/membership_transactions/usecase.go (90.7%)</option>
 				
 				<option value="file6">gym-membership/business/trainers/usecase.go (100.0%)</option>
 				
@@ -350,6 +350,7 @@ func (uc *classUsecase) DeleteClassByID(id uint) error <span class="cov8" title=
 import (
         "gym-membership/business"
         "gym-membership/business/class"
+        "strings"
         "time"
 )
 
@@ -393,6 +394,9 @@ func (uc *classTransactionUsecase) GetAll(date time.Time, status string, idUser 
         if err != nil </span><span class="cov8" title="1">{
                 return []Domain{}, -1, -1, -1, business.ErrInternalServer
         }</span>
+        <span class="cov8" title="1">for i := 0; i &lt; len(res); i++ </span><span class="cov8" title="1">{
+                res[i].Status = strings.ReplaceAll(res[i].Status, "-", " ")
+        }</span>
         <span class="cov8" title="1">return res, offset, limit, totalData, nil</span>
 }
 
@@ -401,6 +405,9 @@ func (uc *classTransactionUsecase) GetAllByUser(idUser uint) ([]Domain, error) <
         res, err := uc.classTransactionRepository.GetAllByUser(idUser)
         if err != nil </span><span class="cov8" title="1">{
                 return []Domain{}, business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">for i := 0; i &lt; len(res); i++ </span><span class="cov8" title="1">{
+                res[i].Status = strings.ReplaceAll(res[i].Status, "-", " ")
         }</span>
         <span class="cov8" title="1">return res, nil</span>
 }
@@ -435,7 +442,8 @@ func (uc *classTransactionUsecase) GetByID(transactionID uint) (Domain, error) <
         if err != nil </span><span class="cov8" title="1">{
                 return Domain{}, business.ErrInternalServer
         }</span>
-        <span class="cov8" title="1">return res, nil</span>
+        <span class="cov8" title="1">res.Status = strings.ReplaceAll(res.Status, "-", " ")
+        return res, nil</span>
 }
 
 func (uc *classTransactionUsecase) UpdateStatusToFailed(transactionID uint) (Domain, error) <span class="cov8" title="1">{
@@ -540,6 +548,7 @@ import (
         "gym-membership/business"
         "gym-membership/business/members"
         "gym-membership/business/membership_products"
+        "strings"
 
         "time"
 
@@ -578,10 +587,12 @@ func (uc *membershipTransactionUsecase) GetAll(date time.Time, status string, id
                 offset = (page - 1) * 10
         }</span>
 
-        // resStatus := strings.ReplaceAll(status, "-", " ")
         <span class="cov8" title="1">res, totalData, err := uc.membershipTransactionRepository.GetAll(date, status, idUser, offset, limit)
         if err != nil </span><span class="cov8" title="1">{
                 return []Domain{}, -1, -1, -1, business.ErrInternalServer
+        }</span>
+        <span class="cov8" title="1">for i := 0; i &lt; len(res); i++ </span><span class="cov8" title="1">{
+                res[i].Status = strings.ReplaceAll(res[i].Status, "-", " ")
         }</span>
         <span class="cov8" title="1">return res, offset, limit, totalData, nil</span>
 }
@@ -592,6 +603,9 @@ func (uc *membershipTransactionUsecase) GetAllByUser(idUser uint) ([]Domain, err
         if err != nil </span><span class="cov8" title="1">{
                 return []Domain{}, business.ErrInternalServer
         }</span>
+        <span class="cov8" title="1">for i := 0; i &lt; len(res); i++ </span><span class="cov8" title="1">{
+                res[i].Status = strings.ReplaceAll(res[i].Status, "-", " ")
+        }</span>
         <span class="cov8" title="1">return res, nil</span>
 }
 
@@ -600,7 +614,8 @@ func (uc *membershipTransactionUsecase) GetByID(idTransaction uint) (Domain, err
         if err != nil </span><span class="cov8" title="1">{
                 return Domain{}, business.ErrInternalServer
         }</span>
-        <span class="cov8" title="1">return res, nil</span>
+        <span class="cov8" title="1">res.Status = strings.ReplaceAll(res.Status, "-", " ")
+        return res, nil</span>
 }
 
 func (uc *membershipTransactionUsecase) UpdateStatus(id, idAdmin uint, status string) error <span class="cov8" title="1">{
