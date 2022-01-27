@@ -22,6 +22,7 @@ var (
 	membershipTransactionUsecase  membership_transactions.Usecase
 	membershipTransactionData     membership_transactions.Domain
 	membershipTransactionInput    membership_transactions.Domain
+	membershipTransactionUpdate  membership_transactions.Domain
 	productData                membership_products.Domain
 )
 
@@ -43,7 +44,15 @@ func TestMain(m *testing.M) {
 		Nominal: 100000,
 		MembershipProductID: 1,
 	}
-
+	membershipTransactionUpdate = membership_transactions.Domain{
+		ID:      1,
+		UserID:  1,
+		AdminID: 1,
+		Status:  "failed",
+		Nominal: 100000,
+		MembershipProductID: 1,
+		CreatedAt:    time.Date(2021, 12, 1, 0, 0, 0, 0, time.UTC),
+	}
 	productData = membership_products.Domain{
 		ID         : 1,
 		Name       : "test product",
@@ -180,5 +189,70 @@ func TestUpdateStatus(t *testing.T) {
 		err := membershipTransactionUsecase.UpdateStatus(uint(1), uint(1), "accepted")
 
 		assert.NotNil(t, err)
+	})
+}
+
+func TestGetAllByUser(t *testing.T){
+	t.Run("Valid Test", func(t *testing.T){
+		mockMembershipTransactionRepo.On("GetAllByUser", mock.AnythingOfType("uint")).
+			Return([]membership_transactions.Domain{membershipTransactionData} , nil).Once()
+
+		resp, err := membershipTransactionUsecase.GetAllByUser(uint(1))
+
+		assert.Nil(t, err)
+		assert.Contains(t, resp, membershipTransactionData)
+		assert.Len(t, resp, 1)
+	})
+	t.Run("Invalid Test | Internal Server Error", func(t *testing.T){
+		mockMembershipTransactionRepo.On("GetAllByUser", mock.AnythingOfType("uint")).
+			Return([]membership_transactions.Domain{} , assert.AnError).Once()
+
+		resp, err := membershipTransactionUsecase.GetAllByUser(uint(1))
+
+		assert.NotNil(t, err)
+		assert.Equal(t, []membership_transactions.Domain{}, resp)
+	})
+}
+
+func TestGetByID(t *testing.T){
+	t.Run("Valid Test", func(t *testing.T){
+		mockMembershipTransactionRepo.On("GetByID", mock.AnythingOfType("uint")).
+			Return(membershipTransactionData , nil).Once()
+
+		resp, err := membershipTransactionUsecase.GetByID(uint(1))
+
+		assert.Nil(t, err)
+		assert.Equal(t, membershipTransactionData, resp)
+	})
+	t.Run("Invalid Test | Internal Server Error", func(t *testing.T){
+		mockMembershipTransactionRepo.On("GetByID", mock.AnythingOfType("uint")).
+			Return(membership_transactions.Domain{} , assert.AnError).Once()
+
+		resp, err := membershipTransactionUsecase.GetByID(uint(1))
+
+		assert.NotNil(t, err)
+		assert.Equal(t, membership_transactions.Domain{}, resp)
+	})
+}
+
+func TestUpdateStatusToFailed(t *testing.T){
+	t.Run("Valid Test", func(t *testing.T){
+		mockMembershipTransactionRepo.On("UpdateStatusToFailed", mock.AnythingOfType("uint"), 
+			mock.AnythingOfType("string")).Return(membershipTransactionInput, nil).Once()
+		
+		resp, err := membershipTransactionUsecase.UpdateStatusToFailed(uint(1))
+
+		assert.Nil(t, err)
+		assert.Equal(t, membershipTransactionInput, resp)
+	})
+	t.Run("Invalid Test | Internal Server Error", func(t *testing.T){
+		mockMembershipTransactionRepo.On("UpdateStatusToFailed", mock.AnythingOfType("uint"), 
+			mock.AnythingOfType("string")).Return(membership_transactions.Domain{}, assert.AnError).Once()
+		
+		resp, err := membershipTransactionUsecase.UpdateStatusToFailed(uint(1))
+
+		assert.NotNil(t, err)
+		assert.Equal(t, business.ErrInternalServer, err)
+		assert.Equal(t, membership_transactions.Domain{}, resp)
 	})
 }

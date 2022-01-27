@@ -5,6 +5,7 @@ import (
 	"gym-membership/business"
 	"gym-membership/business/members"
 	"gym-membership/business/membership_products"
+	"strings"
 
 	"time"
 
@@ -43,10 +44,12 @@ func (uc *membershipTransactionUsecase) GetAll(date time.Time, status string, id
 		offset = (page - 1) * 10
 	}
 
-	// resStatus := strings.ReplaceAll(status, "-", " ")
 	res, totalData, err := uc.membershipTransactionRepository.GetAll(date, status, idUser, offset, limit)
 	if err != nil {
 		return []Domain{}, -1, -1, -1, business.ErrInternalServer
+	}
+	for i := 0; i < len(res); i++ {
+		res[i].Status = strings.ReplaceAll(res[i].Status, "-", " ")
 	}
 	return res, offset, limit, totalData, nil
 }
@@ -57,6 +60,9 @@ func (uc *membershipTransactionUsecase) GetAllByUser(idUser uint) ([]Domain, err
 	if err != nil {
 		return []Domain{}, business.ErrInternalServer
 	}
+	for i := 0; i < len(res); i++ {
+		res[i].Status = strings.ReplaceAll(res[i].Status, "-", " ")
+	}
 	return res, nil
 }
 
@@ -65,6 +71,7 @@ func (uc *membershipTransactionUsecase) GetByID(idTransaction uint) (Domain, err
 	if err != nil {
 		return Domain{}, business.ErrInternalServer
 	}
+	res.Status = strings.ReplaceAll(res.Status, "-", " ")
 	return res, nil
 }
 

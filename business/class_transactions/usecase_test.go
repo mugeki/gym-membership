@@ -1,6 +1,7 @@
 package class_transactions_test
 
 import (
+	"gym-membership/business"
 	"gym-membership/business/class"
 	_classMock "gym-membership/business/class/mocks"
 	"gym-membership/business/class_transactions"
@@ -13,12 +14,13 @@ import (
 )
 
 var (
-	mockClassTransactionRepo _classTransactionMock.Repository
-	mockClassRepo            _classMock.Repository
-	classTransactionUsecase  class_transactions.Usecase
-	classTransactionData     class_transactions.Domain
-	classTransactionInput    class_transactions.Domain
-	classData                class.Domain
+	mockClassTransactionRepo 	_classTransactionMock.Repository
+	mockClassRepo            	_classMock.Repository
+	classTransactionUsecase  	class_transactions.Usecase
+	classTransactionData     	class_transactions.Domain
+	classTransactionDataUpdated class_transactions.Domain
+	classTransactionInput    	class_transactions.Domain
+	classData                	class.Domain
 )
 
 func TestMain(m *testing.M) {
@@ -31,6 +33,16 @@ func TestMain(m *testing.M) {
 		Nominal:   100000,
 		ClassID:   2,
 		CreatedAt: time.Date(2021, 12, 1, 0, 0, 0, 0, time.UTC),
+	}
+	classTransactionDataUpdated = class_transactions.Domain{
+		ID:        1,
+		UserID:    1,
+		AdminID:   1,
+		Status:    "failed",
+		Nominal:   100000,
+		ClassID:   2,
+		CreatedAt: time.Date(2021, 12, 1, 0, 0, 0, 0, time.UTC),
+		UrlImageOfReceipt: "https://image.com",
 	}
 	classTransactionInput = class_transactions.Domain{
 		UserID:  1,
@@ -133,7 +145,28 @@ func TestGetAll(t *testing.T) {
 		assert.Equal(t, expectOffset, offset)
 		assert.Equal(t, expectTotalData, totalData)
 	})
+}
 
+func TestGetAllByUser(t *testing.T){
+	t.Run("Valid Test", func(t *testing.T){
+		mockClassTransactionRepo.On("GetAllByUser", mock.AnythingOfType("uint")).
+			Return([]class_transactions.Domain{classTransactionData}, nil).Once()
+
+		resp, err := classTransactionUsecase.GetAllByUser(uint(1))
+
+		assert.Nil(t, err)
+		assert.Contains(t, resp, classTransactionData)
+		assert.Len(t, resp, 1)
+	})
+	t.Run("Invalid Test | Internal Server Error", func(t *testing.T){
+		mockClassTransactionRepo.On("GetAllByUser", mock.AnythingOfType("uint")).
+			Return([]class_transactions.Domain{}, assert.AnError).Once()
+
+		resp, err := classTransactionUsecase.GetAllByUser(uint(1))
+
+		assert.NotNil(t, err)
+		assert.Len(t, resp, 0)
+	})
 }
 
 func TestUpdateStatus(t *testing.T) {
@@ -168,5 +201,89 @@ func TestGetActiveClass(t *testing.T) {
 
 		assert.NotNil(t, err)
 		assert.Equal(t, []class.Domain{}, resp)
+	})
+}
+
+func TestUpdateReceipt(t *testing.T){
+	t.Run("Valid Test", func(t *testing.T){
+		mockClassTransactionRepo.On("UpdateReceipt", mock.AnythingOfType("uint"), 
+			mock.AnythingOfType("string"), mock.AnythingOfType("string")).
+			Return(classTransactionDataUpdated, nil).Once()
+
+		urlImage := "https://image.com"
+		resp, err := classTransactionUsecase.UpdateReceipt(uint(1), urlImage)
+
+		assert.Nil(t, err)
+		assert.Equal(t, "", resp)
+	})
+	t.Run("Invalid Test | Internal Server Error", func(t *testing.T){
+		mockClassTransactionRepo.On("UpdateReceipt", mock.AnythingOfType("uint"), 
+			mock.AnythingOfType("string"), mock.AnythingOfType("string")).
+			Return(class_transactions.Domain{}, assert.AnError).Once()
+
+		urlImage := "https://image.com"
+		resp, err := classTransactionUsecase.UpdateReceipt(uint(1), urlImage)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, business.ErrInternalServer, err)
+		assert.Equal(t, "", resp)
+	})
+}
+
+func TestGetByID(t *testing.T){
+	t.Run("Valid Test", func(t *testing.T){
+		mockClassTransactionRepo.On("GetByID", mock.AnythingOfType("uint")).
+			Return(classTransactionData, nil).Once()
+
+		resp, err := classTransactionUsecase.GetByID(uint(1))
+
+		assert.Nil(t, err)
+		assert.Equal(t, classTransactionData, resp)
+	})
+	t.Run("Invalid Test | Internal Server Error", func(t *testing.T){
+		mockClassTransactionRepo.On("GetByID", mock.AnythingOfType("uint")).
+			Return(class_transactions.Domain{}, assert.AnError).Once()
+
+		resp, err := classTransactionUsecase.GetByID(uint(1))
+
+		assert.NotNil(t, err)
+		assert.Equal(t, class_transactions.Domain{}, resp)
+		assert.Equal(t, business.ErrInternalServer, err)
+	})
+}
+
+func TestUpdateStatusToFailed(t *testing.T){
+	t.Run("Valid Test", func(t *testing.T){
+		mockClassTransactionRepo.On("UpdateStatusToFailed", mock.AnythingOfType("uint"), 
+			mock.AnythingOfType("string")).Return(classTransactionDataUpdated, nil).Once()
+		mockClassRepo.On("DecreaseParticipant", mock.AnythingOfType("uint")).
+			Return(classData, nil).Once()
+		
+		resp, err := classTransactionUsecase.UpdateStatusToFailed(uint(1))
+
+		assert.Nil(t, err)
+		assert.Equal(t, classTransactionDataUpdated, resp)
+	})
+	t.Run("Invalid Test | Internal Server Error 1", func(t *testing.T){
+		mockClassTransactionRepo.On("UpdateStatusToFailed", mock.AnythingOfType("uint"), 
+			mock.AnythingOfType("string")).Return(class_transactions.Domain{}, assert.AnError).Once()
+		
+		resp, err := classTransactionUsecase.UpdateStatusToFailed(uint(1))
+
+		assert.NotNil(t, err)
+		assert.Equal(t, business.ErrInternalServer, err)
+		assert.Equal(t, class_transactions.Domain{}, resp)
+	})
+	t.Run("Invalid Test | Internal Server Error 2", func(t *testing.T){
+		mockClassTransactionRepo.On("UpdateStatusToFailed", mock.AnythingOfType("uint"), 
+			mock.AnythingOfType("string")).Return(classTransactionDataUpdated, nil).Once()
+		mockClassRepo.On("DecreaseParticipant", mock.AnythingOfType("uint")).
+			Return(class.Domain{}, assert.AnError).Once()
+
+		resp, err := classTransactionUsecase.UpdateStatusToFailed(uint(1))
+
+		assert.NotNil(t, err)
+		assert.Equal(t, business.ErrInternalServer, err)
+		assert.Equal(t, class_transactions.Domain{}, resp)
 	})
 }

@@ -176,7 +176,49 @@ func TestUpdate(t *testing.T){
 		assert.Nil(t, err)
 		assert.Equal(t, userData, res)
 	})
-	t.Run("Invalid Test | Duplicate Data", func(t *testing.T){
+	t.Run("Valid Test | No Password", func(t *testing.T){
+		mockUserRepo.On("GetByUsername", mock.AnythingOfType("string")).
+			Return(userData, nil).Once()
+		mockUserRepo.On("Update", mock.AnythingOfType("uint"), mock.Anything).
+			Return(users.Domain{},assert.AnError).Once()
+
+		inputData := users.Domain{
+			Username	: "test123",
+			Email		: "test@gmail.com",
+			FullName 	: "Test Name",
+			Gender 		: "Male",
+			Telephone 	: "88888000102",
+			Address 	: "Test Street",
+			CreatedAt 	: time.Date(2021,12,1,0,0,0,0,time.UTC),
+		}
+
+		res, err := userUsecase.Update(uint(1), &inputData)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, users.Domain{}, res)
+	})
+	t.Run("Valid Test | Internal Server Error 1", func(t *testing.T){
+		mockUserRepo.On("GetByUsername", mock.AnythingOfType("string")).
+			Return(users.Domain{}, assert.AnError).Once()
+		mockUserRepo.On("Update", mock.AnythingOfType("uint"), mock.Anything).
+			Return(users.Domain{},assert.AnError).Once()
+
+		inputData := users.Domain{
+			Username	: "test123",
+			Email		: "test@gmail.com",
+			FullName 	: "Test Name",
+			Gender 		: "Male",
+			Telephone 	: "88888000102",
+			Address 	: "Test Street",
+			CreatedAt 	: time.Date(2021,12,1,0,0,0,0,time.UTC),
+		}
+
+		res, err := userUsecase.Update(uint(1), &inputData)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, users.Domain{}, res)
+	})
+	t.Run("Invalid Test | Internal Server Error 2", func(t *testing.T){
 		mockUserRepo.On("Update", mock.AnythingOfType("uint"), mock.Anything).
 			Return(users.Domain{},assert.AnError).Once()
 

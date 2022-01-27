@@ -6,8 +6,6 @@ import (
 	"gym-membership/business"
 
 	"gorm.io/gorm"
-	// "gym-membership/helper/encrypt"
-	// "github.com/google/uuid"
 )
 
 type classUsecase struct {

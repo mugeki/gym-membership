@@ -3,6 +3,7 @@ package class_transactions
 import (
 	"gym-membership/business"
 	"gym-membership/business/class"
+	"strings"
 	"time"
 )
 
@@ -46,6 +47,9 @@ func (uc *classTransactionUsecase) GetAll(date time.Time, status string, idUser 
 	if err != nil {
 		return []Domain{}, -1, -1, -1, business.ErrInternalServer
 	}
+	for i := 0; i < len(res); i++ {
+		res[i].Status = strings.ReplaceAll(res[i].Status, "-", " ")
+	}
 	return res, offset, limit, totalData, nil
 }
 
@@ -54,6 +58,9 @@ func (uc *classTransactionUsecase) GetAllByUser(idUser uint) ([]Domain, error) {
 	res, err := uc.classTransactionRepository.GetAllByUser(idUser)
 	if err != nil {
 		return []Domain{}, business.ErrInternalServer
+	}
+	for i := 0; i < len(res); i++ {
+		res[i].Status = strings.ReplaceAll(res[i].Status, "-", " ")
 	}
 	return res, nil
 }
@@ -88,6 +95,7 @@ func (uc *classTransactionUsecase) GetByID(transactionID uint) (Domain, error) {
 	if err != nil {
 		return Domain{}, business.ErrInternalServer
 	}
+	res.Status = strings.ReplaceAll(res.Status, "-", " ")
 	return res, nil
 }
 

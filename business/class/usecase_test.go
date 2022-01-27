@@ -2,6 +2,7 @@ package class_test
 
 import (
 	"gym-membership/app/middleware"
+	"gym-membership/business"
 	"gym-membership/business/class"
 	_classMock "gym-membership/business/class/mocks"
 	"testing"
@@ -9,6 +10,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"gorm.io/gorm"
 )
 
 var (
@@ -116,6 +118,38 @@ func TestGetAll(t *testing.T) {
 
 }
 
+func TestGetClassByID(t *testing.T){
+	t.Run("Valid Test", func (t *testing.T){
+		mockClassRepo.On("GetClassByID", mock.AnythingOfType("uint")).
+			Return(classData, nil).Once()
+
+		resp, err := classUsecase.GetClassByID(uint(1))
+
+		assert.Nil(t, err)
+		assert.Equal(t, classData, resp)
+	})
+	t.Run("Invalid Test | Not Found", func (t *testing.T){
+		mockClassRepo.On("GetClassByID", mock.AnythingOfType("uint")).
+			Return(class.Domain{}, gorm.ErrRecordNotFound).Once()
+
+		resp, err := classUsecase.GetClassByID(uint(1))
+
+		assert.NotNil(t, err)
+		assert.Equal(t, business.ErrProductNotFound, err)
+		assert.Equal(t, class.Domain{}, resp)
+	})
+	t.Run("Invalid Test | Internal Server Error", func (t *testing.T){
+		mockClassRepo.On("GetClassByID", mock.AnythingOfType("uint")).
+			Return(class.Domain{}, assert.AnError).Once()
+
+		resp, err := classUsecase.GetClassByID(uint(1))
+
+		assert.NotNil(t, err)
+		assert.Equal(t, business.ErrInternalServer, err)
+		assert.Equal(t, class.Domain{}, resp)
+	})
+}
+
 func TestIncreaseParticipant(t *testing.T) {
 	t.Run("Valid Test", func(t *testing.T) {
 		mockClassRepo.On("IncreaseParticipant", mock.Anything).Return(classData, nil).Once()
@@ -149,5 +183,33 @@ func TestUpdateClassByID(t *testing.T) {
 
 		assert.NotNil(t, err)
 		assert.Equal(t, resp, class.Domain{})
+	})
+}
+
+func TestDeleteClassByID(t *testing.T){
+	t.Run("Valid Test", func(t *testing.T){
+		mockClassRepo.On("DeleteClassByID", mock.AnythingOfType("uint")).Return(nil).Once()
+
+		err := classUsecase.DeleteClassByID(uint(1))
+
+		assert.Nil(t, err)
+	})
+	t.Run("Invalid Test | Not Found", func(t *testing.T){
+		mockClassRepo.On("DeleteClassByID", mock.AnythingOfType("uint")).
+			Return(gorm.ErrRecordNotFound).Once()
+
+		err := classUsecase.DeleteClassByID(uint(1))
+
+		assert.NotNil(t, err)
+		assert.Equal(t, business.ErrArticleNotFound, err)
+	})
+	t.Run("Invalid Test | Not Found", func(t *testing.T){
+		mockClassRepo.On("DeleteClassByID", mock.AnythingOfType("uint")).
+			Return(assert.AnError).Once()
+
+		err := classUsecase.DeleteClassByID(uint(1))
+
+		assert.NotNil(t, err)
+		assert.Equal(t, business.ErrInternalServer, err)
 	})
 }
